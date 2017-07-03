@@ -4,6 +4,7 @@ $pg_host = $_GET['pg_host'];
 $pg_bdd = $_GET['pg_bdd'];
 $pg_lgn = $_GET['pg_lgn']; 
 $pg_pwd = $_GET['pg_pwd'];
+$siren_epci = $_GET['siren_epci'];
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
@@ -14,16 +15,15 @@ if (!$conn) {
 
 /* Export des données pour piechart */
 $sql = "
-select grand_secteur, grand_secteur_color, (sum(val) / 1000.)::integer as val
-from (
-	select id_secteur, sum(val) as val
-	from total.bilan_comm_v4
-	where id_polluant = 38 and an = 2015
-	group by id_secteur
-) as a
-left join total.tpk_secteur as b using (id_secteur)
-group by grand_secteur, grand_secteur_color
-order by grand_secteur
+select id_secten1, nom_court_secten1, secten1_color, (sum(val)::numeric / 1000.)::integer as val
+from public.emi_epci_nox_graphs as a
+left join total.tpk_secten1_color using (id_secten1)
+where 
+	siren_epci_2017 = " . $siren_epci . "  
+	and an = (select max(an) from public.emi_epci_nox_graphs)
+group by id_secten1, nom_court_secten1, secten1_color
+order by id_secten1
+;
 ";
 
 $res = pg_query($conn, $sql);
@@ -39,11 +39,19 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Export des données pour barchart */
 $sql = "
+-- select an, (sum(val) / 1000.)::integer as val
+-- from total.bilan_comm_v4
+-- where id_polluant = 38
+-- group by an
+-- order by an
+
 select an, (sum(val) / 1000.)::integer as val
-from total.bilan_comm_v4
-where id_polluant = 38
+from public.emi_epci_nox_graphs
+where 
+	id_polluant = 38
+	and siren_epci_2017 = " . $siren_epci . "  
 group by an
-order by an
+order by an 
 ";
 
 $res = pg_query($conn, $sql);
@@ -59,16 +67,18 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Lignes d'évolution des secteurs*/
 $sql = "
-select grand_secteur, grand_secteur_color, an, sum(val) as val
+select id_secten1, nom_court_secten1, secten1_color, an, sum(val) as val
 from (
-	select id_secteur, an, (sum(val) / 1000.)::integer as val
-	from total.bilan_comm_v4
-	where id_polluant = 38
-	group by id_secteur, an
+	select id_secten1, an, (sum(val) / 1000.)::integer as val
+	from public.emi_epci_nox_graphs
+	where 
+		id_polluant = 38 
+		and siren_epci_2017 = " . $siren_epci . "  
+	group by id_secten1, an
 ) as a
-left join total.tpk_secteur as b using (id_secteur)
-group by grand_secteur, grand_secteur_color, an
-order by grand_secteur, an
+left join total.tpk_secten1_color as b using (id_secten1)
+group by id_secten1, nom_court_secten1, secten1_color, an
+order by id_secten1, an
 ";
 
 $res = pg_query($conn, $sql);
@@ -85,23 +95,26 @@ while ($row = pg_fetch_assoc( $res )) {
 /* Part sur dep et reg */
 $sql = "
 select 
-	epci::integer, dep::integer, reg::integer, 
-	round((epci / dep * 100.)::numeric, 1) as pct_dep, 
+	epci::integer, 
+    -- dep::integer, 
+    reg::integer, 
+	-- round((epci / dep * 100.)::numeric, 1) as pct_dep, 
 	round((epci / reg * 100.)::numeric, 1) as pct_reg 
 from (
 	select 
 		-- Emissions de l'EPCI
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v4
-		where id_polluant = 38 and id_comm = 13055 and an = 2015) as epci,
+		from public.emi_epci_nox_graphs
+		where id_polluant = 38 and siren_epci_2017 = " . $siren_epci . " and an = (select max(an) from public.emi_epci_nox_graphs)) as epci,
 		-- Emissions du dep
-		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v4
-		where id_polluant = 38 and id_comm / 1000 = 13 and an = 2015) as dep,
+		-- Impossible, certains EPCI sur 2 ou 3 depts
+		-- (select (sum(val) / 1000.) as val
+		-- from public.emi_epci_nox_graphs
+		-- where id_polluant = 38 and id_comm / 1000 = 13 and an = (select max(an) from public.emi_epci_nox_graphs)) as dep,
 		-- Emissions de la région
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v4
-		where id_polluant = 38 and an = 2015) as reg
+		from public.emi_epci_nox_graphs
+		where id_polluant = 38 and an = (select max(an) from public.emi_epci_nox_graphs)) as reg
 ) as a
 
 ";

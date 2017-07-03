@@ -598,12 +598,8 @@ function create_wfs_epci_layers(my_layers_object){
                         // Zoom sur la couche
                         map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
 
-                        // Récupération de l'id epci et affichage des graphiques
-                        console.log(feature.properties["siren_epci_2017"]);
-                        sidebar.show();  
-
-                        // layer.setStyle({weight: 4});
-                        
+                        // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
+                        create_graphiques(feature.properties["siren_epci_2017"], feature.properties["nom_epci_2017"]);                     
                         
                     });                    
                 },                 
@@ -616,48 +612,22 @@ function create_wfs_epci_layers(my_layers_object){
     });    
 };
 
-/* Appel des fonctions */
-var map = createMap();
-var sidebar = create_sidebar();
-var select_list = liste_epci_create(); 
-liste_epci_populate();
-create_wfs_epci_layers(my_layers.epci_wfs); // create_wms_layer(my_layers.epci);
+function create_sidebar_template(){
+    var sidebarContent = '\
+    <section class="graph_container">\
+        <div class="graph_title">Titre du graph</div>\
+        <div class="graph1">graph1</div>\
+        <div class="graph2">graph2</div>\
+        <div class="graph3">graph3</div>\
+        <div class="graph4">graph4</div>\
+    </section>\
+    ';
+    sidebar.setContent(sidebarContent);      
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Test sidebar  */
-var sidebarContent = '\
-<section class="graph_container">\
-    <div class="graph1">graph1</div>\
-    <div class="graph2">graph2</div>\
-    <div class="graph3">graph3</div>\
-    <div class="graph4">graph4</div>\
-</section>\
-';
-sidebar.setContent(sidebarContent);
+function change_graph_title(the_title){
+    $('.graph_title').html(the_title);
+};
 
 function create_piechart_emi(response, div){
     /*
@@ -670,7 +640,7 @@ function create_piechart_emi(response, div){
 
     var graph_labels = [];
     for (var i in response) {
-        graph_labels.push(response[i].grand_secteur);
+        graph_labels.push(response[i].nom_court_secten1);
     };              
 
     var graph_title = 'Répartition sectorielle';
@@ -683,7 +653,7 @@ function create_piechart_emi(response, div){
     var bg_colors = [];
     var bd_colors = [];
     for (var i in response) {
-        bg_colors.push(response[i].grand_secteur_color);
+        bg_colors.push(response[i].secten1_color);
         bd_colors.push('#ffffff');
     };  
     
@@ -803,9 +773,9 @@ function create_linechart_emi(response, div){
     var liste_secteurs = [];
     var liste_couleurs = [];
     for (var i in response) {
-        if ($.inArray(response[i].grand_secteur, liste_secteurs) == -1){
-            liste_secteurs.push(response[i].grand_secteur);
-            liste_couleurs.push(response[i].grand_secteur_color);
+        if ($.inArray(response[i].nom_court_secten1, liste_secteurs) == -1){
+            liste_secteurs.push(response[i].nom_court_secten1);
+            liste_couleurs.push(response[i].secten1_color);
         };
     };    
     
@@ -816,7 +786,7 @@ function create_linechart_emi(response, div){
         
         data = [];
         for (var i in response) { 
-            if (response[i].grand_secteur == secteur){
+            if (response[i].nom_court_secten1 == secteur){
                 data.push(response[i].val);
             };
         };
@@ -889,10 +859,10 @@ function create_barchart_part(response, div){
     var graph = new Chart(ctx, {
         type: 'horizontalBar', // 'horizontalBar',          
         data: {
-            labels: ["EPCI", "Département", "Région"],
+            labels: ["EPCI", "Région"],
             datasets: [{
                 label: 'LABEL A DEFINIR',
-                data: [response[0].epci, response[0].dep, response[0].reg],
+                data: [response[0].epci, response[0].reg],
                 backgroundColor: '#02fcf2', // bg_colors,
                 borderColor: '#02fcf2', // bd_colors,
                 borderWidth: 1
@@ -904,7 +874,7 @@ function create_barchart_part(response, div){
             title: {
                 display: true,
                 fontSize: 15,
-                text: "EPCI = " + response[0].pct_dep + "% du département et " + response[0].pct_reg + "% de la région",
+                text: "EPCI = " + response[0].pct_reg + "% de la région",
             },
             legend: {
                 position: 'bottom',
@@ -923,28 +893,82 @@ function create_barchart_part(response, div){
     }); 
 };
 
-$.ajax({
-    type: "GET",
-    url: "scripts/graphiques.php",
-    dataType: 'json',   
-    data: {
-        pg_host:cfg_pg_host,
-        pg_bdd:cfg_pg_bdd, 
-        pg_lgn:cfg_pg_lgn, 
-        pg_pwd:cfg_pg_pwd,            
-    },    
-    success: function(response,textStatus,jqXHR){
-        create_barchart_emi(response[1], "graph2");
-        create_piechart_emi(response[0], "graph1");
-        create_linechart_emi(response[2], "graph3");
-        create_barchart_part(response[3], "graph4");
-    },
-    error: function (request, error) {
-        console.log(arguments);
-        console.log("Ajax error: " + error);
-        $("#error_tube").show();
-    },        
-});	
+function create_graphiques(siren_epci, nom_epci){
+    /*
+    Création des graphiques 
+    */
+    $.ajax({
+        type: "GET",
+        url: "scripts/graphiques.php",
+        dataType: 'json',   
+        data: {
+            pg_host:cfg_pg_host,
+            pg_bdd:cfg_pg_bdd, 
+            pg_lgn:cfg_pg_lgn, 
+            pg_pwd:cfg_pg_pwd,  
+            siren_epci:siren_epci,
+        },    
+        beforeSend:function(jqXHR, settings){
+            jqXHR.siren_epci = siren_epci;  
+            jqXHR.nom_epci = nom_epci;               
+        },        
+        success: function(response,textStatus,jqXHR){
+            change_graph_title(jqXHR.nom_epci);
+            create_barchart_emi(response[1], "graph2");
+            create_piechart_emi(response[0], "graph1");
+            create_linechart_emi(response[2], "graph3");
+            create_barchart_part(response[3], "graph4");
+            
+            sidebar.show();  
+        },
+        error: function (request, error) {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });
+
+};
+
+
+/* Appel des fonctions */
+var map = createMap();
+var sidebar = create_sidebar();
+var select_list = liste_epci_create(); 
+liste_epci_populate();
+create_wfs_epci_layers(my_layers.epci_wfs); // create_wms_layer(my_layers.epci);
+create_sidebar_template();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
 
 
 </script>
