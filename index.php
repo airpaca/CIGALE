@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- 
+    FIXME: Le mapfile contient des inforations de connexion. Comment les enlever du git en conservant le fichier?
+    -->
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Visualisation</title>
+    
+    <!-- JQuery 3.2.1 -->
+    <script src="libs/jquery/jquery-3.2.1.min.js"></script>    
+    
+    <!-- Leaflet 3.2.1 -->
+    <script src="libs/leaflet/leaflet_v1.0.3/leaflet.js"></script> 
+    <link rel="stylesheet" href="libs/leaflet/leaflet_v1.0.3/leaflet.css"/>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="libs/bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="libs/bootstrap/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+    <script src="libs/bootstrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+    <!-- Leaflet Sidebar -->
+    <script src="libs/leaflet-sidebar-master/src/L.Control.Sidebar.js"></script>
+    <link rel="stylesheet" href="libs/leaflet-sidebar-master/src/L.Control.Sidebar.css"/>    
+
+    <!-- Leaflet.Spin (including spin.js) -->
+    <script src="libs/spin.js/spin.min.js"></script>
+    <script src="libs/Leaflet.Spin-1.1.0/leaflet.spin.min.js"></script>
+
+    <!-- Chart.js -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+
+    <!-- Selectize.js -->
+    <script src="libs/selectize.js/selectize.js" type="text/javascript"></script>
+    <link href="libs/selectize.js/selectize.css" rel="stylesheet" type="text/css"/>
+    <link href="libs/selectize.js/selectize.bootstrap3.css" rel="stylesheet" type="text/css"/>    
+
+    <!-- Geostats (simogeo/geostats) -->
+    <script type="text/javascript" src="libs/geostats/geostats-master/lib/geostats.min.js"></script>
+
+    <!-- Chroma.js -->
+    <script type="text/javascript" src="libs/chroma.js/chroma.js-master/chroma.min.js"></script>
+    
+    <!-- Monstserrat font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">    
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css"/>
+
+    <!-- Config -->
+    <script type="text/javascript" src="config.js"></script>
+ 
+</head>
+    
+<!------------------------------------------------------------------------------ 
+                                    Body
+------------------------------------------------------------------------------->
+<body>
+
+<!-- ......... Side bar -->
+<div id="container">
+    <div id="sidebar-left">
+        <div class="list-group">
+        
+            <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
+        
+            <h5>Visualisation</h5>
+                
+            <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm() -->
+                <select id="geonfo" placeholder="Echelon administratif ..."></select>
+                <p><a href="javascript:liste_epci_clean();" class="btn btn-default" role="button">Effacer</a> <a href="javascript:liste_epci_submit();" class="btn btn-primary" role="button">Valider</a></p>
+            
+            <!-- Liste des données sélectionnables qui s'affiche après sélection d'un EPCI -->
+            <a href="#" class="list-group-item active" id="liste_polluants">
+            Polluants atmosphériques
+            </a>
+
+                <a href="#" class="list-group-item liste_polluants_items" id="nox">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de NOx
+                </a>
+
+                <a href="#" class="list-group-item liste_polluants_items" id="pm10">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de PM10
+                </a>
+
+                <a href="#" class="list-group-item liste_polluants_items" id="pm25">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de PM2.5
+                </a>            
+
+                <a href="#" class="list-group-item liste_polluants_items" id="cov">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de COV
+                </a>  
+
+                <a href="#" class="list-group-item liste_polluants_items" id="so2">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de SO2
+                </a>  
+
+                <a href="#" class="list-group-item liste_polluants_items" id="nh3">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de NH3
+                </a>              
+            
+            <a href="#" class="list-group-item" id="liste_energies">
+            Bilans énergétiques
+            </a>
+
+                <a href="#" class="list-group-item hide liste_energies_items" id="consos">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Consommations d'énergie
+                </a>
+
+                <a href="#" class="list-group-item hide liste_energies_items" id="prod">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Productions d'énergie
+                </a>                        
+
+            <a href="#" class="list-group-item" id="liste_ges">
+            Gazs à Effet de Serre
+            </a>
+
+                <a href="#" class="list-group-item hide liste_ges_items" id="ges">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de GES
+                </a>            
+        
+        </div>
+        
+    </div>
+    <!-- Leaflet sidebar -->
+    <div id="sidebar">
+        <h1>leaflet-sidebar</h1>
+    </div>    
+ 
+    <!-- Element carte -->
+    <div id="map"></div>             
+    
+</div>
+
+<!------------------------------------------------------------------------------ 
+                                    Map script
+------------------------------------------------------------------------------->
+<script type="text/javascript">
+
+/* Variables générales */
+var wms_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map";
+var wms_format = 'image/png';
+var wms_tr = true;
+var wms_attrib = "Air PACA";
+
+var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0";
+var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map&SERVICE=WFS&VERSION=2.0.0";
+
+var my_layers = {
+    epci: {
+        layer: null,
+        type: "wms",
+        opacity: 0.5,
+        subtitle: "EPCI PACA 2017",
+        onmap: true,
+    },
+    epci_wfs: {
+        layer: null,
+        type: "wfs",
+        wfs_query: "&REQUEST=GetFeature&TYPENAME=epci_wfs&outputformat=geojson",
+        opacity: 0.5,
+        subtitle: "EPCI PACA 2017",
+        onmap: true,
+        style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
+    },    
+};
+
+var my_app = {
+    sidebar: {displayed: false},
+}
+
+/* Fonctions */
+$(function() { /* Gestion des listes */
+
+    /* Click sur la liste des polluants */
+    $('#liste_polluants').click( function() {
+        
+        $('#liste_polluants').addClass("active"); 
+        $('#liste_energies').removeClass("active"); 
+        $('#liste_ges').removeClass("active");          
+        
+        $('.liste_polluants_items').removeClass("hide"); 
+        $('.liste_energies_items').addClass("hide"); 
+        $('.liste_ges_items').addClass("hide");      
+    });
+   
+    /* Click sur la liste des énergies */
+    $('#liste_energies').click( function() {
+        
+        $('#liste_polluants').removeClass("active"); 
+        $('#liste_energies').addClass("active"); 
+        $('#liste_ges').removeClass("active");         
+        
+        $('.liste_polluants_items').addClass("hide"); 
+        $('.liste_energies_items').removeClass("hide"); 
+        $('.liste_ges_items').addClass("hide");         
+    });
+    
+    /* Click sur la liste des ges */
+    $('#liste_ges').click( function() {
+        
+        $('#liste_polluants').removeClass("active"); 
+        $('#liste_energies').removeClass("active"); 
+        $('#liste_ges').addClass("active");         
+        
+        $('.liste_polluants_items').addClass("hide"); 
+        $('.liste_energies_items').addClass("hide"); 
+        $('.liste_ges_items').removeClass("hide"); 
+    });  
+
+    /* Click sur un polluant */
+    $('.liste_polluants_items').click( function() {
+        $('.liste_polluants_items').removeClass('active');
+        $(this).addClass('active');
+    });     
+ 
+    /* Click sur une energie */
+    $('.liste_energies_items').click( function() {
+        $('.liste_energies_items').removeClass('active');
+        $(this).addClass('active');
+    });   
+
+    /* Click sur un GES */
+    $('.liste_ges_items').click( function() {
+        $('.liste_ges_items').removeClass('active');
+        $(this).addClass('active');
+    });     
+});
+
+function createMap(){
+    /* Création de la carte */
+    var map = L.map('map', {layers: []}).setView([43.9, 6.0], 8);    
+    map.attributionControl.addAttribution('mes2camp &copy; <a href="http://www.airpaca.org/">Air PACA - 2017</a>');    
+
+    /* Chargement des fonds carto */    
+    var Hydda_Full = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        opacity: 0.5,
+        attribution: 'Fond de carte &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+    Hydda_Full.addTo(map);
+
+    // Prise en compte du click sur la carte 
+    map.on('click', function(e)  {   
+        sidebar.hide();
+    });
+    
+    return map;
+};
+
+function create_sidebar(){
+    /*
+    Initialisation de la slidebar popup
+    Ex: var sidebar = create_sidebar();
+    */
+    var sidebar = L.control.sidebar('sidebar', {
+        closeButton: true,
+        position: 'right',
+        autoPan: false,
+    });
+
+    // Modification de le fonction show de la sidebar.
+    // NOTE: Remplacé par paddingBottomRight dans l'appel de la méthode map.fitBounds.
+    /*
+    sidebar.show = function () {
+        // RS ADD - Always Pan on show()
+        this._map.panBy([-this.getOffset() / 2, 0], {
+            duration: 0.5
+        });      
+        ---
+
+        if (!this.isVisible()) {
+            L.DomUtil.addClass(this._container, 'visible');
+            if (this.options.autoPan) {
+            }
+            this.fire('show');
+        }
+    };
+    */
+
+
+    map.addControl(sidebar);
+    sidebar.hide();
+    
+    return sidebar;
+};
+
+function liste_epci_create(){
+    /*
+    Création de la liste de sélection des entités géographiques qui sera
+    ensuite remplie par une requête Ajax.
+    Code en partie tiré d'Emiprox, Jonathan Virga.
+    */
+    var select_list = $('#geonfo').selectize({
+        valueField: 'geoid',
+        labelField: 'geonm',
+        searchField: ['geonm'],
+        options: [
+            { geoid: "reg|93", geonm: "PACA", geotyp: "Région" },
+        ],
+        render: {
+            option: function(item, escape) {
+                return "<div><span class='form_geonm'>" + escape(item.geonm) + "</span><br /><span class='form_geotyp'>" + escape(item.geotyp) + "</span></div>";
+            },
+            item: function(item, escape) {
+                return "<div><span class='form_geonm'>" + escape(item.geonm) + "</span> <span class='form_geotyp'>(" + escape(item.geotyp) + ")</span></div>";
+            }
+        }
+    });
+    
+    return select_list;
+};     
+
+function liste_epci_populate() {
+    /*
+    Remplissage de la liste des échelon administratifs.
+    Pour pouvoir remplir la liste directement sans boucler 
+    sur les résultats et leur champs il est nécessaire que 
+    les champs de la requête (dont leur nom) correspondent 
+    exactement aux champs du formulaire.
+    */
+    $.ajax({
+        type: "GET",
+        url: "scripts/liste_epci_populate.php",
+        dataType: 'json',   
+        data: {
+            pg_host:cfg_pg_host,
+            pg_bdd:cfg_pg_bdd, 
+            pg_lgn:cfg_pg_lgn, 
+            pg_pwd:cfg_pg_pwd,            
+        },
+        success: function(response,textStatus,jqXHR){
+            var selectize_element = select_list[0].selectize;
+            selectize_element.addOption(response);
+            // selectize_element.refreshOptions(); // Provoque l'ouverture de la liste onload
+        },
+        error: function (request, error) {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });	  
+};
+
+function liste_epci_clean() {
+    select_list[0].selectize.clear();
+};
+
+function liste_epci_submit(){
+    /*
+    FIXME: Ne fonctionne pas. 
+    Comment récupérer les valeurs de la liste?
+    */
+    console.log("Submission du formulaire");
+    
+    var test = select_list[0].getValue();
+    console.log(test);
+    
+    
+    // v = document.forms['formulaire'].geonfo.value;
+    // if (!v) return;
+    // geotyp = v.split('|')[0];
+    // geoid = v.split('|')[1];
+    // document.forms['formulaire'].geoid.value = geoid;
+    // document.forms['formulaire'].geotyp.value = geotyp;
+    // document.forms['formulaire'].submit();
+    
+    // console.log(geoid);
+    
+};
+
+function layer_epci_chargement(){
+    /*
+    NOTE: OLD PLUS UTILISE. ON PASSE MAINTENANT PAR GEOSERVER
+    Création d'une couche des EPCI à partir d'une requête 
+    ajax dans la base PostGIS.
+    Pour traiter du json en PostgreSQL il faut avoir une version 
+    supérieure à 9.1. On peut retourner la géométrie en geojson mais 
+    on est obligés de créer l'objet json manuellement en javascript.
+    */  
+    $.ajax({       
+        type: "GET",
+        url: "scripts/layer_epci_chargement.php",
+        dataType: 'json',      
+        success: function(response,textStatus,jqXHR){
+            
+            console.log(response);
+            
+            // Création d'une liste d'objets GeoJSON à partir de la réponse
+            var objets_epci = [];
+            for (var i in response) {            
+                objets_epci.push(
+                    {
+                    "type": "Feature",
+                    "id": response[i].geoid,
+                    "properties": {"geoid": response[i].geoid, "geonm": response[i].geonm},
+                    "geometry": JSON.parse(response[i].geom) 
+                    }
+                );                     
+            };  
+            
+            // Création de la couche
+            my_layers["epci"] = new L.geoJSON(objets_epci, {
+                name: "epci",
+                style: {    
+                    "color": "#737373", "weight": 2, "opacity": 1, 
+                    "fillColor": '#ffffff', "fillOpacity": 0.4
+                },
+                filter: function(feature, layer) {
+                    return true;
+                },
+                onEachFeature: function (feature, layer) {
+                    
+                    // Ajout d'un popup
+                    var html = '<div id="popup">';
+                    // for (prop in feature.properties) {
+                        // html += "<b>" + prop + ':</b> ' + feature.properties[prop]+"<br>";
+                    // };
+                    
+                    html += "" + feature.properties["geonm"]+"<br>"; 
+                    
+                    html += "</div>";
+                    layer.bindPopup(html);
+
+                    // Prise en compte du hover
+                    layer.on('mouseover', function(){
+                        layer.setStyle({color: '#737373', weight: 4});
+                        // this.openPopup();
+                    });
+                    layer.on('mouseout', function(){
+                        layer.setStyle({color: "#737373",weight: 2});
+                        // this.closePopup();
+                    });
+
+                    // Prise en compte du cklic
+                    layer.on('click', function(){
+                        // map.fitBounds(layer._bounds);
+                        sidebar.toggle(); 
+                    });                    
+
+                },  
+            });
+            
+            my_layers["epci"].addTo(map);
+            
+        },
+        error: function (request, error) {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });     
+};
+
+function create_wms_layer(my_layers_object){
+    /*
+    Crée un layer wms à partir des couches disponibles 
+    dans le mapfile et l'insert dans l'objet layer déclaré
+    en argument.
+    Ex: create_wms_layer(my_layers.epci);
+    */
+    my_layers_object.layer = L.tileLayer.wms(wms_address, {
+        name: 'epci',
+        layers: 'epci',
+        format: wms_format,
+        transparent: wms_tr,
+        opacity: 0.5,
+        subtitle: "EPCI PACA 2017"
+    });
+
+    if (my_layers_object.onmap == true) {
+        my_layers_object.layer.addTo(map);    
+    };
+};
+
+function calc_jenks(data, field, njenks){
+    /*
+    Calcul à partir d'une réponse geojson [data] les classes et couleurs de 
+    jenks sur un champ [field] à partir d'une nombre de classes [njenks].
+    Renvoie bornes [min, ..., max] et couleurs de ces bornes.
+
+    Ex:
+    the_jenks = calc_jenks(data, "superficie", 3);
+    console.log(the_jenks);
+    */
+    items = [];
+    $.each(data.features, function (key, val) {
+        $.each(val.properties, function(i,j){
+            if (i == field) {
+                items.push(j);
+            };
+        }); 
+    });    
+
+    classifier = new geostats(items);
+    var jenksResult = classifier.getJenks(njenks);
+    var color_x = chroma.scale('PuRd').colors(njenks)
+    
+    return {bornes: jenksResult, colors: color_x}; 
+};
+
+function find_jenks_color(jenks_obj, the_val){
+    /*
+    Retrouve la couleur correspondant à une bornes de classes
+    en fonction d'une valeur.
+    jenks_obj = object return by calc_jenks Object { bornes: Array[4], colors: Array[3] }
+    the_val = value to test
+    Returns html color
+    */
+    
+    // Si la valeur est dans une des bornes de classes <=
+    for (ibornemin in jenks_obj.bornes.slice(0, -1)) {
+        vbornemin = jenks_obj.bornes[ibornemin];
+        vbornemax = jenks_obj.bornes[+ibornemin + 1];
+        
+        // console.log(ibornemin, vbornemin, vbornemax);
+        // console.log(the_jenks.bornes[the_jenks.bornes.length - 1]);
+        
+        if (the_val >= vbornemin && the_val < vbornemax) {
+            // console.log("->" + ibornemin, vbornemin, vbornemax, jenks_obj.colors[ibornemin]); 
+            return jenks_obj.colors[ibornemin]; 
+        };
+    };
+    
+    // Si la valeur est = à la borne encadrante max
+    if (the_val == jenks_obj.bornes[jenks_obj.bornes.length - 1]) {
+            // console.log("->" + ibornemin, vbornemin, vbornemax, jenks_obj.colors[ibornemin]);
+            return jenks_obj.colors[ibornemin];                 
+    // Si non retourne une erreur
+    } else {
+        console.log("ERROR: Value " + the_val + " out of classes");
+        return null;
+    };    
+    
+};
+
+function create_wfs_epci_layers(my_layers_object){
+    /*
+    Crée un layer wfs à partir des couches disponibles 
+    dans le mapfile et l'insert dans l'objet layer déclaré
+    en argument.
+    Ex: create_wms_layer(my_layers.epci);
+    */
+    
+    $.ajax({
+        url: wfs_address + my_layers_object.wfs_query,
+        datatype: 'json',
+        jsonCallback: 'getJson',
+        success: function (data) {
+        
+            // Calcul des statistiques
+            the_jenks = calc_jenks(data, "val", 6);
+           
+            // Création de l'objet
+            my_layers_object.layer = L.geoJSON(data, {
+                style: function(feature) {
+                    
+                    // Récupération du style de l'objet et remplissage avec la bonne couleur
+                    the_style = my_layers_object.style;
+                    the_style.fillColor = find_jenks_color(the_jenks, feature.properties.val);
+                    return the_style;
+                },
+                filter: function(feature, layer) {
+                    return true;
+                },
+                onEachFeature: function (feature, layer) {
+                    
+                    // Ajout d'un popup
+                    var html = "<div id='popup'>" + feature.properties["nom_epci_2017"]+"<br></div>";                   
+                    layer.bindPopup(html);
+
+                    // Prise en compte du hover
+                    layer.on('mouseover', function(){
+                        layer.setStyle({weight: 4});
+                        // this.openPopup();
+                    });
+                    layer.on('mouseout', function(){
+                        layer.setStyle({weight: 2});
+                        // this.closePopup();
+                    });
+
+                    // Prise en compte du cklic
+                    layer.on('click', function(){
+                        
+                        // Zoom sur la couche
+                        map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
+
+                        // Récupération de l'id epci et affichage des graphiques
+                        console.log(feature.properties["siren_epci_2017"]);
+                        sidebar.show();  
+
+                        // layer.setStyle({weight: 4});
+                        
+                        
+                    });                    
+                },                 
+            });     
+
+            if (my_layers_object.onmap == true) {
+                my_layers_object.layer.addTo(map);
+            };
+        }
+    });    
+};
+
+/* Appel des fonctions */
+var map = createMap();
+var sidebar = create_sidebar();
+var select_list = liste_epci_create(); 
+liste_epci_populate();
+create_wfs_epci_layers(my_layers.epci_wfs); // create_wms_layer(my_layers.epci);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Test sidebar  */
+var sidebarContent = '\
+<section class="graph_container">\
+    <div class="graph1">graph1</div>\
+    <div class="graph2">graph2</div>\
+    <div class="graph3">graph3</div>\
+    <div class="graph4">graph4</div>\
+</section>\
+';
+sidebar.setContent(sidebarContent);
+
+function create_piechart_emi(response, div){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */
+           
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');        
+
+    var graph_labels = [];
+    for (var i in response) {
+        graph_labels.push(response[i].grand_secteur);
+    };              
+
+    var graph_title = 'Répartition sectorielle';
+
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var bg_colors = [];
+    var bd_colors = [];
+    for (var i in response) {
+        bg_colors.push(response[i].grand_secteur_color);
+        bd_colors.push('#ffffff');
+    };  
+    
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'doughnut',      
+        data: {
+            labels: graph_labels,
+            datasets: [{
+                label: 'Emissions (t)',
+                data: graph_data,
+                backgroundColor: bg_colors,
+                borderColor: bd_colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                fontSize: 15,
+                text: graph_title
+            },
+            legend: {
+                position: 'bottom',
+                display: true,
+                labels: {fontSize: 9,},
+                boxWidth: 1 // FIXME: Ne fonctionne pas
+            },
+        }
+    });
+    
+};
+
+function create_barchart_emi(response, div){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */
+    
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
+    
+    var graph_labels = [];
+    for (var i in response) {
+        graph_labels.push(response[i].an);
+    };              
+
+    var graph_title = 'Evolution pluriannuelle (t)';
+
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var bg_colors = [];
+    var bd_colors = [];
+    for (var i in response) {
+        bg_colors.push('#02fcf2');
+        bd_colors.push('#02fcf2');
+    };  
+
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'bar', // 'horizontalBar',          
+        data: {
+            labels: graph_labels,
+            datasets: [{
+                label: 'NO2',
+                data: graph_data,
+                backgroundColor: bg_colors,
+                borderColor: bd_colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                fontSize: 15,
+                text: graph_title
+            },
+            legend: {
+                position: 'bottom',
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }]
+            }
+        }
+    }); 
+};
+
+function create_linechart_emi(response, div){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */    
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
+    
+    var graph_annees = [];
+    for (var i in response) {
+        if ($.inArray(response[i].an, graph_annees) == -1){
+            graph_annees.push(response[i].an);
+        };
+    };      
+    
+    var liste_secteurs = [];
+    var liste_couleurs = [];
+    for (var i in response) {
+        if ($.inArray(response[i].grand_secteur, liste_secteurs) == -1){
+            liste_secteurs.push(response[i].grand_secteur);
+            liste_couleurs.push(response[i].grand_secteur_color);
+        };
+    };    
+    
+    var datasets = [];
+    for (var isect in liste_secteurs) {   
+        secteur = liste_secteurs[isect];
+        couleur = liste_couleurs[isect];
+        
+        data = [];
+        for (var i in response) { 
+            if (response[i].grand_secteur == secteur){
+                data.push(response[i].val);
+            };
+        };
+        datasets.push({
+            label: secteur, // response[i].grand_secteur, 
+            data: data, 
+            backgroundColor: couleur, 
+            borderColor: couleur, 
+            fill: false,
+            borderWidth: 3,
+            pointHitRadius: 8,
+        });
+    };            
+
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'line',     
+        data: {
+            labels: graph_annees,
+            datasets: datasets,
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            // tooltips: {
+                // mode: 'index',
+                // intersect: false,
+            // },
+            // hover: {
+                // mode: 'nearest',
+                // intersect: true
+            // },            
+            title: {
+                display: true,
+                fontSize: 15,
+                text: "Evolution sectorielle pluriannuelle (t)"
+            },
+            legend: {
+                position: 'bottom',
+                display: true,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }]
+            }
+        }
+    }); 
+};
+
+function create_barchart_part(response, div){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */
+    
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
+
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'horizontalBar', // 'horizontalBar',          
+        data: {
+            labels: ["EPCI", "Département", "Région"],
+            datasets: [{
+                label: 'LABEL A DEFINIR',
+                data: [response[0].epci, response[0].dep, response[0].reg],
+                backgroundColor: '#02fcf2', // bg_colors,
+                borderColor: '#02fcf2', // bd_colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                fontSize: 15,
+                text: "EPCI = " + response[0].pct_dep + "% du département et " + response[0].pct_reg + "% de la région",
+            },
+            legend: {
+                position: 'bottom',
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }]
+            }
+        }
+    }); 
+};
+
+$.ajax({
+    type: "GET",
+    url: "scripts/graphiques.php",
+    dataType: 'json',   
+    data: {
+        pg_host:cfg_pg_host,
+        pg_bdd:cfg_pg_bdd, 
+        pg_lgn:cfg_pg_lgn, 
+        pg_pwd:cfg_pg_pwd,            
+    },    
+    success: function(response,textStatus,jqXHR){
+        create_barchart_emi(response[1], "graph2");
+        create_piechart_emi(response[0], "graph1");
+        create_linechart_emi(response[2], "graph3");
+        create_barchart_part(response[3], "graph4");
+    },
+    error: function (request, error) {
+        console.log(arguments);
+        console.log("Ajax error: " + error);
+        $("#error_tube").show();
+    },        
+});	
+
+
+</script>
+
+</body>
+</html>

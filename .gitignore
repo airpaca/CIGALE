@@ -1,19 +1,16 @@
-# Build and Release Folders
-bin/
-bin-debug/
-bin-release/
-[Oo]bj/ # FlashDevelop obj
-[Bb]in/ # FlashDevelop bin
+# Libraries
+libs/
 
-# Other files and folders
+# Mapserver mapfiles
+*.map
+
+# Config files and directories
 .settings/
+*.cfg
+config*
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+# Swap files
+*.swp
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+
+
