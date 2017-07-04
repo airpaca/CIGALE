@@ -376,20 +376,48 @@ function liste_epci_populate() {
 };
 
 function liste_epci_clean() {
+    // Efface la liste
     select_list[0].selectize.clear();
+    
+    // Si la couche des communes est déjà affichée on la supprime
+    if (my_layers.comm_nox.layer != null) {
+        map.removeLayer(my_layers.comm_nox.layer);
+    };  
+
+    // Ajout de la couche des EPCI sur la carte et zoom max extent
+    my_layers.epci_wfs.layer.addTo(map); 
+    map.fitBounds(my_layers.epci_wfs.layer.getBounds());
+    
+    // Cache la sidebar
+    sidebar.hide();
 };
 
 function liste_epci_submit(){
     /*
     Une fois validé, on récupère le code de l'EPCI et on zoom dessus, affichant les graphiques
-    */   
+    */  
+
+    // Récupération des valeurs du formulaire
     var liste_siren_epeci = select_list[0].selectize.getValue();
     var liste_nom_epeci = select_list[0].selectize.options[liste_siren_epeci].geonm;
+
+    // Si la couche des communes est déjà affichée on la supprime
+    if (my_layers.comm_nox.layer != null) {
+        map.removeLayer(my_layers.comm_nox.layer);
+    };    
     
-    
+    // Zoom sur l'EPCI en le retrouvant dans les objets du layer epci
+    for (i in my_layers.epci_wfs.layer._layers) {
+        if (my_layers.epci_wfs.layer._layers[i].feature.properties.siren_epci_2017 == liste_siren_epeci) {
+            map.fitBounds(my_layers.epci_wfs.layer._layers[i]._bounds, {paddingBottomRight: [800, 0]});
+        };
+    };
     
     // Affichage de la couche des communes
     create_wfs_comm_layers(my_layers.comm_nox, liste_siren_epeci); 
+    
+    // Retrait de la couche EPCI
+    map.removeLayer(my_layers.epci_wfs.layer);    
     
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
     create_graphiques(liste_siren_epeci, liste_nom_epeci);   
@@ -620,7 +648,7 @@ function create_wfs_epci_layers(my_layers_object){
                         // Zoom sur la couche
                         map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
 
-                        // Retrait de la couche
+                        // Retrait de la couche EPCI
                         map.removeLayer(my_layers_object.layer);
                         
                         // Affichage de la couche des communes
