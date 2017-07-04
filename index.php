@@ -335,7 +335,12 @@ function liste_epci_create(){
                 return "<div><span class='form_geonm'>" + escape(item.geonm) + "</span><br /><span class='form_geotyp'>" + escape(item.geotyp) + "</span></div>";
             },
             item: function(item, escape) {
+                
+                // Passage de l'EPCI à la commune
+                epci2comm(escape(item.geoid), escape(item.geonm));
+                
                 return "<div><span class='form_geonm'>" + escape(item.geonm) + "</span> <span class='form_geotyp'>(" + escape(item.geotyp) + ")</span></div>";
+                
             }
         }
     });
@@ -401,6 +406,13 @@ function liste_epci_submit(){
     var liste_siren_epeci = select_list[0].selectize.getValue();
     var liste_nom_epeci = select_list[0].selectize.options[liste_siren_epeci].geonm;
 
+    // Passage de l'EPCI à la commune
+    epci2comm(liste_siren_epeci, liste_nom_epeci);
+
+};
+
+function epci2comm(siren_epeci, nom_epeci){
+    
     // Si la couche des communes est déjà affichée on la supprime
     if (my_layers.comm_nox.layer != null) {
         map.removeLayer(my_layers.comm_nox.layer);
@@ -408,20 +420,19 @@ function liste_epci_submit(){
     
     // Zoom sur l'EPCI en le retrouvant dans les objets du layer epci
     for (i in my_layers.epci_wfs.layer._layers) {
-        if (my_layers.epci_wfs.layer._layers[i].feature.properties.siren_epci_2017 == liste_siren_epeci) {
+        if (my_layers.epci_wfs.layer._layers[i].feature.properties.siren_epci_2017 == siren_epeci) {
             map.fitBounds(my_layers.epci_wfs.layer._layers[i]._bounds, {paddingBottomRight: [800, 0]});
         };
     };
     
     // Affichage de la couche des communes
-    create_wfs_comm_layers(my_layers.comm_nox, liste_siren_epeci); 
+    create_wfs_comm_layers(my_layers.comm_nox, siren_epeci); 
     
     // Retrait de la couche EPCI
     map.removeLayer(my_layers.epci_wfs.layer);    
     
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
-    create_graphiques(liste_siren_epeci, liste_nom_epeci);   
-    
+    create_graphiques(siren_epeci, nom_epeci);       
 };
 
 function layer_epci_chargement(){
@@ -557,7 +568,7 @@ function calc_jenks(data, field, njenks){
     
     classifier = new geostats(items);
     var jenksResult = classifier.getJenks(njenks);
-    var color_x = chroma.scale('PuRd').colors(njenks)
+    var color_x = chroma.scale(['#f9ebea', '#cd6155', '#cb4335']).colors(njenks);
     
     return {bornes: jenksResult, colors: color_x}; 
 };
@@ -685,8 +696,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
     dans le mapfile et l'insert dans l'objet layer déclaré
     en argument.
     Ex: create_wfs_comm_layers(my_layers.comm_nox);
-    */
-     
+    */     
     $.ajax({
         url: wfs_address + my_layers_object.wfs_query,
         datatype: 'json',
@@ -1122,6 +1132,7 @@ var select_list = liste_epci_create();
 liste_epci_populate();
 create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
+
 
 
 </script>
