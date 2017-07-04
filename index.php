@@ -4,6 +4,7 @@
 
     <!-- 
     TODO: Tester le chargement des différents EPCI avec l'exemple suivant:https://gist.github.com/zross/f0306ca14e8202a0fe73
+    FIXME: Impossible de faire marcher le filtre WFS on charge donc toute la couche et filtre avec leaflet ce qui est pas top!
     -->
 
     <meta charset="utf-8">
@@ -661,8 +662,14 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
         jsonCallback: 'getJson',
         success: function (data) {
         
-            // Calcul des statistiques
-            the_jenks = calc_jenks(data, "val", 6);
+            // Calcul des statistiques uniquement sur les valeurs répondant au filtre
+            data_filtered = {features: []};
+            for (ifeature in data.features) {
+                if (data.features[ifeature].properties.siren_epci_2017 == siren_epci) {
+                    data_filtered.features.push(data.features[ifeature]);
+                };
+            };
+            the_jenks = calc_jenks(data_filtered, "val", 6);
            
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
