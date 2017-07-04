@@ -511,6 +511,9 @@ function calc_jenks(data, field, njenks){
     jenks sur un champ [field] à partir d'une nombre de classes [njenks].
     Renvoie bornes [min, ..., max] et couleurs de ces bornes.
 
+    Attention, si le nombre de classes jenks demandé est trop faible par rapport au nombre
+    de valeurs, alors on réduit le nombre de classes
+    
     Ex:
     the_jenks = calc_jenks(data, "superficie", 3);
     console.log(the_jenks);
@@ -524,6 +527,11 @@ function calc_jenks(data, field, njenks){
         }); 
     });    
 
+    if (items.length < njenks + 1){
+        console.log("Nombre d'objets insuffisant pour " + njenks + " classes passage à " + (parseInt(items.length) + -1) + " classes.");
+        njenks = (parseInt(items.length) + -1);
+    };   
+    
     classifier = new geostats(items);
     var jenksResult = classifier.getJenks(njenks);
     var color_x = chroma.scale('PuRd').colors(njenks)
@@ -669,6 +677,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                     data_filtered.features.push(data.features[ifeature]);
                 };
             };
+            
             the_jenks = calc_jenks(data_filtered, "val", 6);
            
             // Création de l'objet
@@ -688,7 +697,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                 onEachFeature: function (feature, layer) {
                     
                     // Ajout d'un popup
-                    var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " kg/an</div>";                   
+                    var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>";                   
                     layer.bindPopup(html);
 
                     // Prise en compte du hover
