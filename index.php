@@ -362,6 +362,7 @@ function liste_epci_populate() {
             pg_pwd:cfg_pg_pwd,            
         },
         success: function(response,textStatus,jqXHR){
+            
             var selectize_element = select_list[0].selectize;
             selectize_element.addOption(response);
             // selectize_element.refreshOptions(); // Provoque l'ouverture de la liste onload
@@ -380,24 +381,18 @@ function liste_epci_clean() {
 
 function liste_epci_submit(){
     /*
-    FIXME: Ne fonctionne pas. 
-    Comment récupérer les valeurs de la liste?
-    */
-    console.log("Submission du formulaire");
-    
-    var test = select_list[0].getValue();
-    console.log(test);
+    Une fois validé, on récupère le code de l'EPCI et on zoom dessus, affichant les graphiques
+    */   
+    var liste_siren_epeci = select_list[0].selectize.getValue();
+    var liste_nom_epeci = select_list[0].selectize.options[liste_siren_epeci].geonm;
     
     
-    // v = document.forms['formulaire'].geonfo.value;
-    // if (!v) return;
-    // geotyp = v.split('|')[0];
-    // geoid = v.split('|')[1];
-    // document.forms['formulaire'].geoid.value = geoid;
-    // document.forms['formulaire'].geotyp.value = geotyp;
-    // document.forms['formulaire'].submit();
     
-    // console.log(geoid);
+    // Affichage de la couche des communes
+    create_wfs_comm_layers(my_layers.comm_nox, liste_siren_epeci); 
+    
+    // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
+    create_graphiques(liste_siren_epeci, liste_nom_epeci);   
     
 };
 
