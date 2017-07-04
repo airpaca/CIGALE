@@ -160,13 +160,6 @@ var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/se
 var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map&SERVICE=WFS&VERSION=2.0.0";
 
 var my_layers = {
-    epci: {
-        layer: null,
-        type: "wms",
-        opacity: 0.5,
-        subtitle: "EPCI PACA 2017",
-        onmap: true,
-    },
     epci_wfs: {
         layer: null,
         type: "wfs",
@@ -175,7 +168,19 @@ var my_layers = {
         subtitle: "EPCI PACA 2017",
         onmap: true,
         style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
-    },    
+    },  
+    comm_nox: {
+        layer: null,
+        type: "wfs",
+        wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson",
+        // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson&FILTER=<Filter><Equals><PropertyName>siren_epci_2017</PropertyName><Literal>200039931</Literal></Equals></Filter>",
+        // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson&Filter=<Filter><PropertyIsEqualTo><PropertyName>siren_epci_2017</PropertyName><Literal>200039931</Literal></PropertyIsEqualTo></Filter>",
+        // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson&Filter=<Filter><PropertyIsLike wildcard='*' singleChar='.' escape='!'><PropertyName>siren_epci_2017</PropertyName><Literal>*200039931*</Literal></PropertyIsLike></Filter>",
+        opacity: 0.5,
+        subtitle: "Emissions de NOx par communes",
+        onmap: true,
+        style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
+    },         
 };
 
 var my_app = {
@@ -554,7 +559,7 @@ function create_wfs_epci_layers(my_layers_object){
     Crée un layer wfs à partir des couches disponibles 
     dans le mapfile et l'insert dans l'objet layer déclaré
     en argument.
-    Ex: create_wms_layer(my_layers.epci);
+    Ex: create_wfs_epci_layers(my_layers.epci);
     */
     
     $.ajax({
@@ -577,6 +582,86 @@ function create_wfs_epci_layers(my_layers_object){
                 },
                 filter: function(feature, layer) {
                     return true;
+                },
+                onEachFeature: function (feature, layer) {
+                    
+                    // Ajout d'un popup
+                    var html = "<div id='popup'>" + feature.properties["nom_epci_2017"]+"<br></div>";                   
+                    layer.bindPopup(html);
+
+                    // Prise en compte du hover
+                    layer.on('mouseover', function(){
+                        layer.setStyle({weight: 4});
+                        // this.openPopup();
+                    });
+                    layer.on('mouseout', function(){
+                        layer.setStyle({weight: 2});
+                        // this.closePopup();
+                    });
+
+                    // Prise en compte du cklic
+                    layer.on('click', function(){
+                        
+                        // Zoom sur la couche
+                        map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
+
+                        // Retrait de la couche
+                        map.removeLayer(my_layers_object.layer);
+                        
+                        // Affichage de la couche des communes
+                        create_wfs_comm_layers(my_layers.comm_nox, feature.properties["siren_epci_2017"]); 
+                        
+                        // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
+                        create_graphiques(feature.properties["siren_epci_2017"], feature.properties["nom_epci_2017"]);                     
+                        
+                    });                    
+                },                 
+            });     
+
+            if (my_layers_object.onmap == true) {
+                
+                // Ajout de la couche sur la carte
+                my_layers_object.layer.addTo(map);
+                
+                // Création de la légende
+                generate_legend("Emissions de NOx / an (t)", the_jenks.bornes, the_jenks.colors);
+            };
+        }
+    });    
+};
+
+function create_wfs_comm_layers(my_layers_object, siren_epci){
+    /*
+    Crée un layer wfs à partir des couches disponibles 
+    dans le mapfile et l'insert dans l'objet layer déclaré
+    en argument.
+    Ex: create_wfs_comm_layers(my_layers.comm_nox);
+    */
+    
+    console.log( wfs_address + my_layers_object.wfs_query);
+    
+    $.ajax({
+        url: wfs_address + my_layers_object.wfs_query,
+        datatype: 'json',
+        jsonCallback: 'getJson',
+        success: function (data) {
+        
+            // Calcul des statistiques
+            the_jenks = calc_jenks(data, "val", 6);
+           
+            // Création de l'objet
+            my_layers_object.layer = L.geoJSON(data, {
+                style: function(feature) {
+                    
+                    // Récupération du style de l'objet et remplissage avec la bonne couleur
+                    the_style = my_layers_object.style;
+                    the_style.fillColor = find_jenks_color(the_jenks, feature.properties.val);
+                    return the_style;
+                },
+                filter: function(feature, layer) {
+                    if (feature.properties["siren_epci_2017"] == siren_epci) {
+                        return true;
+                    };
                 },
                 onEachFeature: function (feature, layer) {
                     
@@ -627,7 +712,7 @@ function generate_legend(title, grades, colors){
     Fait pour fonctionner avec le retour de la fonction calc_jenks()
     Ex: generate_legend("Emissions de NOx / an (t)", the_jenks.bornes, the_jenks.colors);
     */  
-    console.log(title, grades, colors);
+    // console.log(title, grades, colors);
     
     legend.onAdd = function (map) {
         
@@ -979,8 +1064,10 @@ var map = createMap();
 var sidebar = create_sidebar();
 var select_list = liste_epci_create(); 
 liste_epci_populate();
-create_wfs_epci_layers(my_layers.epci_wfs); // create_wms_layer(my_layers.epci);
+create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
+
+
 
 
 
