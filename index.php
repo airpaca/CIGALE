@@ -182,6 +182,8 @@ var my_app = {
     sidebar: {displayed: false},
 }
 
+var legend = L.control({position: 'bottomleft'});
+
 /* Fonctions */
 $(function() { /* Gestion des listes */
 
@@ -606,10 +608,52 @@ function create_wfs_epci_layers(my_layers_object){
             });     
 
             if (my_layers_object.onmap == true) {
+                
+                // Ajout de la couche sur la carte
                 my_layers_object.layer.addTo(map);
+                
+                // Création de la légende
+                generate_legend("Emissions de NOx / an (t)", the_jenks.bornes, the_jenks.colors);
             };
         }
     });    
+};
+
+function generate_legend(title, grades, colors){
+    /*
+    Génération d'un légende
+    @grades = bornes de classes. On doit avoir une borne de classe de plus que le nb de couleurs
+    @colors = liste des couleurs.
+    Fait pour fonctionner avec le retour de la fonction calc_jenks()
+    Ex: generate_legend("Emissions de NOx / an (t)", the_jenks.bornes, the_jenks.colors);
+    */  
+    console.log(title, grades, colors);
+    
+    legend.onAdd = function (map) {
+        
+        var div = L.DomUtil.create('div', 'info legend'),
+        from, to;
+        var labels = [];
+        
+        div.innerHTML += title + "</br>";
+        
+        for (var i = 0; i < grades.slice(0,-1).length; i++) {
+            
+            if (i == 0) {
+                from = 0;
+            } else {
+                from = grades[i].toFixed(1);
+            }
+            to = grades[i + 1].toFixed(1);            
+            
+            labels.push('<i style="background:' + colors[i] + '"></i> ' + from + (to ? ' à ' + to : '+'));    
+        };
+        
+        div.innerHTML += labels.join('<br>');
+
+        return div;
+    };
+    legend.addTo(map);    
 };
 
 function create_sidebar_template(){
@@ -929,7 +973,6 @@ function create_graphiques(siren_epci, nom_epci){
     });
 
 };
-
 
 /* Appel des fonctions */
 var map = createMap();
