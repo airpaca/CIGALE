@@ -3,7 +3,7 @@
 <head>
 
     <!-- 
-    FIXME: Le mapfile contient des inforations de connexion. Comment les enlever du git en conservant le fichier?
+    TODO: Tester le chargement des différents EPCI avec l'exemple suivant:https://gist.github.com/zross/f0306ca14e8202a0fe73
     -->
 
     <meta charset="utf-8">
@@ -168,6 +168,7 @@ var my_layers = {
         subtitle: "EPCI PACA 2017",
         onmap: true,
         style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
+        legend: {},
     },  
     comm_nox: {
         layer: null,
@@ -262,7 +263,17 @@ function createMap(){
 
     // Prise en compte du click sur la carte 
     map.on('click', function(e)  {   
+        
+        // Cache la couche des communes si visible
         sidebar.hide();
+        if (my_layers.comm_nox.layer != null) {
+            map.removeLayer(my_layers.comm_nox.layer);
+        };
+        
+        // Affichage des EPCI et regénération de la légende
+        my_layers.epci_wfs.layer.addTo(map);
+        generate_legend("Emissions de NOx / an (t)", my_layers.epci_wfs.legend.bornes, my_layers.epci_wfs.legend.colors);
+        map.fitBounds(my_layers.epci_wfs.layer.getBounds());
     });
     
     return map;
@@ -591,11 +602,11 @@ function create_wfs_epci_layers(my_layers_object){
 
                     // Prise en compte du hover
                     layer.on('mouseover', function(){
-                        layer.setStyle({weight: 4});
+                        layer.setStyle({weight: 4, color: "#000000"});
                         // this.openPopup();
                     });
                     layer.on('mouseout', function(){
-                        layer.setStyle({weight: 2});
+                        layer.setStyle({weight: 2, color: "#000000"});
                         // this.closePopup();
                     });
 
@@ -623,8 +634,14 @@ function create_wfs_epci_layers(my_layers_object){
                 // Ajout de la couche sur la carte
                 my_layers_object.layer.addTo(map);
                 
+                // Zoom sur la couche
+                map.fitBounds(my_layers_object.layer.getBounds());
+                
                 // Création de la légende
                 generate_legend("Emissions de NOx / an (t)", the_jenks.bornes, the_jenks.colors);
+                
+                // Enregistrement des paramètres de la légende pour la recréer
+                my_layers_object.legend = {bornes: the_jenks.bornes, colors: the_jenks.colors};
             };
         }
     });    
@@ -637,9 +654,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
     en argument.
     Ex: create_wfs_comm_layers(my_layers.comm_nox);
     */
-    
-    console.log( wfs_address + my_layers_object.wfs_query);
-    
+     
     $.ajax({
         url: wfs_address + my_layers_object.wfs_query,
         datatype: 'json',
@@ -666,7 +681,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                 onEachFeature: function (feature, layer) {
                     
                     // Ajout d'un popup
-                    var html = "<div id='popup'>" + feature.properties["nom_epci_2017"]+"<br></div>";                   
+                    var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " kg/an</div>";                   
                     layer.bindPopup(html);
 
                     // Prise en compte du hover
@@ -682,11 +697,13 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                     // Prise en compte du cklic
                     layer.on('click', function(){
                         
+                        return null;
+                        
                         // Zoom sur la couche
-                        map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
+                        // map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
 
                         // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
-                        create_graphiques(feature.properties["siren_epci_2017"], feature.properties["nom_epci_2017"]);                     
+                        // create_graphiques(feature.properties["siren_epci_2017"], feature.properties["nom_epci_2017"]);                     
                         
                     });                    
                 },                 
@@ -1066,39 +1083,6 @@ var select_list = liste_epci_create();
 liste_epci_populate();
 create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
 
 
 </script>
