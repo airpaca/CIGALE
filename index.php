@@ -143,7 +143,7 @@
         </div>
         
         <!-- Bouton de dev pour les tests -->
-        <a href="javascript:tests();" class="btn btn-default" role="button">Tests d'export des bilans</a>
+        <a href="javascript:tests();" class="btn btn-default" role="button">Tests dev</a>
         
     </div>
     <!-- Leaflet sidebar -->
@@ -199,7 +199,10 @@ var my_app = {
     sidebar: {displayed: false},
 }
 
+/* Déclaration des Controles Leaflet */
 var legend = L.control({position: 'bottomleft'});
+var hover_info = L.control({position: 'topleft'});
+
 
 /* Fonctions */
 $(function() { /* Gestion des listes */
@@ -261,7 +264,7 @@ $(function() { /* Gestion des listes */
 
 function createMap(){
     /* Création de la carte */
-    var map = L.map('map', {layers: []}).setView([43.9, 6.0], 8);    
+    var map = L.map('map', {layers: [], zoomControl:false}).setView([43.9, 6.0], 8);    
     map.attributionControl.addAttribution('mes2camp &copy; <a href="http://www.airpaca.org/">Air PACA - 2017</a>');    
 
     /* Chargement des fonds carto */    
@@ -440,6 +443,7 @@ function epci2comm(siren_epeci, nom_epeci){
     
     // Retrait de la couche EPCI
     map.removeLayer(my_layers.epci_wfs.layer);    
+    // my_layers.epci_wfs.layer.setStyle({fillOpacity:0.0});
     
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
     create_graphiques(siren_epeci, nom_epeci);       
@@ -657,10 +661,12 @@ function create_wfs_epci_layers(my_layers_object){
                     layer.on('mouseover', function(){
                         layer.setStyle({weight: 4, color: "#000000"});
                         // this.openPopup();
+                        hover_info.update(feature.properties["nom_epci_2017"]);
                     });
                     layer.on('mouseout', function(){
                         layer.setStyle({weight: 2, color: "#000000"});
                         // this.closePopup();
+                        hover_info.hide();
                     });
 
                     // Prise en compte du cklic
@@ -740,17 +746,20 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                 onEachFeature: function (feature, layer) {
                     
                     // Ajout d'un popup
-                    var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>";                   
+                    // var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>";
+                    var html = "<div id='popup'>Accéder aux données tabulaires?</div>";                    
                     layer.bindPopup(html);
 
                     // Prise en compte du hover
                     layer.on('mouseover', function(){
                         layer.setStyle({weight: 4});
                         // this.openPopup();
+                        hover_info.update(feature.properties["nom_comm"] + ": " + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>");
                     });
                     layer.on('mouseout', function(){
                         layer.setStyle({weight: 2});
                         // this.closePopup();
+                        hover_info.hide();
                     });
 
                     // Prise en compte du cklic
@@ -1202,6 +1211,24 @@ function export_pdf(){
 
 };
 
+function create_hover_info_bar(){
+
+    hover_info.onAdd = function(map) {
+            this._div = L.DomUtil.create('div', 'hover_info'); 
+            this._div.innerHTML = "";  // this.update();
+            $(this._div).hide();
+            return this._div;
+    };
+    hover_info.update = function(text) {
+            $(this._div).show();
+            this._div.innerHTML = '<span id="hover_info">' + text + '</span>';
+    };
+    hover_info.hide = function() {
+            $(this._div).hide();
+    };    
+    hover_info.addTo(map);
+};
+
 /* Appel des fonctions */
 var map = createMap();
 var sidebar = create_sidebar();
@@ -1209,6 +1236,25 @@ var select_list = liste_epci_create();
 liste_epci_populate();
 create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
+create_hover_info_bar();
+
+
+function tests(){
+    console.log("tests");
+    
+    console.log(my_layers.epci_wfs.layer);
+    // if (a == 0){
+        my_layers.epci_wfs.layer.setStyle({fillOpacity:0.0});
+        // a = 1;
+    // } else {
+        // my_layers.epci_wfs.layer.resetStyle();
+        // a = 0;
+    // };
+};
+
+
+
+
 
 </script>
 
