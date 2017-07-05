@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Visualisation</title>
+    <title>Air PACA ORECA V3E</title>
     
     <!-- JQuery 3.2.1 -->
     <script src="libs/jquery/jquery-3.2.1.min.js"></script>    
@@ -45,10 +45,13 @@
 
     <!-- Chroma.js -->
     <script type="text/javascript" src="libs/chroma.js/chroma.js-master/chroma.min.js"></script>
-    
+  
     <!-- Monstserrat font -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">    
     
+    <!-- jsPDF -->
+    <script src="libs/jspdf/jsPDF-master/dist/jspdf.min.js"></script>
+
     <!-- CSS -->
     <link rel="stylesheet" href="style.css"/>
 
@@ -69,11 +72,15 @@
         
             <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
         
-            <h5>Visualisation</h5>
+            <h1>V3E</h1>
+            <h2>Visualisations et Extractions Emissions Energie</h2>
                 
             <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm() -->
                 <select id="geonfo" placeholder="Echelon administratif ..."></select>
-                <p><a href="javascript:liste_epci_clean();" class="btn btn-default" role="button">Effacer</a> <a href="javascript:liste_epci_submit();" class="btn btn-primary" role="button">Valider</a></p>
+                <p>
+                    <a href="javascript:liste_epci_clean();" class="btn btn-default" role="button">Réinitialiser</a> 
+                    <!-- <a href="javascript:liste_epci_submit();" class="btn btn-primary" role="button">Valider</a> -->
+                </p>
             
             <!-- Liste des données sélectionnables qui s'affiche après sélection d'un EPCI -->
             <a href="#" class="list-group-item active" id="liste_polluants">
@@ -134,6 +141,9 @@
                 </a>            
         
         </div>
+        
+        <!-- Bouton de dev pour les tests -->
+        <a href="javascript:tests();" class="btn btn-default" role="button">Tests d'export des bilans</a>
         
     </div>
     <!-- Leaflet sidebar -->
@@ -809,8 +819,9 @@ function generate_legend(title, grades, colors){
 
 function create_sidebar_template(){
     var sidebarContent = '\
-    <section class="graph_container">\
+    <section class="graph_container" id="graph_container_block">\
         <div class="graph_title">Titre du graph</div>\
+        <div class="btn_export"><img class="img-btn-export" src="img/pdf_download.png" onclick="export_pdf();"></div>\
         <div class="graph1">graph1</div>\
         <div class="graph2">graph2</div>\
         <div class="graph3">graph3</div>\
@@ -821,7 +832,7 @@ function create_sidebar_template(){
 };
 
 function change_graph_title(the_title){
-    $('.graph_title').html(the_title);
+    $('.graph_title').html(the_title + '</br> Bilan des émissions de NOx');    
 };
 
 function create_piechart_emi(response, div){
@@ -876,7 +887,7 @@ function create_piechart_emi(response, div){
             legend: {
                 position: 'bottom',
                 display: true,
-                labels: {fontSize: 9,},
+                labels: {fontSize: 10,},
                 boxWidth: 1 // FIXME: Ne fonctionne pas
             },
         }
@@ -1125,6 +1136,72 @@ function create_graphiques(siren_epci, nom_epci){
 
 };
 
+function export_pdf(){
+    /*
+    Utilisation de jsPDF et de la fonction toDataURL de charts.js
+    NOTE: Valeurs pour canva 1 qui rendaient la meilleure res:
+          doc.addImage(canvasImg, 'PNG', 10, 30, 100, 90);  
+    NOTE: On peut aussi ne pas indiquer la résolution 
+          doc.addImage((canvasImg, 'PNG', x, y, width, height)
+    */
+
+    /*
+    Démo téléchragement d'une seule image dans navigateur
+    
+    // Création de l'image + paramètres
+    var download = document.createElement('a');     
+    download.href = document.getElementById("graph1_canvas").toDataURL();
+    download.download = 'test.png';
+    download.click();     
+  
+    // Fonction permettant de créer un évenement de téléchargement
+    function fireEvent(obj,evt){
+        var fireOnThis = obj;
+        if(document.createEvent ) {
+            var evObj = document.createEvent('MouseEvents');
+            evObj.initEvent( evt, true, false );
+            fireOnThis.dispatchEvent( evObj );
+        } else if( document.createEventObject ) {
+            var evObj = document.createEventObject();
+            fireOnThis.fireEvent( 'on' + evt, evObj );
+        }
+    };
+    
+    // Déclanchement du téléchargement
+    fireEvent(download, 'click');    
+    */
+    
+    // Création du doc
+    var doc = new jsPDF;
+
+    // Titre principal
+    doc.text("Métropole d'Aix-Marseille-Provence", 10, 10);
+    
+    // Sous titre
+    doc.setFontSize(10);
+    doc.text('Bilan des émissions de NOx', 10, 20);
+
+    // Ajout pie chart
+    var canvasImg = document.getElementById("graph1_canvas").toDataURL();
+    doc.addImage(canvasImg, 'PNG', 10, 30);    
+
+    // Ajout bar chart
+    var canvasImg = document.getElementById("graph2_canvas").toDataURL();
+    doc.addImage(canvasImg, 'PNG', 100, 30);    
+
+    // Ajout line chart
+    var canvasImg = document.getElementById("graph3_canvas").toDataURL();
+    doc.addImage(canvasImg, 'PNG', 10, 120);    
+
+    // Ajout bar chart inversé
+    var canvasImg = document.getElementById("graph4_canvas").toDataURL();
+    doc.addImage(canvasImg, 'PNG', 10, 240); 
+    
+    // Export
+    doc.save('bilan_emissions.pdf');
+
+};
+
 /* Appel des fonctions */
 var map = createMap();
 var sidebar = create_sidebar();
@@ -1132,8 +1209,6 @@ var select_list = liste_epci_create();
 liste_epci_populate();
 create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
-
-
 
 </script>
 
