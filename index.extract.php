@@ -41,11 +41,18 @@
     <!-- Selectize.js -->
     <script src="libs/selectize.js/selectize.js" type="text/javascript"></script>
     <link href="libs/selectize.js/selectize.css" rel="stylesheet" type="text/css"/>
-    <link href="libs/selectize.js/selectize.bootstrap3.css" rel="stylesheet" type="text/css"/>    
-    
+    <link href="libs/selectize.js/selectize.bootstrap3.css" rel="stylesheet" type="text/css"/> 
+
+    <!-- datatables -->
+    <script type="text/javascript" src="libs/DataTables/datatables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
     <!-- CSS -->
     <link rel="stylesheet" href="style.extract.css"/>
-   
+
+    <!-- Config -->
+    <script type="text/javascript" src="config.js"></script>
+    
 </head>
     
 <body>
@@ -65,60 +72,20 @@
             <!-- Formulaire de sélection avec bootstrap-select --> 
              
             <p>Année(s) d'inventaire</p>
-            <select class="selectpicker" id="select_ans" title="Années d'inventaire" multiple data-selected-text-format="count > 3" data-width="100%">
-                <option>2007</option>
-                <option>2010</option>
-                <option>2012</option>
-                <option>2013</option>
-                <option>2014</option>
-                <option>2015</option>                
-            </select>
+            <select class="selectpicker" id="select_ans" title="Années d'inventaire" multiple data-selected-text-format="count > 3" data-width="100%"></select>
 
             <p>Emprise géographique</p>
-            <select class="selectpicker" title="Emprise géograpique" multiple data-max-options="1" data-live-search="true" data-width="100%">
-                <option>Région PACA</option>
-                <option>Commune A</option>
-                <option>Commune B</option>
-            </select>
+            <select class="selectpicker" id="select_entites" title="Emprise géograpique" multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
             
             <p>Secteurs d'activités</p>
-            <select class="selectpicker" title="Secteurs d'activité" data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%">
-                <option>Extraction, transformation et distribution d'énergie</option>
-                <option>Industrie manufacturière, traitement des déchets, construction</option>
-                <option>Résidentiel</option>
-                <option>Tertiaire, commercial et institutionnel</option>
-                <option>Agriculture, sylviculture et aquaculture hors UTCF</option>
-                <option>Transport routier'</option>
-                <option>Modes de transports autres que routier'</option>
-                <option>Emetteurs non inclus'</option>
-            </select>             
+            <select class="selectpicker" id="select_secteurs" title="Secteurs d'activité" data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
 
             <p>Combustibles</p>
-            <select class="selectpicker" title="Combustibles" data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%">
-                <option>Combustibles Minéraux Solides (CMS)</option>
-                <option>Produits pétroliers</option>
-                <option>Bois-énergie (EnR)</option>
-                <option>Autres énergies renouvelables (EnR)</option>
-                <option>Autres non renouvelables</option>
-                <option>Gaz Naturel</option>
-                <option>Electricité (émissions indirectes)</option>
-                <option>Chaleur et froid issus de réseau (émissions indirectes)</option>
-            </select>    
+            <select class="selectpicker" id="select_cat_ener" title="Combustibles" data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
 
-            <p>Polluants et GES</p>
-            <select class="selectpicker" title="Polluants et GES" data-selected-text-format="count > 5" multiple data-actions-box="true" data-width="100%">
-                <option>PM10</option>
-                <option>PM2.5</option>
-                <option>NOx</option>
-                <option>COV</option>
-                <option>SO2</option>
-                <option>NH3</option>
-                <option>GES eq.CO2</option>
-            </select>   
+            <p>Energie, Polluants et GES</p>
+            <select class="selectpicker" id="select_variable" title="Polluants et GES" data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
 
-            
-         
-            
         </div>
 
         <div class="Boutons_extractions">
@@ -126,7 +93,7 @@
         
             <!-- Split button -->
             <div class="btn-group">
-                <button type="button" class="btn btn-success">Exporter les données</button>
+                <button type="button" class="btn btn-success" onClick="afficher_donnees();">Exporter les données</button>
                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
@@ -164,290 +131,24 @@
         Les données contenues dans ce document restent la propriété d'Air PACA.</br>
         Air PACA peut rediffuser ce document à d'autres destinataires.</br>
         </h3>
-        
-        
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Année</th>
-              <th>Entité administrative</th>
-              <th>Secteur</th>
-              <th>Combustible</th>
-              <th>Consommation en tep</th>
-              <th>Polluant</th>
-              <th>Valeur</th>
-              <th>Unité</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>1417</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>5</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>2051</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>24</td>
-              <td>t/an</td>
-            </tr>
-            
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>1417</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>5</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>2051</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>24</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>1417</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>5</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>2051</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>24</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>1417</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>5</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>2051</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>24</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>1417</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>5</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>2051</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>24</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>1417</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2007</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>5</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Bois-énergie (EnR)</td>
-              <td>200</td>
-              <td>PM10</td>
-              <td>2051</td>
-              <td>t/an</td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>2015</td>
-              <td>Région</td>
-              <td>Tertiaire</td>
-              <td>Autres énergies renouvelables (EnR)</td>
-              <td>7</td>
-              <td>PM10</td>
-              <td>24</td>
-              <td>t/an</td>
-            </tr>          
-          </tbody>
+
+
+        <table id="tableau" class="display" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                  <th>Année</th>
+                  <th>Entité administrative</th>
+                  <th>Secteur</th>
+                  <th>Combustible</th>
+                  <th>Consommation en tep</th>
+                  <th>Polluant</th>
+                  <th>Valeur</th>
+                  <th>Unité</th>
+                </tr>
+            </thead>
         </table>
+
+
 
 
     </div>
@@ -459,16 +160,188 @@
 /* Variables générales */
 
 /* Fonctions */
+function tests(){
+    
+    $.ajax({
+        type: "GET",
+        url: "scripts/tableau.php",
+        dataType: 'json',   
+        data: {
+            pg_host:cfg_pg_host,
+            pg_bdd:cfg_pg_bdd, 
+            pg_lgn:cfg_pg_lgn, 
+            pg_pwd:cfg_pg_pwd,  
+        },         
+        success: function(response,textStatus,jqXHR){
+            
+            console.log(response);
+            console.log(JSON.stringify(response));
+        },
+        error: function (request, error) {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });
+    
+};
+
+function fill_listes(){
+    /*
+    Une seule requête Ajax qui retourne dans une array toutes les valeurs 
+    nécessaires pour remplir les listes de sélection.
+    
+    Maj des listes avec les réponses.
+    */
+    $.ajax({
+        type: "GET",
+        url: "scripts/fill_listes.php",
+        dataType: 'json',   
+        data: {
+            pg_host:cfg_pg_host,
+            pg_bdd:cfg_pg_bdd, 
+            pg_lgn:cfg_pg_lgn, 
+            pg_pwd:cfg_pg_pwd,  
+        },         
+        success: function(response,textStatus,jqXHR){
+            
+            // Remplissage de la liste des années
+            for (ian in response[0]) {             
+                $("#select_ans").append($('<option>', {value: response[0][ian].an, text: response[0][ian].an}));                               
+            };
+            $("#select_ans").selectpicker('refresh');
+
+            // Remplissage de la liste des entités géographiques
+            for (ient in response[1]) {             
+                $("#select_entites").append($('<option>', {value: response[1][ient].valeur, text: response[1][ient].texte}));                               
+            };
+            $("#select_entites").selectpicker('refresh');            
+
+            // Remplissage des secteurs d'activités
+            for (isect in response[2]) {             
+                $("#select_secteurs").append($('<option>', {value: response[2][isect].id_secten1, text: response[2][isect].nom_secten1}));                               
+            };
+            $("#select_secteurs").selectpicker('refresh');  
+            
+            // Remplissage des catégories d'énergie
+            for (isect in response[3]) {             
+                $("#select_cat_ener").append($('<option>', {value: response[3][isect].code_cat_energie, text: response[3][isect].cat_energie}));                               
+            };
+            $("#select_cat_ener").selectpicker('refresh');            
+
+            // Remplissage des variables (fixe)
+            variables_ener = [
+                {val: 131, text: "Consommations d'énergie"},
+                {val: 999, text: "Productions d'énergie"},       
+            ];
+
+            variables_emi = [
+                {val: 65, text: "PM10"},
+                {val: 108, text: "PM2.5"},
+                {val: 38, text: "NOx"},
+                {val: 129, text: "COV"},
+                {val: 48, text: "SO2"},
+                {val: 36, text: "NH3"},
+                {val: 999, text: "GES eq.CO2"},        
+            ];
+            
+            $("#select_variable").append($('<optgroup label="Energie">'));
+            for (ivar in variables_ener) {                                          
+                $("#select_variable").append($('<option>', {value: variables_ener[ivar].val, text: variables_ener[ivar].text}));                               
+            };
+            $("#select_variable").append($('</optgroup>'));
+            
+            $("#select_variable").append($('<optgroup label="Emissions">'));
+            for (ivar in variables_emi) {                                           
+                $("#select_variable").append($('<option>', {value: variables_emi[ivar].val, text: variables_emi[ivar].text}));                               
+            };
+            $("#select_variable").append($('</optgroup>'));            
+            
+            $("#select_variable").selectpicker('refresh');  
+            
+            // FIXME: Les labels ne s'affichent pas! Tester d'ajouter d'abord les groupes 
+            // Puis de mettre à jour ces groups?
+            $("#selectpicker").selectpicker();
+            $("#select_variable").selectpicker();    // FIXME: Les labels ne s'affichent pas!
+            
+            
+        },
+        error: function (request, error) {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });
+};
+
+function afficher_donnees(){
+   
+    // Vérification des variables du formulaire
+    if ($('#select_ans').val().length == 0) {
+        console.log("TODO: Erreure pas d'années définies");
+    } else {
+        query_ans = $('#select_ans').val().join();
+    };
+ 
+    if ($('#select_secteurs').val().length == 0) {
+        query_sect = " ";
+        console.log("TODO: Faut faire un group by!")
+    } else {
+        query_sect = " and id_secten1 in (" + $('#select_secteurs').val().join() + ")";
+    };
+
+    if ($('#select_cat_ener').val().length == 0) {
+        console.log("TODO: Tous combustibles confondus");
+    } else {
+        query_ener = $('#select_cat_ener').val().join();
+    };
+    
+    if ($('#select_variable').val().length == 0) {
+        console.log("TODO: Erreure pas de polluant défini");
+    } else {
+        query_var = $('#select_variable').val().join();
+    };    
+    
+    // Si un tableau existe déjà on le détruit avant de le recréer
+    if (typeof the_table !== 'undefined') {
+        the_table.destroy();
+    };
+    
+    // Création du tableau  
+    the_table = $('#tableau').DataTable({
+        scrollY: '60vh',
+        scrollCollapse: true,        
+        paging: false,
+        responsive: true,
+        dom: 'Bfrtip',
+        buttons: ['copy', 'csv', 'excel', 'pdf'], 
+        processing: true,
+        serverSide: false,      
+        ajax: {
+            "url" : "scripts/tableau.php",
+            "type": "GET",
+            "data" : {
+                "pg_host": cfg_pg_host,
+                "pg_bdd": cfg_pg_bdd, 
+                "pg_lgn": cfg_pg_lgn, 
+                "pg_pwd": cfg_pg_pwd,
+                "query_ans": query_ans,
+                "query_sect": query_sect,
+                "query_ener": query_ener,
+                "query_var": query_var,
+            },
+        },
+    });
+  
+};
+
+
 
 /* Appel des fonctions */
+fill_listes();
+// tests();
 
 
-console.log($("#select_ans"));
-
-$("#select_ans").append($('<option>', {
-    value: "toto",
-    text: '2020'
-}));
 
 
 </script>
