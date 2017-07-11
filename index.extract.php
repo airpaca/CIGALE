@@ -47,6 +47,9 @@
     <script type="text/javascript" src="libs/DataTables/datatables.min.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
 
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+    
     <!-- CSS -->
     <link rel="stylesheet" href="style.extract.css"/>
 
@@ -72,18 +75,24 @@
             <!-- Formulaire de sélection avec bootstrap-select --> 
              
             <p>Année(s) d'inventaire</p>
-            <select class="selectpicker" id="select_ans" title="Années d'inventaire" multiple data-selected-text-format="count > 3" data-width="100%"></select>
+            <select class="selectpicker" id="select_ans" title="Années d'inventaire" multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
 
             <p>Emprise géographique</p>
             <select class="selectpicker" id="select_entites" title="Emprise géograpique" multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
             
+            <p>Détail communal</p>
+            <select class="selectpicker" id="select_detail_comm" title="Détail par commune" data-max-options="1" data-width="100%">
+                <option value="true">Oui</option>
+                <option value="false">Non</option>
+            </select>
+       
             <p>Secteurs d'activités</p>
             <select class="selectpicker" id="select_secteurs" title="Secteurs d'activité" data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
 
-            <p>Combustibles</p>
+            <p>Energies</p>
             <select class="selectpicker" id="select_cat_ener" title="Combustibles" data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
 
-            <p>Energie, Polluants et GES</p>
+            <p>Consommations, Productions et Emissions</p>
             <select class="selectpicker" id="select_variable" title="Polluants et GES" data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
 
         </div>
@@ -94,16 +103,19 @@
             <!-- Split button -->
             <div class="btn-group">
                 <button type="button" class="btn btn-success" onClick="afficher_donnees();">Exporter les données</button>
+                <!--
                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
+                 
                 <ul class="dropdown-menu">
                     <li><a href="#">En CSV</a></li>
                     <li><a href="#">En PDF</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="#">Au format base de données</a></li>
                 </ul>
+                 -->
             </div>
             
             
@@ -115,22 +127,10 @@
     <div id="sidebar-right">
 
         
-        <p>
-        Air PACA - Inventaire v4</br>
-        Extraction datée du 2017-06-21 à 15:32
-        </p>
-        
-        <h3>
-        Conditions d'utilisation et de diffusion :
-        </br>
-        Diffusion libre pour une réutilisation ultérieure des données dans les conditions ci-dessous :</br>
-        – Toute utilisation partielle ou totale de ce document doit faire référence à Air PACA en terme de "Inventaire Air PACA".</br>
-        – Données non rediffusées en cas de modification ultérieure des données.</br>
-        </br>
-        Sur demande, Air PACA met à disposition les méthodes d'exploitation des données mises en oeuvre.</br>
-        Les données contenues dans ce document restent la propriété d'Air PACA.</br>
-        Air PACA peut rediffuser ce document à d'autres destinataires.</br>
-        </h3>
+        <div class="header_extraction">
+            Air PACA - Inventaire v4
+        </div>
+
 
 
         <table id="tableau" class="display" width="100%" cellspacing="0">
@@ -138,21 +138,17 @@
                 <tr>
                   <th>Année</th>
                   <th>Entité administrative</th>
-                  <th>Secteur</th>
-                  <th>Combustible</th>
-                  <th>Consommation en tep</th>
+                  <th><a target="_blank" href="https://www.citepa.org/fr/" data-toggle="tooltip" title="Nomenclature SECTEN niveau 1 du CITEPA (SECTteurs Economiques et éNergie)">Secten 1</a></th>
+                  <th>Catégorie d'énergie</th>
+                  <th><a data-toggle="tooltip" title="Consommations d'énergie finale">Consommation (tep)</a></th>
                   <th>Polluant</th>
                   <th>Valeur</th>
                   <th>Unité</th>
                 </tr>
             </thead>
         </table>
-
-
-
-
     </div>
-
+    
 </div>
 
 <script type="text/javascript">
@@ -186,6 +182,25 @@ function tests(){
     
 };
 
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    };
+    return i;
+};
+
+function datehour() {
+    var d = new Date();
+    
+    var year = d.getFullYear() ;
+    var month = addZero(d.getMonth() + 1);
+    var day =addZero(d.getDate());
+    var hour = addZero(d.getHours());
+    var minutes = addZero(d.getMinutes());
+    var seconds = addZero(d.getSeconds());
+    return year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
+};
+
 function fill_listes(){
     /*
     Une seule requête Ajax qui retourne dans une array toutes les valeurs 
@@ -207,32 +222,32 @@ function fill_listes(){
             
             // Remplissage de la liste des années
             for (ian in response[0]) {             
-                $("#select_ans").append($('<option>', {value: response[0][ian].an, text: response[0][ian].an}));                               
+                $("#select_ans").append($('<option>', {value: response[0][ian].an, text: response[0][ian].an}, '</option>'));                               
             };
             $("#select_ans").selectpicker('refresh');
 
             // Remplissage de la liste des entités géographiques
             for (ient in response[1]) {             
-                $("#select_entites").append($('<option>', {value: response[1][ient].valeur, text: response[1][ient].texte}));                               
+                $("#select_entites").append($('<option>', {value: response[1][ient].valeur, text: response[1][ient].texte}, '</option>'));                               
             };
             $("#select_entites").selectpicker('refresh');            
 
             // Remplissage des secteurs d'activités
             for (isect in response[2]) {             
-                $("#select_secteurs").append($('<option>', {value: response[2][isect].id_secten1, text: response[2][isect].nom_secten1}));                               
+                $("#select_secteurs").append($('<option>', {value: response[2][isect].id_secten1, text: response[2][isect].nom_secten1}, '</option>'));                               
             };
             $("#select_secteurs").selectpicker('refresh');  
             
             // Remplissage des catégories d'énergie
             for (isect in response[3]) {             
-                $("#select_cat_ener").append($('<option>', {value: response[3][isect].code_cat_energie, text: response[3][isect].cat_energie}));                               
+                $("#select_cat_ener").append($('<option>', {value: response[3][isect].code_cat_energie, text: response[3][isect].cat_energie}, '</option>'));                               
             };
             $("#select_cat_ener").selectpicker('refresh');            
 
             // Remplissage des variables (fixe)
             variables_ener = [
                 {val: 131, text: "Consommations d'énergie"},
-                {val: 999, text: "Productions d'énergie"},       
+                // {val: 999, text: "Productions d'énergie"},       
             ];
 
             variables_emi = [
@@ -245,15 +260,15 @@ function fill_listes(){
                 {val: 999, text: "GES eq.CO2"},        
             ];
             
-            $("#select_variable").append($('<optgroup label="Energie">'));
+            // $("#select_variable").append($('<optgroup label="Energie">'));
             for (ivar in variables_ener) {                                          
-                $("#select_variable").append($('<option>', {value: variables_ener[ivar].val, text: variables_ener[ivar].text}));                               
+                $("#select_variable").append($('<option>', {value: variables_ener[ivar].val, text: variables_ener[ivar].text}, '</option>'));                               
             };
-            $("#select_variable").append($('</optgroup>'));
+            // $("#select_variable").append($('</optgroup>'));
             
             $("#select_variable").append($('<optgroup label="Emissions">'));
             for (ivar in variables_emi) {                                           
-                $("#select_variable").append($('<option>', {value: variables_emi[ivar].val, text: variables_emi[ivar].text}));                               
+                $("#select_variable").append($('<option>', {value: variables_emi[ivar].val, text: variables_emi[ivar].text}, '</option>'));                               
             };
             $("#select_variable").append($('</optgroup>'));            
             
@@ -333,13 +348,33 @@ function afficher_donnees(){
         },
     });
   
+    // Mise à jour de la date et de l'heure de l'extraction
+    var extraction_time = datehour();
+    $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Conditions d\'utilisation et de diffusion</a>');
 };
 
 
 
-/* Appel des fonctions */
-fill_listes();
-// tests();
+
+/* Au chargement */
+$(document).ready(function(){
+    /* Configuration des popups */
+    $('[data-toggle="tooltip"]').tooltip();   
+    
+    /* Appel des fonctions */
+    fill_listes();
+    // tests();   
+
+});
+
+
+
+
+
+        
+        
+
+
 
 
 

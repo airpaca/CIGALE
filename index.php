@@ -170,6 +170,8 @@ var wms_attrib = "Air PACA";
 var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0";
 var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map&SERVICE=WFS&VERSION=2.0.0";
 
+var an_max = 2015;
+
 var my_layers = {
     epci_wfs: {
         layer: null,
@@ -180,6 +182,7 @@ var my_layers = {
         onmap: true,
         style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
         legend: {},
+        legend_text: "Emissions de NOx en 2015</br>t/km&sup2;",
     },  
     comm_nox: {
         layer: null,
@@ -192,6 +195,7 @@ var my_layers = {
         subtitle: "Emissions de NOx par communes",
         onmap: true,
         style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
+        legend_text: "Emissions de NOx en 2015</br>t/km&sup2;",
     },         
 };
 
@@ -286,7 +290,7 @@ function createMap(){
         
         // Affichage des EPCI et regénération de la légende
         my_layers.epci_wfs.layer.addTo(map);
-        generate_legend("Emissions de NOx / an (t)", my_layers.epci_wfs.legend.bornes, my_layers.epci_wfs.legend.colors);
+        generate_legend(my_layers.epci_wfs.legend_text, my_layers.epci_wfs.legend.bornes, my_layers.epci_wfs.legend.colors);
         map.fitBounds(my_layers.epci_wfs.layer.getBounds());
     });
     
@@ -349,7 +353,7 @@ function liste_epci_create(){
             },
             item: function(item, escape) {
                 
-                // Passage de l'EPCI à la commune
+                // Passage de l'EPCI à la commune       
                 epci2comm(escape(item.geoid), escape(item.geonm));
                 
                 return "<div><span class='form_geonm'>" + escape(item.geonm) + "</span> <span class='form_geotyp'>(" + escape(item.geotyp) + ")</span></div>";
@@ -425,7 +429,7 @@ function liste_epci_submit(){
 };
 
 function epci2comm(siren_epeci, nom_epeci){
-    
+        
     // Si la couche des communes est déjà affichée on la supprime
     if (my_layers.comm_nox.layer != null) {
         map.removeLayer(my_layers.comm_nox.layer);
@@ -682,7 +686,12 @@ function create_wfs_epci_layers(my_layers_object){
                         create_wfs_comm_layers(my_layers.comm_nox, feature.properties["siren_epci_2017"]); 
                         
                         // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
-                        create_graphiques(feature.properties["siren_epci_2017"], feature.properties["nom_epci_2017"]);                     
+                        create_graphiques(feature.properties["siren_epci_2017"], feature.properties["nom_epci_2017"]);  
+
+                        // Mise à jour de la liste des EPCI avec l'EPCI sélectionné
+                        // FIXME: Ne fonctionne pas pour l'instant, revoir tout le système d'affichage
+                        // select_list[0].selectize.addOption({value:feature.properties["siren_epci_2017"],text:feature.properties["nom_epci_2017"]});
+                        // select_list[0].selectize.addItem(feature.properties["siren_epci_2017"], false); 
                         
                     });                    
                 },                 
@@ -697,7 +706,7 @@ function create_wfs_epci_layers(my_layers_object){
                 map.fitBounds(my_layers_object.layer.getBounds());
                 
                 // Création de la légende
-                generate_legend("Emissions de NOx / an (t)", the_jenks.bornes, the_jenks.colors);
+                generate_legend(my_layers_object.legend_text, the_jenks.bornes, the_jenks.colors);
                 
                 // Enregistrement des paramètres de la légende pour la recréer
                 my_layers_object.legend = {bornes: the_jenks.bornes, colors: the_jenks.colors};
@@ -783,7 +792,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                 my_layers_object.layer.addTo(map);
                 
                 // Création de la légende
-                generate_legend("Emissions de NOx / an (t)", the_jenks.bornes, the_jenks.colors);
+                generate_legend(my_layers_object.legend_text, the_jenks.bornes, the_jenks.colors);
             };
         }
     });    
@@ -812,9 +821,9 @@ function generate_legend(title, grades, colors){
             if (i == 0) {
                 from = 0;
             } else {
-                from = grades[i].toFixed(1);
+                from = grades[i].toFixed(0);
             }
-            to = grades[i + 1].toFixed(1);            
+            to = grades[i + 1].toFixed(0);            
             
             labels.push('<i style="background:' + colors[i] + '"></i> ' + from + (to ? ' à ' + to : '+'));    
         };
@@ -858,7 +867,7 @@ function create_piechart_emi(response, div){
         graph_labels.push(response[i].nom_court_secten1);
     };              
 
-    var graph_title = 'Répartition sectorielle';
+    var graph_title = 'Répartition sectorielle ' + an_max;
 
     var graph_data = [];
     for (var i in response) {
@@ -899,10 +908,78 @@ function create_piechart_emi(response, div){
                 labels: {fontSize: 10,},
                 boxWidth: 1 // FIXME: Ne fonctionne pas
             },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        /*
+                        Pourcentage de chaque classe et moif tooltip
+                        */
+                        
+                        var allData = data.datasets[tooltipItem.datasetIndex].data;
+                                                
+                        var tooltipLabel = data.labels[tooltipItem.index];
+                        var tooltipData = allData[tooltipItem.index];
+
+                        var total = 0;
+                        for (var i in allData) {
+                            total += parseInt(allData[i]);
+                        };
+                        
+                        var tooltipPercentage = Math.round((tooltipData / total) * 100.);
+                        return tooltipLabel + ': ' + tooltipData + ' (' + tooltipPercentage + '%)';
+                    }
+                }
+            },
+
         }
     });
     
 };
+
+
+
+
+
+
+// var chart = new Chart(ctx, {
+	// type: 'pie',
+	// data: {
+		// labels: [
+			// "Red",
+			// "Blue",
+			// "Yellow"
+		// ],
+		// datasets: [
+			// {
+				// data: [300, 50, 100],
+				// backgroundColor: [
+					// "#FF6384",
+					// "#36A2EB",
+					// "#FFCE56"
+				// ],
+				// hoverBackgroundColor: [
+					// "#FF6384",
+					// "#36A2EB",
+					// "#FFCE56"
+				// ]
+			// }
+		// ]
+	// },
+	// options: {
+
+	// }
+// });
+
+
+
+
+
+
+
+
+
+
+
 
 function create_barchart_emi(response, div){
     /*
@@ -928,8 +1005,8 @@ function create_barchart_emi(response, div){
     var bg_colors = [];
     var bd_colors = [];
     for (var i in response) {
-        bg_colors.push('#02fcf2');
-        bd_colors.push('#02fcf2');
+        bg_colors.push('#8a8a8a');
+        bd_colors.push('#8a8a8a');
     };  
 
     var ctx = document.getElementById(div + "_canvas");
@@ -1078,8 +1155,8 @@ function create_barchart_part(response, div){
             datasets: [{
                 label: 'LABEL A DEFINIR',
                 data: [response[0].epci, response[0].reg],
-                backgroundColor: '#02fcf2', // bg_colors,
-                borderColor: '#02fcf2', // bd_colors,
+                backgroundColor: '#8a8a8a', // bg_colors,
+                borderColor: '#8a8a8a', // bd_colors,
                 borderWidth: 1
             }]
         },
@@ -1089,7 +1166,7 @@ function create_barchart_part(response, div){
             title: {
                 display: true,
                 fontSize: 15,
-                text: "EPCI = " + response[0].pct_reg + "% de la région",
+                text: "EPCI = " + response[0].pct_reg + "% de la région en " + an_max,
             },
             legend: {
                 position: 'bottom',

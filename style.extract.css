@@ -17,6 +17,39 @@ html, body, #container {
  */
  
  
+.header_extraction {
+    margin-bottom: 5%;
+    margin-left: 3%;
+    margin-top: 3%;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+	font-style: light;
+    color: black;
+}
+.header_extraction a:link {
+    font-size: 15px;
+    color: black;
+}
+.header_extraction a:visited {
+    font-size: 15px;
+    color: black;
+}
+.header_extraction a:hover {
+    font-size: 15px;
+    color: #FABA00;
+    text-decoration: none;
+}
+.header_extraction a:active {
+    font-size: 15px;
+    color: black;
+} 
+
+
+
+
+
+ 
+ 
 .Boutons_extractions{
     float:right;
    /*  margin-top:30%; */

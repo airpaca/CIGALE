@@ -21,17 +21,34 @@ if (!$conn) {
 
 /*  Ecriture du code SQL de la requête */
 $sql = "
-select an, id_comm, id_secten1, code_cat_energie, sum(val) as conso, id_polluant, sum(val) as val, id_unite
-from total.bilan_comm_v4_secten1
+-- select an, id_comm, id_secten1, code_cat_energie, sum(val) as conso, id_polluant, sum(val) as val, id_unite
+-- from total.bilan_comm_v4_secten1
+-- where 
+--     an in (" . $query_ans . ")
+--     " . $query_sect . " --  and id_secten1 in (" . $query_sect . ")
+--     and code_cat_energie in (" . $query_ener . ")
+-- 	and id_polluant in (" . $query_var . ")
+-- 	and id_comm = 13060
+-- group by an, id_comm, id_secten1, code_cat_energie, id_polluant, id_unite
+-- order by an, id_comm, id_secten1, code_cat_energie, id_polluant, id_unite
+-- ;
+
+select an, nom_comm as nom_entite, nom_secten1 , cat_energie, sum(val) as conso, nom_abrege_polluant, sum(val) as val, lib_unite
+from total.bilan_comm_v4_secten1 as aColumnsleft join commun.tpk_communes as b using (id_comm)
+left join transversal.tpk_secten1 as c using (id_secten1)
+left join transversal.tpk_energie as d using (code_cat_energie)
+left join commun.tpk_polluants as e using (id_polluant)
+left join commun.tpk_unite as f using (id_unite)
 where 
     an in (" . $query_ans . ")
     " . $query_sect . " --  and id_secten1 in (" . $query_sect . ")
     and code_cat_energie in (" . $query_ener . ")
 	and id_polluant in (" . $query_var . ")
 	and id_comm = 13060
-group by an, id_comm, id_secten1, code_cat_energie, id_polluant, id_unite
-order by an, id_comm, id_secten1, code_cat_energie, id_polluant, id_unite
+group by an, nom_comm, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
+order by an, nom_comm, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
 ;
+
 ";
 
 // echo $sql;
@@ -44,7 +61,7 @@ if (!$rResult) {
 }
 
 /* Récupération des colonnes de la requête */
-$aColumns = array('an', 'id_comm', 'id_secten1', 'code_cat_energie', 'conso', 'id_polluant', 'val', 'id_unite');
+$aColumns = array('an', 'nom_entite', 'nom_secten1', 'cat_energie', 'conso', 'nom_abrege_polluant', 'val', 'lib_unite');
 
 /* Préparation de l'header de l'output */
 $output = array(

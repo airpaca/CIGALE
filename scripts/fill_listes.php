@@ -42,7 +42,7 @@ from commun.tpk_commune_2015_2016
 where siren_epci_2017 is not null
 union all
 -- Communes
-select order_field, id_comm, b.nom_comm
+select order_field, id_comm, b.nom_comm || ' (' || lpad((id_comm / 1000)::text, 2, '0') || ')' as nom_comm
 from (
 	select distinct 4 as order_field, a.id_comm
 	from total.bilan_comm_v4_secten1 as a
