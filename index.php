@@ -763,7 +763,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                     layer.on('mouseover', function(){
                         layer.setStyle({weight: 4});
                         // this.openPopup();
-                        hover_info.update(feature.properties["nom_comm"] + ": " + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>");
+                        hover_info.update(feature.properties["nom_comm"] + ": " + parseFloat(feature.properties["val"]).toFixed(1) + " t/km&sup2;</div>");
                     });
                     layer.on('mouseout', function(){
                         layer.setStyle({weight: 2});
@@ -891,7 +891,7 @@ function create_piechart_emi(response, div){
                 data: graph_data,
                 backgroundColor: bg_colors,
                 borderColor: bd_colors,
-                borderWidth: 1
+                borderWidth: 0
             }]
         },
         options: {
@@ -926,7 +926,7 @@ function create_piechart_emi(response, div){
                         };
                         
                         var tooltipPercentage = Math.round((tooltipData / total) * 100.);
-                        return tooltipLabel + ': ' + tooltipData + ' (' + tooltipPercentage + '%)';
+                        return tooltipLabel + ': ' + tooltipPercentage + '% (' + tooltipData + ')';
                     }
                 }
             },
@@ -935,51 +935,6 @@ function create_piechart_emi(response, div){
     });
     
 };
-
-
-
-
-
-
-// var chart = new Chart(ctx, {
-	// type: 'pie',
-	// data: {
-		// labels: [
-			// "Red",
-			// "Blue",
-			// "Yellow"
-		// ],
-		// datasets: [
-			// {
-				// data: [300, 50, 100],
-				// backgroundColor: [
-					// "#FF6384",
-					// "#36A2EB",
-					// "#FFCE56"
-				// ],
-				// hoverBackgroundColor: [
-					// "#FF6384",
-					// "#36A2EB",
-					// "#FFCE56"
-				// ]
-			// }
-		// ]
-	// },
-	// options: {
-
-	// }
-// });
-
-
-
-
-
-
-
-
-
-
-
 
 function create_barchart_emi(response, div){
     /*
@@ -1314,7 +1269,6 @@ liste_epci_populate();
 create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
 create_hover_info_bar();
-
 
 function tests(){
     console.log("tests");
