@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Extraction</title>
+    <title>CIGALE - Extraction</title>
     
     <!-- JQuery 3.2.1 -->
     <script src="libs/jquery/jquery-3.2.1.min.js"></script>    

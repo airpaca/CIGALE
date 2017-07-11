@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Air PACA ORECA V3E</title>
+    <title>CIGALE - Visualisation</title>
     
     <!-- JQuery 3.2.1 -->
     <script src="libs/jquery/jquery-3.2.1.min.js"></script>    
@@ -72,8 +72,8 @@
         
             <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
         
-            <h1>V3E</h1>
-            <h2>Visualisations et Extractions Emissions Energie</h2>
+            <h1>CIGALE</h1>
+            <h2>Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie</h2>
                 
             <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm() -->
                 <select id="geonfo" placeholder="Echelon administratif ..."></select>
@@ -162,13 +162,13 @@
 <script type="text/javascript">
 
 /* Variables générales */
-var wms_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map";
+var wms_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map";
 var wms_format = 'image/png';
 var wms_tr = true;
 var wms_attrib = "Air PACA";
 
-var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0";
-var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "V3E/serv.map&SERVICE=WFS&VERSION=2.0.0";
+var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0";
+var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&VERSION=2.0.0";
 
 var an_max = 2015;
 
