@@ -27,22 +27,22 @@
     <link rel="stylesheet" href="libs/bootstrap-select-1.12.2/dist/css/bootstrap-select.min.css">
     <script src="libs/bootstrap-select-1.12.2/dist/js/bootstrap-select.min.js"></script>
     
-    <!-- Leaflet Sidebar -->
+    <!-- Leaflet Sidebar
     <script src="libs/leaflet-sidebar-master/src/L.Control.Sidebar.js"></script>
     <link rel="stylesheet" href="libs/leaflet-sidebar-master/src/L.Control.Sidebar.css"/>    
-
-    <!-- Leaflet.Spin (including spin.js) -->
+     -->
+    <!-- Leaflet.Spin (including spin.js)
     <script src="libs/spin.js/spin.min.js"></script>
     <script src="libs/Leaflet.Spin-1.1.0/leaflet.spin.min.js"></script>
-
-    <!-- Chart.js -->
+     -->
+    <!-- Chart.js
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
-
-    <!-- Selectize.js -->
+    -->
+    <!-- Selectize.js
     <script src="libs/selectize.js/selectize.js" type="text/javascript"></script>
     <link href="libs/selectize.js/selectize.css" rel="stylesheet" type="text/css"/>
     <link href="libs/selectize.js/selectize.bootstrap3.css" rel="stylesheet" type="text/css"/> 
-
+     -->
     <!-- datatables -->
     <script type="text/javascript" src="libs/DataTables/datatables.min.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
@@ -75,25 +75,25 @@
             <!-- Formulaire de sélection avec bootstrap-select --> 
              
             <p>Année(s) d'inventaire</p>
-            <select class="selectpicker" id="select_ans" title="Années d'inventaire" multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
+            <select class="selectpicker" id="select_ans" title="Années d'inventaire" mobile multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
 
             <p>Emprise géographique</p>
-            <select class="selectpicker" id="select_entites" title="Emprise géograpique" multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
+            <select class="selectpicker" id="select_entites" title="Emprise géograpique" mobile multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
             
             <p>Détail communal</p>
-            <select class="selectpicker" id="select_detail_comm" title="Détail par commune" data-max-options="1" data-width="100%">
+            <select class="selectpicker" id="select_detail_comm" title="Détail par commune" mobile data-max-options="1" data-width="100%">
                 <option value="true">Oui</option>
                 <option value="false">Non</option>
             </select>
        
             <p>Secteurs d'activités</p>
-            <select class="selectpicker" id="select_secteurs" title="Secteurs d'activité" data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
+            <select class="selectpicker" id="select_secteurs" title="Secteurs d'activité" mobile data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
 
             <p>Energies</p>
-            <select class="selectpicker" id="select_cat_ener" title="Combustibles" data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
+            <select class="selectpicker" id="select_cat_ener" title="Combustibles" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
 
             <p>Consommations, Productions et Emissions</p>
-            <select class="selectpicker" id="select_variable" title="Polluants et GES" data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
+            <select class="selectpicker" id="select_variable" title="Polluants et GES" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
 
         </div>
 
@@ -103,19 +103,6 @@
             <!-- Split button -->
             <div class="btn-group">
                 <button type="button" class="btn btn-success" onClick="afficher_donnees();">Exporter les données</button>
-                <!--
-                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                 
-                <ul class="dropdown-menu">
-                    <li><a href="#">En CSV</a></li>
-                    <li><a href="#">En PDF</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">Au format base de données</a></li>
-                </ul>
-                 -->
             </div>
             
             
@@ -142,7 +129,7 @@
                   <th>Catégorie d'énergie</th>
                   <th><a data-toggle="tooltip" title="Consommations d'énergie finale">Consommation (tep)</a></th>
                   <th>Polluant</th>
-                  <th>Valeur</th>
+                  <th>Emission</th>
                   <th>Unité</th>
                 </tr>
             </thead>
@@ -260,11 +247,11 @@ function fill_listes(){
                 {val: 999, text: "GES eq.CO2"},        
             ];
             
-            // $("#select_variable").append($('<optgroup label="Energie">'));
+            $("#select_variable").append($('<optgroup label="Energie">'));
             for (ivar in variables_ener) {                                          
                 $("#select_variable").append($('<option>', {value: variables_ener[ivar].val, text: variables_ener[ivar].text}, '</option>'));                               
             };
-            // $("#select_variable").append($('</optgroup>'));
+            $("#select_variable").append($('</optgroup>'));
             
             $("#select_variable").append($('<optgroup label="Emissions">'));
             for (ivar in variables_emi) {                                           
@@ -291,28 +278,48 @@ function fill_listes(){
 
 function afficher_donnees(){
    
-    // Vérification des variables du formulaire
+    // Si aucune année sélectionnée alors on ne peut pas envoyer
     if ($('#select_ans').val().length == 0) {
-        console.log("TODO: Erreure pas d'années définies");
+        $('#select_ans').selectpicker('setStyle', 'btn-warning');
+        return null;
     } else {
         query_ans = $('#select_ans').val().join();
     };
+    
+    // Emprise géographique
+    // FIXME: Si quelqu'un sélectionne région + communes par exemple?
+    if ($('#select_entites').val().length == 0) {
+        query_entite = "";
+    } else {
+        query_entite = $('#select_entites').val().join();
+    };        
+
+    // Détail communal
+    if ($('#select_detail_comm').val().length == 0) {
+        $('#select_detail_comm').selectpicker('setStyle', 'btn-warning');
+        return null;        
+    } else {
+        query_detail_comm = $('#select_detail_comm').val();
+    };    
  
+    // Secteurs
     if ($('#select_secteurs').val().length == 0) {
-        query_sect = " ";
-        console.log("TODO: Faut faire un group by!")
+        query_sect = "";
     } else {
         query_sect = " and id_secten1 in (" + $('#select_secteurs').val().join() + ")";
     };
-
+    
+    // Cétégories d'énergie
     if ($('#select_cat_ener').val().length == 0) {
-        console.log("TODO: Tous combustibles confondus");
+        query_ener = "";
     } else {
         query_ener = $('#select_cat_ener').val().join();
     };
     
+    // Polluant
     if ($('#select_variable').val().length == 0) {
-        console.log("TODO: Erreure pas de polluant défini");
+        $('#select_variable').selectpicker('setStyle', 'btn-warning');
+        return null; 
     } else {
         query_var = $('#select_variable').val().join();
     };    
@@ -321,6 +328,10 @@ function afficher_donnees(){
     if (typeof the_table !== 'undefined') {
         the_table.destroy();
     };
+    
+    // TODO: Si tout est ok, il faut remettre les styles par défauts aux listes
+    // $('#select_ans').selectpicker('setStyle', 'btn');
+    console.log("TODO: Lists styles reset");
     
     // Création du tableau  
     the_table = $('#tableau').DataTable({
@@ -341,6 +352,7 @@ function afficher_donnees(){
                 "pg_lgn": cfg_pg_lgn, 
                 "pg_pwd": cfg_pg_pwd,
                 "query_ans": query_ans,
+                "query_entite": query_entite,
                 "query_sect": query_sect,
                 "query_ener": query_ener,
                 "query_var": query_var,
@@ -352,9 +364,6 @@ function afficher_donnees(){
     var extraction_time = datehour();
     $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Conditions d\'utilisation et de diffusion</a>');
 };
-
-
-
 
 /* Au chargement */
 $(document).ready(function(){
