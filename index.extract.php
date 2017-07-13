@@ -87,13 +87,13 @@
             </select>
        
             <p>Secteurs d'activités</p>
-            <select class="selectpicker" id="select_secteurs" title="Secteurs d'activité" mobile data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
+            <select class="selectpicker" id="select_secteurs" title="Tous secteurs d'activités confondues" mobile data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
 
             <p>Energies</p>
-            <select class="selectpicker" id="select_cat_ener" title="Combustibles" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
+            <select class="selectpicker" id="select_cat_ener" title="Toutes énergies confondues" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
 
             <p>Consommations, Productions et Emissions</p>
-            <select class="selectpicker" id="select_variable" title="Polluants et GES" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
+            <select class="selectpicker" id="select_variable" title="Consommations, Productions et Emissions" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
 
         </div>
 
@@ -119,21 +119,26 @@
         </div>
 
 
+        <div class="emplacement_tableau">
+            <table id="tableau" class="display" width="100%" cellspacing="0">
+                <!--
+                <thead>
+                    <tr>
+                      <th>Année</th>
+                      <th>Entité administrative</th>
+                      <th><a target="_blank" href="https://www.citepa.org/fr/" data-toggle="tooltip" title="Nomenclature SECTEN niveau 1 du CITEPA (SECTteurs Economiques et éNergie)">Secten 1</a></th>
+                      <th>Catégorie d'énergie</th>
+                      <th><a data-toggle="tooltip" title="Consommations d'énergie finale">Consommation (tep)</a></th>
+                      <th>Polluant</th>
+                      <th>Emission</th>
+                      <th>Unité</th>
+                    </tr>
+                </thead>
+                -->
+            </table>
+        </div>
 
-        <table id="tableau" class="display" width="100%" cellspacing="0">
-            <thead>
-                <tr>
-                  <th>Année</th>
-                  <th>Entité administrative</th>
-                  <th><a target="_blank" href="https://www.citepa.org/fr/" data-toggle="tooltip" title="Nomenclature SECTEN niveau 1 du CITEPA (SECTteurs Economiques et éNergie)">Secten 1</a></th>
-                  <th>Catégorie d'énergie</th>
-                  <th><a data-toggle="tooltip" title="Consommations d'énergie finale">Consommation (tep)</a></th>
-                  <th>Polluant</th>
-                  <th>Emission</th>
-                  <th>Unité</th>
-                </tr>
-            </thead>
-        </table>
+        
     </div>
     
 </div>
@@ -266,8 +271,15 @@ function fill_listes(){
             $("#selectpicker").selectpicker();
             $("#select_variable").selectpicker();    // FIXME: Les labels ne s'affichent pas!
             
+            // Sélection des valeurs par défaut
+            $('#select_ans').selectpicker('val', '2015');
+            $("#select_entites").selectpicker('val', '93');   
+            $("#select_entites").selectpicker('val', '93'); 
+            $("#select_detail_comm").selectpicker('val', 'true'); 
+            $("#select_variable").selectpicker('val', '131');
             
         },
+        
         error: function (request, error) {
             console.log(arguments);
             console.log("Ajax error: " + error);
@@ -306,7 +318,7 @@ function afficher_donnees(){
     if ($('#select_secteurs').val().length == 0) {
         query_sect = "";
     } else {
-        query_sect = " and id_secten1 in (" + $('#select_secteurs').val().join() + ")";
+        query_sect = $('#select_secteurs').val().join();
     };
     
     // Cétégories d'énergie
@@ -326,43 +338,75 @@ function afficher_donnees(){
     
     // Si un tableau existe déjà on le détruit avant de le recréer
     if (typeof the_table !== 'undefined') {
-        the_table.destroy();
+        the_table.destroy(false);
+        $('#tableau').empty();
     };
     
     // TODO: Si tout est ok, il faut remettre les styles par défauts aux listes
     // $('#select_ans').selectpicker('setStyle', 'btn');
     console.log("TODO: Lists styles reset");
-    
-    // Création du tableau  
-    the_table = $('#tableau').DataTable({
-        scrollY: '60vh',
-        scrollCollapse: true,        
-        paging: false,
-        responsive: true,
-        dom: 'Bfrtip',
-        buttons: ['copy', 'csv', 'excel', 'pdf'], 
-        processing: true,
-        serverSide: false,      
-        ajax: {
-            "url" : "scripts/tableau.php",
-            "type": "GET",
-            "data" : {
-                "pg_host": cfg_pg_host,
-                "pg_bdd": cfg_pg_bdd, 
-                "pg_lgn": cfg_pg_lgn, 
-                "pg_pwd": cfg_pg_pwd,
-                "query_ans": query_ans,
-                "query_entite": query_entite,
-                "query_sect": query_sect,
-                "query_ener": query_ener,
-                "query_var": query_var,
-            },
+   
+    // Création du tableau
+    $.ajax({
+        type: "GET",
+        url: "scripts/tableau.php",
+        dataType: 'json',   
+        data: {
+            "pg_host": cfg_pg_host,
+            "pg_bdd": cfg_pg_bdd, 
+            "pg_lgn": cfg_pg_lgn, 
+            "pg_pwd": cfg_pg_pwd,
+            "query_ans": query_ans,
+            "query_entite": query_entite,
+            "query_sect": query_sect,
+            "query_ener": query_ener,
+            "query_var": query_var,
+            "query_detail_comm": query_detail_comm, 
+        },         
+        success: function(response,textStatus,jqXHR){
+
+            // Création de la liste de définition des colonnes
+            columns = [];
+            for (i in Object.keys(response[0])) {
+                field = Object.keys(response[0])[i];
+                columns.push( { title: field, name: field, data: field });
+            };
+            
+            // Création de la table
+            the_table = $('#tableau').DataTable({
+                scrollY: '70vh',
+                scrollCollapse: true,        
+                paging: false,
+                searching: true,
+                responsive: true,
+                dom: 'lpftiBr',
+                buttons: ['copy', 'csv', 'pdf'], 
+                processing: true,
+                serverSide: false,
+                language: {
+                    "lengthMenu": "Display _MENU_ records per page",
+                    "zeroRecords": "Aucune donnée à afficher",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)",
+                },    
+                data: response,        
+                columns:columns,
+            });
+            
+            
         },
-    });
+        
+        error: function (request, error) {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });    
   
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
-    $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Conditions d\'utilisation et de diffusion</a>');
+    $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
 /* Au chargement */
