@@ -31,10 +31,10 @@
     <script src="libs/leaflet-sidebar-master/src/L.Control.Sidebar.js"></script>
     <link rel="stylesheet" href="libs/leaflet-sidebar-master/src/L.Control.Sidebar.css"/>    
      -->
-    <!-- Leaflet.Spin (including spin.js)
+    <!-- Leaflet.Spin (including spin.js) -->
     <script src="libs/spin.js/spin.min.js"></script>
     <script src="libs/Leaflet.Spin-1.1.0/leaflet.spin.min.js"></script>
-     -->
+    
     <!-- Chart.js
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
     -->
@@ -65,49 +65,43 @@
 
     <!-- Partie gauche - Sélection des données -->
     <div id="sidebar-left">
-        <div class="list-group">
-        
-            <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
-        
-            <h5>Extraction</h5>
-             
-             
-            <!-- Formulaire de sélection avec bootstrap-select --> 
-             
-            <p>Année(s) d'inventaire</p>
-            <select class="selectpicker" id="select_ans" title="Années d'inventaire" mobile multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
 
-            <p>Emprise géographique</p>
-            <select class="selectpicker" id="select_entites" title="Emprise géograpique" mobile multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
-            
-            <p>Détail communal</p>
-            <select class="selectpicker" id="select_detail_comm" title="Détail par commune" mobile data-max-options="1" data-width="100%">
-                <option value="true">Oui</option>
-                <option value="false">Non</option>
-            </select>
-       
-            <p>Secteurs d'activités</p>
-            <select class="selectpicker" id="select_secteurs" title="Tous secteurs d'activités confondues" mobile data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
+        <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
+    
+        <h5>Extraction</h5>    
+    
+        <div class="list-group hide" id="formulaire">
 
-            <p>Energies</p>
-            <select class="selectpicker" id="select_cat_ener" title="Toutes énergies confondues" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
+                <p>Année(s) d'inventaire</p>
+                <select class="selectpicker" id="select_ans" title="Années d'inventaire" mobile multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
 
-            <p>Consommations, Productions et Emissions</p>
-            <select class="selectpicker" id="select_variable" title="Consommations, Productions et Emissions" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
+                <p>Emprise géographique</p>
+                <select class="selectpicker" id="select_entites" title="Emprise géograpique" mobile multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
+                
+                <p>Détail communal</p>
+                <select class="selectpicker" id="select_detail_comm" title="Détail par commune" mobile data-max-options="1" data-width="100%">
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                </select>
+           
+                <p>Secteurs d'activités</p>
+                <select class="selectpicker" id="select_secteurs" title="Tous secteurs d'activités confondues" mobile data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
+
+                <p>Energies</p>
+                <select class="selectpicker" id="select_cat_ener" title="Toutes énergies confondues" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
+
+                <p>Consommations, Productions et Emissions</p>
+                <select class="selectpicker" id="select_variable" title="Consommations, Productions et Emissions" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
+                
+                <div class="Boutons_extractions">
+                    <!-- Split button -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success" onClick="afficher_donnees();">Exporter les données</button>
+                    </div>
+                </div>            
 
         </div>
 
-        <div class="Boutons_extractions">
-        
-        
-            <!-- Split button -->
-            <div class="btn-group">
-                <button type="button" class="btn btn-success" onClick="afficher_donnees();">Exporter les données</button>
-            </div>
-            
-            
-        </div>
-        
     </div>
     
     <!-- Partie droite - Affichage des données -->    
@@ -121,20 +115,6 @@
 
         <div class="emplacement_tableau">
             <table id="tableau" class="display" width="100%" cellspacing="0">
-                <!--
-                <thead>
-                    <tr>
-                      <th>Année</th>
-                      <th>Entité administrative</th>
-                      <th><a target="_blank" href="https://www.citepa.org/fr/" data-toggle="tooltip" title="Nomenclature SECTEN niveau 1 du CITEPA (SECTteurs Economiques et éNergie)">Secten 1</a></th>
-                      <th>Catégorie d'énergie</th>
-                      <th><a data-toggle="tooltip" title="Consommations d'énergie finale">Consommation (tep)</a></th>
-                      <th>Polluant</th>
-                      <th>Emission</th>
-                      <th>Unité</th>
-                    </tr>
-                </thead>
-                -->
             </table>
         </div>
 
@@ -146,6 +126,13 @@
 <script type="text/javascript">
 
 /* Variables générales */
+
+// Spinner: spinner.spin(spinner_element); spinner.stop();
+var spinner_right = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"50%", left:"65%",});
+var spinner_right_element = document.getElementById('container');
+
+var spinner_left = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"40%", left:"15%",});
+var spinner_left_element = document.getElementById('container');
 
 /* Fonctions */
 function tests(){
@@ -200,6 +187,10 @@ function fill_listes(){
     
     Maj des listes avec les réponses.
     */
+    
+    // Déclanchement du sablier (spinner)
+    spinner_left.spin(spinner_left_element);
+    
     $.ajax({
         type: "GET",
         url: "scripts/fill_listes.php",
@@ -209,7 +200,10 @@ function fill_listes(){
             pg_bdd:cfg_pg_bdd, 
             pg_lgn:cfg_pg_lgn, 
             pg_pwd:cfg_pg_pwd,  
-        },         
+        },
+        beforeSend:function(jqXHR, settings){
+            jqXHR.spinner_left = spinner_left;
+        },          
         success: function(response,textStatus,jqXHR){
             
             // Remplissage de la liste des années
@@ -278,12 +272,21 @@ function fill_listes(){
             $("#select_detail_comm").selectpicker('val', 'true'); 
             $("#select_variable").selectpicker('val', '131');
             
+            // Arrêt du sablier (spinner)
+            jqXHR.spinner_left.stop();
+            
+            // Affichage du formulaire de sélection
+            $("#formulaire").removeClass("hide");
+            
         },
         
         error: function (request, error) {
             console.log(arguments);
             console.log("Ajax error: " + error);
             $("#error_tube").show();
+            
+            // Arrêt du sablier (spinner)
+            jqXHR.spinner_left.stop();
         },        
     });
 };
@@ -346,6 +349,9 @@ function afficher_donnees(){
     // $('#select_ans').selectpicker('setStyle', 'btn');
     console.log("TODO: Lists styles reset");
    
+    // Déclanchement du sablier (spinner)
+    spinner_right.spin(spinner_right_element);
+   
     // Création du tableau
     $.ajax({
         type: "GET",
@@ -362,7 +368,10 @@ function afficher_donnees(){
             "query_ener": query_ener,
             "query_var": query_var,
             "query_detail_comm": query_detail_comm, 
-        },         
+        },
+        beforeSend:function(jqXHR, settings){
+            jqXHR.spinner_right = spinner_right;
+        },           
         success: function(response,textStatus,jqXHR){
 
             // Création de la liste de définition des colonnes
@@ -394,13 +403,17 @@ function afficher_donnees(){
                 columns:columns,
             });
             
-            
+            // Arrêt du sablier (spinner)
+            jqXHR.spinner_right.stop();
         },
         
         error: function (request, error) {
             console.log(arguments);
             console.log("Ajax error: " + error);
             $("#error_tube").show();
+            
+            // Arrêt du sablier (spinner)
+            jqXHR.spinner_right.stop();
         },        
     });    
   
@@ -409,28 +422,9 @@ function afficher_donnees(){
     $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
-/* Au chargement */
-$(document).ready(function(){
-    /* Configuration des popups */
-    $('[data-toggle="tooltip"]').tooltip();   
-    
-    /* Appel des fonctions */
-    fill_listes();
-    // tests();   
-
-});
-
-
-
-
-
-        
-        
-
-
-
-
-
+/* Appel des fonctions */
+fill_listes();
+$('[data-toggle="tooltip"]').tooltip(); // Configuration des popups   
 
 </script>
 
