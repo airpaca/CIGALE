@@ -18,6 +18,9 @@ $query_detail_comm = $_GET['query_detail_comm'];
 $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
 if ($query_detail_comm == "true") {
     $group_by =  $group_by . ", nom_entite";
+    $nom_entite = " nom_comm";
+} else {
+    $nom_entite = " 'TODO: Nom entite'";
 };
 if ($query_sect != "") {
     $group_by =  $group_by . ", nom_secten1";
@@ -64,7 +67,7 @@ if ($query_entite == "93") {
 $sql = "
 select 
     an, 
-    nom_comm as nom_entite, 
+    " . $nom_entite . "  as nom_entite,  
     " . $nom_secten1 . " ,  
     " . $cat_energie . " , 
     round(sum(val)::numeric, 1) as conso, 
@@ -80,9 +83,11 @@ left join commun.tpk_polluants as e using (id_polluant)
 left join commun.tpk_unite as f using (id_unite)
 " . $where . " 
 " . $group_by . "
-order by an, nom_comm, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
+order by an, nom_entite, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
 ;
 ";
+
+// echo $sql;
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");

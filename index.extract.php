@@ -394,6 +394,7 @@ function afficher_donnees(){
                     columns:[{}],
                 });                
                 
+                // Arrêt du sablier (spinner)
                 jqXHR.spinner_right.stop();
                 
                 return null;
