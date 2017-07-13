@@ -107,11 +107,7 @@
     <!-- Partie droite - Affichage des données -->    
     <div id="sidebar-right">
 
-        
-        <div class="header_extraction">
-            Air PACA - Inventaire v4
-        </div>
-
+        <div class="header_extraction"></div>
 
         <div class="emplacement_tableau">
             <table id="tableau" class="display" width="100%" cellspacing="0">
@@ -373,7 +369,36 @@ function afficher_donnees(){
             jqXHR.spinner_right = spinner_right;
         },           
         success: function(response,textStatus,jqXHR){
-
+        
+            // Si la réponse est vide alors on affiche une table vide et on quitte
+            if (response.length == 0) {
+                
+                the_table = $('#tableau').DataTable({
+                    scrollY: '70vh',
+                    scrollCollapse: true,        
+                    paging: false,
+                    searching: true,
+                    responsive: true,
+                    dom: 'lpftiBr',
+                    buttons: ['copy', 'csv', 'pdf'], 
+                    processing: true,
+                    serverSide: false,
+                    language: {
+                        "lengthMenu": "Display _MENU_ records per page",
+                        "zeroRecords": "Aucune donnée à afficher",
+                        "info": "Showing page _PAGE_ of _PAGES_",
+                        "infoEmpty": "No records available",
+                        "infoFiltered": "(filtered from _MAX_ total records)",
+                    },    
+                    data: response,        
+                    columns:[{}],
+                });                
+                
+                jqXHR.spinner_right.stop();
+                
+                return null;
+            };
+            
             // Création de la liste de définition des colonnes
             columns = [];
             for (i in Object.keys(response[0])) {
