@@ -173,6 +173,18 @@ var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.ma
 var an_max = 2015;
 
 var my_layers = {
+    epci_wms: {
+        name: "epci",
+        layer: null,
+        type: "wms",
+        wms_layer_name: "epci",
+        opacity: 0.5,
+        subtitle: "EPCI PACA 2017",
+        onmap: true,
+        // style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
+        // legend: {},
+        // legend_text: "Emissions de NOx en 2015</br>t/km&sup2;",
+    },      
     epci_wfs: {
         layer: null,
         type: "wfs",
@@ -542,14 +554,14 @@ function create_wms_layer(my_layers_object){
     dans le mapfile et l'insert dans l'objet layer déclaré
     en argument.
     Ex: create_wms_layer(my_layers.epci);
-    */
+    */   
     my_layers_object.layer = L.tileLayer.wms(wms_address, {
-        name: 'epci',
-        layers: 'epci',
+        name: my_layers_object.name, // wms_layer_name
+        layers: 'epci', // (required) Comma-separated list of WMS layers to show.
         format: wms_format,
         transparent: wms_tr,
-        opacity: 0.5,
-        subtitle: "EPCI PACA 2017"
+        opacity: my_layers_object.opacity,
+        subtitle: my_layers_object.subtitle,
     });
 
     if (my_layers_object.onmap == true) {
@@ -1266,26 +1278,10 @@ var map = createMap();
 var sidebar = create_sidebar();
 var select_list = liste_epci_create(); 
 liste_epci_populate();
+create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
 create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
 create_hover_info_bar();
-
-function tests(){
-    console.log("tests");
-    
-    console.log(my_layers.epci_wfs.layer);
-    // if (a == 0){
-        my_layers.epci_wfs.layer.setStyle({fillOpacity:0.0});
-        // a = 1;
-    // } else {
-        // my_layers.epci_wfs.layer.resetStyle();
-        // a = 0;
-    // };
-};
-
-
-
-
 
 </script>
 
