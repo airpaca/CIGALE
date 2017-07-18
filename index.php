@@ -699,6 +699,9 @@ function create_wfs_epci_layers(my_layers_object){
                         
                         // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
                         create_graphiques(feature.properties["siren_epci_2017"], feature.properties["nom_epci_2017"]);  
+                        
+                        // On réapplique le style mouseout pour éviter les artefacts 
+                        layer.setStyle({weight: 2, color: "#000000"});
 
                         // Mise à jour de la liste des EPCI avec l'EPCI sélectionné
                         // FIXME: Ne fonctionne pas pour l'instant, revoir tout le système d'affichage
@@ -1278,7 +1281,7 @@ var map = createMap();
 var sidebar = create_sidebar();
 var select_list = liste_epci_create(); 
 liste_epci_populate();
-create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
+// create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
 create_wfs_epci_layers(my_layers.epci_wfs);
 create_sidebar_template();
 create_hover_info_bar();
