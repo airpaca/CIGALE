@@ -97,7 +97,7 @@
                 Emissions de PM10
                 </a>
 
-                <a href="#" class="list-group-item liste_polluants_items" id="pm25">
+                <a href="#" class="list-group-item liste_polluants_items" id="pm2.5">
                 <span class="glyphicon glyphicon-chevron-right"></span>
                 Emissions de PM2.5
                 </a>            
@@ -121,7 +121,7 @@
             Bilans énergétiques
             </a>
 
-                <a href="#" class="list-group-item hide liste_energies_items" id="consos">
+                <a href="#" class="list-group-item hide liste_energies_items" id="conso">
                 <span class="glyphicon glyphicon-chevron-right"></span>
                 Consommations d'énergie
                 </a>
@@ -135,10 +135,20 @@
             Gazs à Effet de Serre
             </a>
 
-                <a href="#" class="list-group-item hide liste_ges_items" id="ges">
+                <a href="#" class="list-group-item hide liste_ges_items" id="co2">
                 <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de GES
-                </a>            
+                Emissions de CO2
+                </a>  
+                
+                <a href="#" class="list-group-item hide liste_ges_items" id="ch4.co2e">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de CH4 eq.co2
+                </a>  
+
+                <a href="#" class="list-group-item hide liste_ges_items" id="n2o.co2e">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                Emissions de N2O eq.co2
+                </a>                  
         
         </div>
         
@@ -171,6 +181,8 @@ var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE
 var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&VERSION=2.0.0";
 
 var an_max = 2015;
+var polls = ['conso','so2','nox','pm10','pm2.5','cov','nh3','co2','ch4.co2e','n2o.co2e',];
+var polluant_actif = "nox";
 
 var my_layers = {
     epci_wms: {
@@ -181,28 +193,12 @@ var my_layers = {
         opacity: 0.5,
         subtitle: "EPCI PACA 2017",
         onmap: true,
-        // style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
-        // legend: {},
-        // legend_text: "Emissions de NOx en 2015</br>t/km&sup2;",
-    },      
-    epci_wfs: {
-        layer: null,
-        type: "wfs",
-        wfs_query: "&REQUEST=GetFeature&TYPENAME=epci_wfs&outputformat=geojson",
-        opacity: 0.5,
-        subtitle: "EPCI PACA 2017",
-        onmap: true,
-        style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
-        legend: {},
-        legend_text: "Emissions de NOx en 2015</br>t/km&sup2;",
     },  
     comm_nox: {
+        name: "comm_nox",
         layer: null,
         type: "wfs",
         wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson",
-        // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson&FILTER=<Filter><Equals><PropertyName>siren_epci_2017</PropertyName><Literal>200039931</Literal></Equals></Filter>",
-        // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson&Filter=<Filter><PropertyIsEqualTo><PropertyName>siren_epci_2017</PropertyName><Literal>200039931</Literal></PropertyIsEqualTo></Filter>",
-        // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_nox&outputformat=geojson&Filter=<Filter><PropertyIsLike wildcard='*' singleChar='.' escape='!'><PropertyName>siren_epci_2017</PropertyName><Literal>*200039931*</Literal></PropertyIsLike></Filter>",
         opacity: 0.5,
         subtitle: "Emissions de NOx par communes",
         onmap: true,
@@ -213,15 +209,14 @@ var my_layers = {
 
 var my_app = {
     sidebar: {displayed: false},
-}
+};
 
 /* Déclaration des Controles Leaflet */
 var legend = L.control({position: 'bottomleft'});
 var hover_info = L.control({position: 'topleft'});
 
-
 /* Fonctions */
-$(function() { /* Gestion des listes */
+$(function() { /* Gestion des listes et couches EPCI poll */
 
     /* Click sur la liste des polluants */
     $('#liste_polluants').click( function() {
@@ -263,6 +258,7 @@ $(function() { /* Gestion des listes */
     $('.liste_polluants_items').click( function() {
         $('.liste_polluants_items').removeClass('active');
         $(this).addClass('active');
+        // console.log($(this).attr("id"));
     });     
  
     /* Click sur une energie */
@@ -275,7 +271,46 @@ $(function() { /* Gestion des listes */
     $('.liste_ges_items').click( function() {
         $('.liste_ges_items').removeClass('active');
         $(this).addClass('active');
-    });     
+    }); 
+
+    /* Click sur une couche quelle qu'elle soit */
+    $('.liste_polluants_items, .liste_energies_items, .liste_ges_items').click( function() {
+        
+        // Change le polluant actif
+        polluant_actif = $(this).attr("id");
+        
+        // Si les émissions à la commune sont affichées alors on change le poll
+        if (map.hasLayer(my_layers.comm_nox.layer) == true){
+            console.log("TODO: Changer polluant");
+            return null;
+        } else {
+        // Sinon on gère les couches des EPCI
+            
+            // Affiche la couche des ECPI pour le polluant actif, retire les autres
+            for (i in my_layers) {
+
+                // Si une des couches EPCI polluant est déjà affichée on la supprime
+                if ( my_layers[i].name.match(/epci_.*/) && map.hasLayer(my_layers[i].layer) == true ){
+                    map.removeLayer(my_layers[i].layer);
+                    // console.log("Removed " + my_layers[i].name);
+                };    
+
+                // On affiche la couche des EPCI correspondant au polluant actif
+                if (my_layers[i].name == "epci_" + polluant_actif) {
+                    my_layers[i].layer.addTo(map);
+                    
+                    // Création de la légende
+                    generate_legend(my_layers[i].legend_text, my_layers[i].legend.bornes, my_layers[i].legend.colors);             
+                    
+                    // Zoom sur la couche
+                    map.fitBounds(my_layers[i].layer.getBounds());
+                    
+                    // console.log("Added " + my_layers[i].name);
+                };
+                
+            };
+        };
+    });    
 });
 
 function createMap(){
@@ -301,9 +336,9 @@ function createMap(){
         };
         
         // Affichage des EPCI et regénération de la légende
-        my_layers.epci_wfs.layer.addTo(map);
-        generate_legend(my_layers.epci_wfs.legend_text, my_layers.epci_wfs.legend.bornes, my_layers.epci_wfs.legend.colors);
-        map.fitBounds(my_layers.epci_wfs.layer.getBounds());
+        my_layers["epci_" + polluant_actif].layer.addTo(map);
+        generate_legend(my_layers["epci_" + polluant_actif].legend_text, my_layers["epci_" + polluant_actif].legend.bornes, my_layers["epci_" + polluant_actif].legend.colors);
+        map.fitBounds(my_layers["epci_" + polluant_actif].layer.getBounds());
     });
     
     return map;
@@ -414,13 +449,15 @@ function liste_epci_clean() {
     select_list[0].selectize.clear();
     
     // Si la couche des communes est déjà affichée on la supprime
-    if (my_layers.comm_nox.layer != null) {
+    // if (my_layers.comm_nox.layer != null) {
+    if (map.hasLayer(my_layers.comm_nox.layer) == true){
         map.removeLayer(my_layers.comm_nox.layer);
     };  
 
     // Ajout de la couche des EPCI sur la carte et zoom max extent
-    my_layers.epci_wfs.layer.addTo(map); 
-    map.fitBounds(my_layers.epci_wfs.layer.getBounds());
+    my_layers["epci_" + polluant_actif].layer.addTo(map);
+    generate_legend(my_layers["epci_" + polluant_actif].legend_text, my_layers["epci_" + polluant_actif].legend.bornes, my_layers["epci_" + polluant_actif].legend.colors);
+    map.fitBounds(my_layers["epci_" + polluant_actif].layer.getBounds());
     
     // Cache la sidebar
     sidebar.hide();
@@ -443,14 +480,14 @@ function liste_epci_submit(){
 function epci2comm(siren_epeci, nom_epeci){
         
     // Si la couche des communes est déjà affichée on la supprime
-    if (my_layers.comm_nox.layer != null) {
+    if (map.hasLayer(my_layers.comm_nox.layer) == true){
         map.removeLayer(my_layers.comm_nox.layer);
-    };    
+    };      
     
     // Zoom sur l'EPCI en le retrouvant dans les objets du layer epci
-    for (i in my_layers.epci_wfs.layer._layers) {
-        if (my_layers.epci_wfs.layer._layers[i].feature.properties.siren_epci_2017 == siren_epeci) {
-            map.fitBounds(my_layers.epci_wfs.layer._layers[i]._bounds, {paddingBottomRight: [800, 0]});
+    for (i in my_layers["epci_" + polluant_actif].layer._layers) {
+        if (my_layers["epci_" + polluant_actif].layer._layers[i].feature.properties.siren_epci == siren_epeci) {
+            map.fitBounds(my_layers["epci_" + polluant_actif].layer._layers[i]._bounds, {paddingBottomRight: [800, 0]});
         };
     };
     
@@ -458,7 +495,7 @@ function epci2comm(siren_epeci, nom_epeci){
     create_wfs_comm_layers(my_layers.comm_nox, siren_epeci); 
     
     // Retrait de la couche EPCI
-    map.removeLayer(my_layers.epci_wfs.layer);    
+    map.removeLayer(my_layers["epci_" + polluant_actif].layer);    
     // my_layers.epci_wfs.layer.setStyle({fillOpacity:0.0});
     
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
@@ -670,6 +707,123 @@ function create_wfs_epci_layers(my_layers_object){
                 onEachFeature: function (feature, layer) {
                     
                     // Ajout d'un popup
+                    var html = "<div id='popup'>" + feature.properties["nom_epci"]+"<br></div>";                   
+                    layer.bindPopup(html);
+
+                    // Prise en compte du hover
+                    layer.on('mouseover', function(){
+                        layer.setStyle({weight: 4, color: "#000000"});
+                        // this.openPopup();
+                        hover_info.update(feature.properties["nom_epci"]);
+                    });
+                    layer.on('mouseout', function(){
+                        layer.setStyle({weight: 2, color: "#000000"});
+                        // this.closePopup();
+                        hover_info.hide();
+                    });
+
+                    // Prise en compte du cklic
+                    layer.on('click', function(){
+                        
+                        // Zoom sur la couche
+                        map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
+
+                        // Retrait de la couche EPCI
+                        map.removeLayer(my_layers_object.layer);
+                        
+                        // Affichage de la couche des communes
+                        create_wfs_comm_layers(my_layers.comm_nox, feature.properties["siren_epci"]); 
+                        
+                        // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
+                        create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
+                        
+                        // On réapplique le style mouseout pour éviter les artefacts 
+                        layer.setStyle({weight: 2, color: "#000000"});
+
+                        // Mise à jour de la liste des EPCI avec l'EPCI sélectionné
+                        // FIXME: Ne fonctionne pas pour l'instant, revoir tout le système d'affichage
+                        // select_list[0].selectize.addOption({value:feature.properties["siren_epci_2017"],text:feature.properties["nom_epci_2017"]});
+                        // select_list[0].selectize.addItem(feature.properties["siren_epci_2017"], false); 
+                        
+                    });                    
+                },                 
+            });     
+
+            // Enregistrement des paramètres de la légende pour la recréer
+            my_layers_object.legend = {bornes: the_jenks.bornes, colors: the_jenks.colors};            
+            
+            if (my_layers_object.onmap == true) {
+                
+                // Ajout de la couche sur la carte
+                my_layers_object.layer.addTo(map);
+                
+                // Zoom sur la couche
+                map.fitBounds(my_layers_object.layer.getBounds());
+                
+                // Création de la légende
+                generate_legend(my_layers_object.legend_text, the_jenks.bornes, the_jenks.colors);
+                
+            };
+        }
+    });    
+};
+
+function create_wfs_epci_layers_filter_specifique(my_layers_object){
+    /*
+    Crée un layer wfs à partir des couches disponibles 
+    dans le mapfile et l'insert dans l'objet layer déclaré
+    en argument.
+    
+    Filtre les données en fonction d'un champ et d'une valeur 
+    Ex: create_wfs_epci_layers_filter_specifique(my_layers.epci);
+    
+    FIXME: Abandonné pour l'instant, car il faudrait refaire tous les
+    jenks. Cf. FIXME dans la fonction filter.
+    */
+    $.ajax({
+        url: wfs_address + my_layers_object.wfs_query,
+        datatype: 'json',
+        jsonCallback: 'getJson',
+        success: function (data) {
+        
+            // Calcul des statistiques
+            the_jenks = calc_jenks(data, "val", 6);
+           
+            // Création de l'objet
+            my_layers_object.layer = L.geoJSON(data, {
+                filtre_polluant: function(value){
+                    /*
+                    Fonction spécifique permettant de filtrer 
+                    le layer en fonction du polluant demandé
+                    
+                    FIXME: Il faudrait recalculer les classes de couleur et 
+                    les appliquer! Trop long, on laisse de côté et on essaie de créer plusieurs
+                    layers à partir d'une liste de polluants
+                    */
+                    if (value == null) {
+                        value = "no2";
+                    };
+                   
+                    for (iobjet in my_layers.epci_wfs_poll.layer._layers){
+                        if (my_layers.epci_wfs_poll.layer._layers[iobjet].feature.properties.nom_abrege_polluant != value){
+                            map.removeLayer(my_layers.epci_wfs_poll.layer._layers[iobjet]);
+                        } else {
+                            map.addLayer(my_layers.epci_wfs_poll.layer._layers[iobjet]);
+                            console.log(my_layers.epci_wfs_poll.layer._layers[iobjet].options.color)
+                        };
+                    };
+                                        
+                },
+                style: function(feature) {
+                    
+                    // Récupération du style de l'objet et remplissage avec la bonne couleur
+                    the_style = my_layers_object.style;
+                    the_style.fillColor = find_jenks_color(the_jenks, feature.properties.val);
+                    return the_style;
+                },
+                onEachFeature: function (feature, layer) {
+                    
+                    // Ajout d'un popup
                     var html = "<div id='popup'>" + feature.properties["nom_epci_2017"]+"<br></div>";                   
                     layer.bindPopup(html);
 
@@ -726,6 +880,9 @@ function create_wfs_epci_layers(my_layers_object){
                 // Enregistrement des paramètres de la légende pour la recréer
                 my_layers_object.legend = {bornes: the_jenks.bornes, colors: the_jenks.colors};
             };
+        },
+        error(){
+            console.log("ERROR - create_wfs_epci_layers_filter(my_layers_object)");
         }
     });    
 };
@@ -1276,15 +1433,55 @@ function create_hover_info_bar(){
     hover_info.addTo(map);
 };
 
+function creation_couches_epci_polluant(){
+    /*
+    Boucle sur la liste des polluants,
+    crée le layer dans la liste des layers,
+    et charge chaque couche mapserver 
+    pour le polluant demandé.
+    */
+    for (i in polls) {
+        
+        // Si on traite les nox on ajoutera la couche à la carte
+        if (polls[i] == "nox") {
+            onmap = true;
+        } else {
+            onmap = false;
+        };
+        
+        // Ajout de la couche dans la liste des couches avec les bons paramètres
+        my_layers["epci_" + polls[i]] = {
+            name: "epci_" + polls[i],
+            polluant: polls[i], 
+            type: "wfs",
+            wfs_query: "&REQUEST=GetFeature&TYPENAME=epci_wfs_" + polls[i] + "&outputformat=geojson",
+            layer: null,
+            opacity: 0.5,
+            subtitle: "Emissions " + an_max + " de " + polls[i] + " à l'EPCI",
+            onmap: onmap,
+            style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
+            legend: {},
+            legend_text: "Emissions de " + polls[i] + " en " + an_max + " t/km&sup2;",        
+        };
+        
+        // Création de la couche avec le bon filtre
+        create_wfs_epci_layers(my_layers["epci_" + polls[i]]);
+    };
+};
+
 /* Appel des fonctions */
 var map = createMap();
 var sidebar = create_sidebar();
 var select_list = liste_epci_create(); 
 liste_epci_populate();
-// create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
-create_wfs_epci_layers(my_layers.epci_wfs);
+create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
+creation_couches_epci_polluant(); // Couches des ECPI par polluant
 create_sidebar_template();
 create_hover_info_bar();
+
+function tests(){
+    console.log("tests()");
+};
 
 </script>
 
