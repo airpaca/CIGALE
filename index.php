@@ -1022,7 +1022,7 @@ function create_sidebar_template(){
 };
 
 function change_graph_title(the_title){
-    $('.graph_title').html(the_title + '</br> Bilan des émissions de NOx');    
+    $('.graph_title').html(the_title);    
 };
 
 function create_piechart_emi(response, div){
@@ -1321,18 +1321,22 @@ function create_graphiques(siren_epci, nom_epci){
         url: "scripts/graphiques.php",
         dataType: 'json',   
         data: {
-            pg_host:cfg_pg_host,
-            pg_bdd:cfg_pg_bdd, 
-            pg_lgn:cfg_pg_lgn, 
-            pg_pwd:cfg_pg_pwd,  
-            siren_epci:siren_epci,
+            pg_host: cfg_pg_host,
+            pg_bdd: cfg_pg_bdd, 
+            pg_lgn: cfg_pg_lgn, 
+            pg_pwd: cfg_pg_pwd,  
+            siren_epci: siren_epci,
+            polluant: polluant_actif,
+            an: an_max,
         },    
         beforeSend:function(jqXHR, settings){
             jqXHR.siren_epci = siren_epci;  
-            jqXHR.nom_epci = nom_epci;               
+            jqXHR.nom_epci = nom_epci;
+            jqXHR.polluant = polluant_actif; 
+            jqXHR.an = an_max;            
         },        
         success: function(response,textStatus,jqXHR){
-            change_graph_title(jqXHR.nom_epci);
+            change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polluant);
             create_barchart_emi(response[1], "graph2");
             create_piechart_emi(response[0], "graph1");
             create_linechart_emi(response[2], "graph3");
@@ -1341,6 +1345,7 @@ function create_graphiques(siren_epci, nom_epci){
             sidebar.show();  
         },
         error: function (request, error) {
+            console.log("ERROR: create_graphiques()");
             console.log(arguments);
             console.log("Ajax error: " + error);
             $("#error_tube").show();
