@@ -209,6 +209,8 @@ var my_layers = {
 
 var my_app = {
     sidebar: {displayed: false},
+    siren_epci: "",
+    nom_epci: "",
 };
 
 /* Déclaration des Controles Leaflet */
@@ -281,11 +283,11 @@ $(function() { /* Gestion des listes et couches EPCI poll */
         
         // Si les émissions à la commune sont affichées alors on change le poll
         if (map.hasLayer(my_layers.comm_nox.layer) == true){
-            console.log("TODO: Changer polluant");
+            create_graphiques(my_app.siren_epci, my_app.nom_epci); // FIXME: Comment connaître les deux variables
             return null;
         } else {
         // Sinon on gère les couches des EPCI
-            
+
             // Affiche la couche des ECPI pour le polluant actif, retire les autres
             for (i in my_layers) {
 
@@ -1316,6 +1318,11 @@ function create_graphiques(siren_epci, nom_epci){
     /*
     Création des graphiques 
     */
+    
+    // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
+    my_app.siren_epci = siren_epci;
+    my_app.nom_epci = nom_epci;
+    
     $.ajax({
         type: "GET",
         url: "scripts/graphiques.php",
