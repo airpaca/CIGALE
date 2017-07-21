@@ -182,6 +182,19 @@ var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.ma
 
 var an_max = 2015;
 var polls = ['conso', 'prod', 'so2','nox','pm10','pm2.5','cov','nh3','co2','ch4.co2e','n2o.co2e',];
+var polls_names = {
+    "conso": "consommations",
+    "prod": "productions",
+    "so2": "SO2",
+    "nox": "NOx",
+    "pm10": "PM10",
+    "pm2.5": "PM2.5",
+    "cov": "COV",
+    "nh3": "NH3",
+    "co2": "CO2",
+    "ch4.co2e": "CH4 eq.CO2",
+    "n2o.co2e": "N2O eq.CO2",
+};
 var polluant_actif = "nox";
 
 var my_layers = {
@@ -1375,10 +1388,18 @@ function create_graphiques(siren_epci, nom_epci){
             jqXHR.siren_epci = siren_epci;  
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
+            jqXHR.polls_names = polls_names;
             jqXHR.an = an_max;            
         },        
         success: function(response,textStatus,jqXHR){
-            change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polluant);
+            
+            // titre en fonction du polluant
+            if (jqXHR.polluant == "conso"){
+                change_graph_title(jqXHR.nom_epci + '</br> Bilan des consommations');
+            } else {
+                change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
+            };
+            
             create_barchart_emi(response[1], "graph2");
             create_piechart_emi(response[0], "graph1");
             create_linechart_emi(response[2], "graph3");
@@ -1496,6 +1517,13 @@ function creation_couches_epci_polluant(){
             onmap = false;
         };
         
+        // Texte de légende en fonction du polluant
+        if (polls[i] == 'conso'){
+            legend_text = "Consommations " + an_max + " tep/km&sup2;";
+        } else {
+            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";  
+        };
+        
         // Ajout de la couche dans la liste des couches avec les bons paramètres
         my_layers["epci_" + polls[i]] = {
             name: "epci_" + polls[i],
@@ -1508,7 +1536,7 @@ function creation_couches_epci_polluant(){
             onmap: onmap,
             style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
             legend: {},
-            legend_text: "Emissions de " + polls[i] + " en " + an_max + " t/km&sup2;",        
+            legend_text: legend_text,        
         };
         
         // Création de la couche avec le bon filtre
@@ -1528,6 +1556,13 @@ function creation_couches_comm_polluant(){
         // On ne charge jamais les communes dès le départ
         onmap = false;
         
+        // Texte de légende en fonction du polluant
+        if (polls[i] == 'conso'){
+            legend_text = "Consommations " + an_max + " tep/km&sup2;";
+        } else {
+            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";  
+        };        
+        
         // Ajout de la couche dans la liste des couches avec les bons paramètres
         my_layers["comm_" + polls[i]] = {
             name: "comm_" + polls[i],
@@ -1540,7 +1575,7 @@ function creation_couches_comm_polluant(){
             onmap: onmap,
             style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
             legend: {},
-            legend_text: "Emissions de " + polls[i] + " en " + an_max + " t/km&sup2;",        
+            legend_text: legend_text,        
         };
     };
 };
