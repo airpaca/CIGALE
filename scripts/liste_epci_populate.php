@@ -13,9 +13,8 @@ if (!$conn) {
 }
 
 $sql = "
-select distinct siren_epci_2017 as geoid, nom_epci_2017 as geonm, 'EPCI' as geotyp
-from commun.tpk_commune_2015_2016
-order by nom_epci_2017;
+select distinct siren_epci as geoid, nom_epci as geonm, 'EPCI' as geotyp
+from cigale.epci
 ";
 
 $res = pg_query($conn, $sql);

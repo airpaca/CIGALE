@@ -35,8 +35,8 @@
     <!-- Chart.js -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
 
-    <!-- Selectize.js -->
-    <script src="libs/selectize.js/selectize.js" type="text/javascript"></script>
+    <!-- Selectize.js (ATTENTION: Version standalone nécessaire!! js/standalone) -->
+    <script src="libs/selectize.js/selectize.min.js" type="text/javascript"></script>
     <link href="libs/selectize.js/selectize.css" rel="stylesheet" type="text/css"/>
     <link href="libs/selectize.js/selectize.bootstrap3.css" rel="stylesheet" type="text/css"/>    
 
@@ -349,6 +349,7 @@ function createMap(){
         
         // Cache la couche des communes si visible
         sidebar.hide();
+        
         // if (my_layers["comm_" + polluant_actif].layer != null) {
         if (map.hasLayer(my_layers["comm_" + polluant_actif].layer) == true) {           
             map.removeLayer(my_layers["comm_" + polluant_actif].layer);
@@ -732,8 +733,7 @@ function create_wfs_epci_layers(my_layers_object){
             } else {
                 the_jenks = calc_jenks(data, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
             };
-            
-           
+
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
                 style: function(feature) {
@@ -786,10 +786,8 @@ function create_wfs_epci_layers(my_layers_object){
                         layer.setStyle({weight: 2, color: "#000000"});
 
                         // Mise à jour de la liste des EPCI avec l'EPCI sélectionné
-                        // FIXME: Ne fonctionne pas pour l'instant, revoir tout le système d'affichage
-                        // select_list[0].selectize.addOption({value:feature.properties["siren_epci_2017"],text:feature.properties["nom_epci_2017"]});
-                        // select_list[0].selectize.addItem(feature.properties["siren_epci_2017"], false); 
-                        
+                        // NOTE: Si bugs / lenteurs, commencer par commenter cette ligne!
+                        select_list[0].selectize.setValue(feature.properties["siren_epci"], true);                       
                     });                    
                 },                 
             });     
