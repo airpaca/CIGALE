@@ -608,7 +608,7 @@ function create_wms_layer(my_layers_object){
     };
 };
 
-function calc_jenks(data, field, njenks){
+function calc_jenks(data, field, njenks, colorscale){
     /*
     Calcul à partir d'une réponse geojson [data] les classes et couleurs de 
     jenks sur un champ [field] à partir d'une nombre de classes [njenks].
@@ -617,8 +617,10 @@ function calc_jenks(data, field, njenks){
     Attention, si le nombre de classes jenks demandé est trop faible par rapport au nombre
     de valeurs, alors on réduit le nombre de classes
     
+    @colorscale: Ex - ['#f9ebea', '#cd6155', '#cb4335']
+    
     Ex:
-    the_jenks = calc_jenks(data, "superficie", 3);
+    the_jenks = calc_jenks(data, "superficie", 3, ['#f9ebea', '#cd6155', '#cb4335']);
     console.log(the_jenks);
     */
     items = [];
@@ -637,7 +639,8 @@ function calc_jenks(data, field, njenks){
     
     classifier = new geostats(items);
     var jenksResult = classifier.getJenks(njenks);
-    var color_x = chroma.scale(['#f9ebea', '#cd6155', '#cb4335']).colors(njenks);
+    // var color_x = chroma.scale(['#f9ebea', '#cd6155', '#cb4335']).colors(njenks);
+    var color_x = chroma.scale(colorscale).colors(njenks);
     
     return {bornes: jenksResult, colors: color_x}; 
 };
@@ -691,8 +694,16 @@ function create_wfs_epci_layers(my_layers_object){
         jsonCallback: 'getJson',
         success: function (data) {
         
-            // Calcul des statistiques
-            the_jenks = calc_jenks(data, "val", 6);
+            // Calcul des statistiques (echelle de couleur en fonction du polluant)
+            // the_jenks = calc_jenks(data, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
+            if (['conso','prod'].includes(my_layers_object.polluant)  == true) {
+                the_jenks = calc_jenks(data, "val", 6, ['#dddd31', '#b9711b', '#940505']);
+            } else if (['co2','ch4.co2e','n2o.co2e'].includes(my_layers_object.polluant)  == true) {
+                the_jenks = calc_jenks(data, "val", 6, ['#61ccdd', '#3e6cb9', '#1a0c94']);
+            } else {
+                the_jenks = calc_jenks(data, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
+            };
+            
            
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
@@ -789,7 +800,7 @@ function create_wfs_epci_layers_filter_specifique(my_layers_object){
         success: function (data) {
         
             // Calcul des statistiques
-            the_jenks = calc_jenks(data, "val", 6);
+            the_jenks = calc_jenks(data, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
            
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
@@ -910,7 +921,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                 };
             };
             
-            the_jenks = calc_jenks(data_filtered, "val", 6);
+            the_jenks = calc_jenks(data_filtered, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
            
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
