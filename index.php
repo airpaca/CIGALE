@@ -300,6 +300,8 @@ $(function() { /* Gestion des listes et couches EPCI poll */
             // Création des graphiques
             if (polluant_actif == 'conso') {
                 create_graphiques_conso(my_app.siren_epci, my_app.nom_epci);
+            } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e') {
+                create_graphiques_ges(my_app.siren_epci, my_app.nom_epci);                
             } else {
                 create_graphiques(my_app.siren_epci, my_app.nom_epci);             
             };
@@ -535,6 +537,8 @@ function epci2comm(siren_epeci, nom_epeci){
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
     if (polluant_actif == 'conso') {
         create_graphiques_conso(siren_epeci, nom_epeci);
+    } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e') {
+        create_graphiques_ges(siren_epeci, nom_epeci);           
     } else {
         create_graphiques(siren_epeci, nom_epeci);       
     };    
@@ -789,7 +793,9 @@ function create_wfs_epci_layers(my_layers_object){
                         
                         // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques 
                         if (my_layers_object.polluant  == 'conso'){
-                            create_graphiques_conso(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
+                            create_graphiques_conso(feature.properties["siren_epci"], feature.properties["nom_epci"]); 
+                        } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e') {
+                            create_graphiques_ges(feature.properties["siren_epci"], feature.properties["nom_epci"]);                                
                         } else {
                             create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
                         };                        
@@ -910,6 +916,8 @@ function create_wfs_epci_layers_filter_specifique(my_layers_object){
                         create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]); 
                     if (polluant_actif == 'conso') {
                         create_graphiques_conso(siren_epeci, nom_epeci);
+                    } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e') {
+                        create_graphiques_ges(siren_epeci, nom_epeci);                         
                     } else {
                         create_graphiques(siren_epeci, nom_epeci);       
                     }; 
@@ -1004,7 +1012,13 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                     layer.on('mouseover', function(){
                         layer.setStyle({weight: 4});
                         // this.openPopup();
-                        hover_info.update(feature.properties["nom_comm"] + ": " + parseFloat(feature.properties["val"]).toFixed(1) + " t/km&sup2;</div>");
+                        
+                        if (my_layers_object.polluant == ("conso")){
+                            the_unit = "tep";
+                        } else {
+                            the_unit = "t";
+                        };
+                        hover_info.update(feature.properties["nom_comm"] + ": " + parseFloat(feature.properties["val"]).toFixed(1) + " " + the_unit + "/km&sup2;</div>");
                     });
                     layer.on('mouseout', function(){
                         layer.setStyle({weight: 2});
@@ -1478,6 +1492,58 @@ function create_graphiques_conso(siren_epci, nom_epci){
 
 };
 
+function create_graphiques_ges(siren_epci, nom_epci){
+    /*
+    Création des graphiques 
+    */
+    
+    // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
+    my_app.siren_epci = siren_epci;
+    my_app.nom_epci = nom_epci;
+    
+    $.ajax({
+        type: "GET",
+        url: "scripts/graphiques_ges.php",
+        dataType: 'json',   
+        data: {
+            pg_host: cfg_pg_host,
+            pg_bdd: cfg_pg_bdd, 
+            pg_lgn: cfg_pg_lgn, 
+            pg_pwd: cfg_pg_pwd,  
+            siren_epci: siren_epci,
+            polluant: polluant_actif,
+            an: an_max,
+        },    
+        beforeSend:function(jqXHR, settings){
+            jqXHR.siren_epci = siren_epci;  
+            jqXHR.nom_epci = nom_epci;
+            jqXHR.polluant = polluant_actif; 
+            jqXHR.polls_names = polls_names;
+            jqXHR.an = an_max;            
+        },        
+        success: function(response,textStatus,jqXHR){
+                
+            console.log("SUCCESS");
+                
+            // titre
+            change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
+            
+            create_piechart_emi(response[0], "graph1", "Emissions directes");
+            create_piechart_emi(response[1], "graph2", "Emissions indirectes");
+            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (émissions directes en t)");
+            create_barchart_part(response[3], "graph4");
+            sidebar.show();  
+        },
+        error: function (request, error) {
+            console.log("ERROR: create_graphiques_ges()");
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });
+
+};
+
 function export_pdf(){
     /*
     Utilisation de jsPDF et de la fonction toDataURL de charts.js
@@ -1580,7 +1646,9 @@ function creation_couches_epci_polluant(){
         
         // Texte de légende en fonction du polluant
         if (polls[i] == 'conso'){
-            legend_text = "Consommations " + an_max + " tep/km&sup2;";
+            legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
+        } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
+            legend_text = "Emissions directes de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";
         } else {
             legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";  
         };
@@ -1619,7 +1687,9 @@ function creation_couches_comm_polluant(){
         
         // Texte de légende en fonction du polluant
         if (polls[i] == 'conso'){
-            legend_text = "Consommations " + an_max + " tep/km&sup2;";
+            legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
+        } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
+            legend_text = "Emissions directes de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";            
         } else {
             legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";  
         };        
