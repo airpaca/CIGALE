@@ -19,7 +19,7 @@ if (!$conn) {
 $sql = "
 select b.nom_court_secten1, b.secten1_color, sum(val) as val
 from (
-	select id_comm, id_secten1, (sum(val))::BIGINT as val 
+	select id_comm, id_secten1, (sum(val) / 1000.)::BIGINT as val 
 	from total.bilan_comm_v4_secten1
 	where 
         an = " . $an . " 
@@ -51,7 +51,7 @@ while ($row = pg_fetch_assoc( $res )) {
 $sql = "
 select b.nom_court_secten1, b.secten1_color, sum(val) as val
 from (
-	select id_comm, id_secten1, (sum(val))::BIGINT as val 
+	select id_comm, id_secten1, (sum(val) / 1000.)::BIGINT as val 
 	from total.bilan_comm_v4_secten1
 	where 
         an = " . $an . " 

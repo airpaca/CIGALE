@@ -1016,7 +1016,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                         if (my_layers_object.polluant == ("conso")){
                             the_unit = "tep";
                         } else {
-                            the_unit = "t";
+                            the_unit = "kg";
                         };
                         hover_info.update(feature.properties["nom_comm"] + ": " + parseFloat(feature.properties["val"]).toFixed(1) + " " + the_unit + "/km&sup2;</div>");
                     });
@@ -1105,7 +1105,7 @@ function change_graph_title(the_title){
     $('.graph_title').html(the_title);    
 };
 
-function create_piechart_emi(response, div, graph_title){
+function create_piechart_emi(response, div, graph_title, tooltip_unit){
     /*
     Création d'un graphique bar à partir de:
     @response - Réponse json de la requête ajax
@@ -1177,7 +1177,7 @@ function create_piechart_emi(response, div, graph_title){
                         };
                         
                         var tooltipPercentage = Math.round((tooltipData / total) * 100.);
-                        return tooltipLabel + ': ' + tooltipPercentage + '% (' + tooltipData + ')';
+                        return tooltipLabel + ': ' + tooltipPercentage + '% (' + tooltipData + ' ' + tooltip_unit + ')';
                     }
                 }
             },
@@ -1426,7 +1426,7 @@ function create_graphiques(siren_epci, nom_epci){
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
             
             create_barchart_emi(response[1], "graph2");
-            create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max);
+            create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max, "t");
             create_linechart_emi(response[2], "graph3", "Evolution sectorielle pluriannuelle (t)");
             create_barchart_part(response[3], "graph4");
             
@@ -1476,9 +1476,9 @@ function create_graphiques_conso(siren_epci, nom_epci){
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des consommations');
             
-            create_piechart_emi(response[0], "graph1", "Consommations d'énergie primaire");
-            create_piechart_emi(response[1], "graph2", "Consommations d'énergie finale");
-            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie primaire en tep)");
+            create_piechart_emi(response[0], "graph1", "Consommations d'énergie primaire", "ktep");
+            create_piechart_emi(response[1], "graph2", "Consommations d'énergie finale", "ktep");
+            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie primaire en ktep)");
             create_barchart_part(response[3], "graph4");
             sidebar.show();  
         },
@@ -1528,8 +1528,8 @@ function create_graphiques_ges(siren_epci, nom_epci){
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
             
-            create_piechart_emi(response[0], "graph1", "Emissions directes");
-            create_piechart_emi(response[1], "graph2", "Emissions indirectes");
+            create_piechart_emi(response[0], "graph1", "Emissions directes", "t");
+            create_piechart_emi(response[1], "graph2", "Emissions indirectes", "t");
             create_linechart_emi(response[2], "graph3", "Evolution séctorielle (émissions directes en t)");
             create_barchart_part(response[3], "graph4");
             sidebar.show();  
@@ -1648,9 +1648,9 @@ function creation_couches_epci_polluant(){
         if (polls[i] == 'conso'){
             legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
-            legend_text = "Emissions directes de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";
+            legend_text = "Emissions directes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";
         } else {
-            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";  
+            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";  
         };
         
         // Ajout de la couche dans la liste des couches avec les bons paramètres
@@ -1689,9 +1689,9 @@ function creation_couches_comm_polluant(){
         if (polls[i] == 'conso'){
             legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
-            legend_text = "Emissions directes de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";            
+            legend_text = "Emissions directes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";            
         } else {
-            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " t/km&sup2;";  
+            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";  
         };        
         
         // Ajout de la couche dans la liste des couches avec les bons paramètres
