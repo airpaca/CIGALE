@@ -220,6 +220,67 @@ var my_app = {
 var legend = L.control({position: 'bottomleft'});
 var hover_info = L.control({position: 'topleft'});
 
+/* Extension de chart.js */
+
+// Permets de dessiner des lignes sur un linechart pour les nodata
+// Source: https://stackoverflow.com/questions/36329630/chart-js-2-0-vertical-lines
+var originalLineDraw = Chart.controllers.line.prototype.draw;
+Chart.helpers.extend(Chart.controllers.line.prototype, {
+  draw: function() {
+    originalLineDraw.apply(this, arguments);
+
+    var chart = this.chart;
+    var ctx = chart.chart.ctx;
+
+  
+    var xaxis = chart.scales['x-axis-0'];
+    var yaxis = chart.scales['y-axis-0'];
+
+    ctx.beginPath();
+    ctx.moveTo(xaxis.getPixelForValue(undefined, 0.5), yaxis.top);
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 50;
+    ctx.lineTo(xaxis.getPixelForValue(undefined, 0.5), yaxis.bottom);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(xaxis.getPixelForValue(undefined, 0.3), yaxis.top);
+    ctx.strokeStyle = '#bfbfbf';
+    ctx.lineWidth = 1;
+    ctx.lineTo(xaxis.getPixelForValue(undefined, 0.3), yaxis.bottom);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(xaxis.getPixelForValue(undefined, 0.71), yaxis.top);
+    ctx.strokeStyle = '#bfbfbf';
+    ctx.lineWidth = 1;
+    ctx.lineTo(xaxis.getPixelForValue(undefined, 0.71), yaxis.bottom);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(xaxis.getPixelForValue(undefined, 1.5), yaxis.top);
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 25;
+    ctx.lineTo(xaxis.getPixelForValue(undefined, 1.5), yaxis.bottom);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(xaxis.getPixelForValue(undefined, 1.4), yaxis.top);
+    ctx.strokeStyle = '#bfbfbf';
+    ctx.lineWidth = 1;
+    ctx.lineTo(xaxis.getPixelForValue(undefined, 1.4), yaxis.bottom);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(xaxis.getPixelForValue(undefined, 1.6), yaxis.top);
+    ctx.strokeStyle = '#bfbfbf';
+    ctx.lineWidth = 1;
+    ctx.lineTo(xaxis.getPixelForValue(undefined, 1.6), yaxis.bottom);
+    ctx.stroke();
+    
+  }
+});
+
 /* Fonctions */
 $(function() { /* Gestion des listes et couches EPCI poll */
 
@@ -1298,7 +1359,7 @@ function create_linechart_emi(response, div, graph_title){
             pointHitRadius: 8,
         });
     };            
-
+    
     var graph_data = [];
     for (var i in response) {
         graph_data.push(response[i].val);
@@ -1340,7 +1401,7 @@ function create_linechart_emi(response, div, graph_title){
                     }
                 }]
             }
-        }
+        },        
     }); 
 };
 

@@ -53,6 +53,15 @@ where
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
 	and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
 group by an
+
+-- Ajout des années non disponibles
+union all 
+select 2008::integer as an, null::integer as val
+union all
+select 2009::integer as an, null::integer as val
+union all
+select 2011::integer as an, null::integer as val
+
 order by an
 ;
 ";
@@ -70,16 +79,46 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Lignes d'évolution des secteurs*/
 $sql = "
+-- SANS LES VALEURS POUR LES ANNEES MANQUANTES
 select an, id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
 from total.bilan_comm_v4_secten1 as a
 left join total.tpk_secten1_color as b using (id_secten1)
 where 
-	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+ 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
 	and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
 group by an, id_secten1, nom_court_secten1, secten1_color
 order by id_secten1, an
 ;
 ";
+
+// $sql = "
+// -- AVEC LES VALEURS POUR LES ANNEES MANQUANTES
+// with emi as (
+	// select an, id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
+	// from total.bilan_comm_v4_secten1 as a
+	// left join total.tpk_secten1_color as b using (id_secten1)
+	// where 
+		// id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+		// and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
+	// group by an, id_secten1, nom_court_secten1, secten1_color
+	// order by id_secten1, an
+// ) 
+// select * from emi
+// union all
+// select 2008::integer as an, id_secten1, nom_court_secten1, secten1_color, null::integer as val
+// from emi 
+// where an = 2007
+// union all
+// select 2009::integer as an, id_secten1, nom_court_secten1, secten1_color, null::integer as val
+// from emi 
+// where an = 2007
+// union all
+// select 2011::integer as an, id_secten1, nom_court_secten1, secten1_color, null::integer as val
+// from emi 
+// where an = 2007
+// order by id_secten1, an
+// ;
+// ";
 
 $res = pg_query($conn, $sql);
 if (!$res) {
