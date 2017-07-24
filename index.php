@@ -298,7 +298,11 @@ $(function() { /* Gestion des listes et couches EPCI poll */
             create_wfs_comm_layers(my_layers["comm_" + polluant_actif], my_app.siren_epci);
             
             // Création des graphiques
-            create_graphiques(my_app.siren_epci, my_app.nom_epci);             
+            if (polluant_actif == 'conso') {
+                create_graphiques_conso(my_app.siren_epci, my_app.nom_epci);
+            } else {
+                create_graphiques(my_app.siren_epci, my_app.nom_epci);             
+            };
             
             return null;
         } else {
@@ -529,7 +533,11 @@ function epci2comm(siren_epeci, nom_epeci){
     map.removeLayer(my_layers["epci_" + polluant_actif].layer);    
     
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
-    create_graphiques(siren_epeci, nom_epeci);   
+    if (polluant_actif == 'conso') {
+        create_graphiques_conso(siren_epeci, nom_epeci);
+    } else {
+        create_graphiques(siren_epeci, nom_epeci);       
+    };    
 
     // On informe l'application que l'on est au niveau communal
     my_app.niveau = "comm";
@@ -779,8 +787,12 @@ function create_wfs_epci_layers(my_layers_object){
                         // On informe l'application que l'on est au niveau communal
                         my_app.niveau = 'comm';
                         
-                        // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
-                        create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
+                        // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques 
+                        if (my_layers_object.polluant  == 'conso'){
+                            create_graphiques_conso(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
+                        } else {
+                            create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
+                        };                        
                         
                         // On réapplique le style mouseout pour éviter les artefacts 
                         layer.setStyle({weight: 2, color: "#000000"});
@@ -895,7 +907,13 @@ function create_wfs_epci_layers_filter_specifique(my_layers_object){
                         create_wfs_comm_layers(my_layers["comm_" + polluant_actif], feature.properties["siren_epci"]); 
                         
                         // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
-                        create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
+                        create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]); 
+                    if (polluant_actif == 'conso') {
+                        create_graphiques_conso(siren_epeci, nom_epeci);
+                    } else {
+                        create_graphiques(siren_epeci, nom_epeci);       
+                    }; 
+                        
                         
                         // On réapplique le style mouseout pour éviter les artefacts 
                         layer.setStyle({weight: 2, color: "#000000"});
@@ -1073,13 +1091,12 @@ function change_graph_title(the_title){
     $('.graph_title').html(the_title);    
 };
 
-function create_piechart_emi(response, div){
+function create_piechart_emi(response, div, graph_title){
     /*
     Création d'un graphique bar à partir de:
     @response - Réponse json de la requête ajax
     @div - Classe de l'élement auquel rattacher le graph 
-    */
-           
+    */           
     $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');        
 
     var graph_labels = [];
@@ -1087,7 +1104,7 @@ function create_piechart_emi(response, div){
         graph_labels.push(response[i].nom_court_secten1);
     };              
 
-    var graph_title = 'Répartition sectorielle ' + an_max;
+    // var graph_title = 'Répartition sectorielle ' + an_max;
 
     var graph_data = [];
     for (var i in response) {
@@ -1222,7 +1239,7 @@ function create_barchart_emi(response, div){
     }); 
 };
 
-function create_linechart_emi(response, div){
+function create_linechart_emi(response, div, graph_title){
     /*
     Création d'un graphique bar à partir de:
     @response - Réponse json de la requête ajax
@@ -1294,7 +1311,7 @@ function create_linechart_emi(response, div){
             title: {
                 display: true,
                 fontSize: 15,
-                text: "Evolution sectorielle pluriannuelle (t)"
+                text: graph_title,
             },
             legend: {
                 position: 'bottom',
@@ -1391,22 +1408,68 @@ function create_graphiques(siren_epci, nom_epci){
         },        
         success: function(response,textStatus,jqXHR){
             
-            // titre en fonction du polluant
-            if (jqXHR.polluant == "conso"){
-                change_graph_title(jqXHR.nom_epci + '</br> Bilan des consommations');
-            } else {
-                change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
-            };
+            // titre
+            change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
             
             create_barchart_emi(response[1], "graph2");
-            create_piechart_emi(response[0], "graph1");
-            create_linechart_emi(response[2], "graph3");
+            create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max);
+            create_linechart_emi(response[2], "graph3", "Evolution sectorielle pluriannuelle (t)");
             create_barchart_part(response[3], "graph4");
             
             sidebar.show();  
         },
         error: function (request, error) {
             console.log("ERROR: create_graphiques()");
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });
+
+};
+
+function create_graphiques_conso(siren_epci, nom_epci){
+    /*
+    Création des graphiques 
+    */
+    
+    // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
+    my_app.siren_epci = siren_epci;
+    my_app.nom_epci = nom_epci;
+    
+    $.ajax({
+        type: "GET",
+        url: "scripts/graphiques_consos.php",
+        dataType: 'json',   
+        data: {
+            pg_host: cfg_pg_host,
+            pg_bdd: cfg_pg_bdd, 
+            pg_lgn: cfg_pg_lgn, 
+            pg_pwd: cfg_pg_pwd,  
+            siren_epci: siren_epci,
+            polluant: polluant_actif,
+            an: an_max,
+        },    
+        beforeSend:function(jqXHR, settings){
+            jqXHR.siren_epci = siren_epci;  
+            jqXHR.nom_epci = nom_epci;
+            jqXHR.polluant = polluant_actif; 
+            jqXHR.polls_names = polls_names;
+            jqXHR.an = an_max;            
+        },        
+        success: function(response,textStatus,jqXHR){
+                       
+            // titre
+            change_graph_title(jqXHR.nom_epci + '</br> Bilan des consommations');
+            
+            create_piechart_emi(response[0], "graph1", "Consommations d'énergie primaire");
+            create_piechart_emi(response[1], "graph2", "Consommations d'énergie finale");
+            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie primaire en tep)");
+            create_barchart_part(response[3], "graph4");
+            sidebar.show();  
+        },
+        error: function (request, error) {
+            console.log("ERROR: create_graphiques_conso()");
             console.log(arguments);
             console.log("Ajax error: " + error);
             $("#error_tube").show();
