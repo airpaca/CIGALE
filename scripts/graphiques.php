@@ -23,6 +23,7 @@ from (
 	where 
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+        and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
 	group by id_comm, id_secten1
 ) as a
 left join total.tpk_secten1_color as b using (id_secten1)
@@ -52,6 +53,7 @@ from total.bilan_comm_v4_secten1
 where 
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
 	and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
+    and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
 group by an
 
 -- Ajout des années non disponibles
@@ -85,6 +87,7 @@ from total.bilan_comm_v4_secten1 as a
 left join total.tpk_secten1_color as b using (id_secten1)
 where 
  	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+    and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
 	and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
 group by an, id_secten1, nom_court_secten1, secten1_color
 order by id_secten1, an
@@ -99,6 +102,7 @@ order by id_secten1, an
 	// left join total.tpk_secten1_color as b using (id_secten1)
 	// where 
 		// id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+        // and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
 		// and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
 	// group by an, id_secten1, nom_court_secten1, secten1_color
 	// order by id_secten1, an
@@ -144,7 +148,8 @@ from (
 		from total.bilan_comm_v4_secten1
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-			and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
+            and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
+			and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . " )
 			and an = " . $an . "
 		) as epci,
 		-- Emissions de la région
@@ -152,6 +157,7 @@ from (
 		from total.bilan_comm_v4_secten1
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+            and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
 			and an = " . $an . "
 		) as reg
 ) as a

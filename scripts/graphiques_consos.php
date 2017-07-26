@@ -15,7 +15,7 @@ if (!$conn) {
     exit;
 }
 
-// Export des consommations primaires
+// Export des consommations finales par secteur
 $sql = "
 select b.nom_court_secten1, b.secten1_color, sum(val) as val
 from (
@@ -24,7 +24,7 @@ from (
 	where 
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-        and not (id_secten1 = '1' and code_cat_energie <> 8) -- On ne veut pas prendre le secteur de la production d'énergie sauf elec
+        and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 	group by id_comm, id_secten1
 ) as a
 left join total.tpk_secten1_color as b using (id_secten1)
@@ -42,29 +42,29 @@ if (!$res) {
     exit;
 }
 
-$array_result_pie_primaire = array();
+$array_result_pie_secteurs = array();
 while ($row = pg_fetch_assoc( $res )) {
-  $array_result_pie_primaire[] = $row;
+  $array_result_pie_secteurs[] = $row;
 } 
 
-// Export des consommations finales
+// Export des consommations finales par catégorie d'énergie
 $sql = "
-select b.nom_court_secten1, b.secten1_color, sum(val) as val
+select b.nom_court_cat_energie as nom_court_secten1, b.cat_energie_color as secten1_color, sum(val) as val
 from (
-	select id_comm, id_secten1, (sum(val) / 1000.)::integer as val 
+	select id_comm, code_cat_energie, (sum(val) / 1000.)::integer as val 
 	from total.bilan_comm_v4_secten1
 	where 
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-        -- and not (id_secten1 = '1' and code_cat_energie <> 8) -- On ne veut pas prendre le secteur de la production d'énergie sauf elec
-	group by id_comm, id_secten1
+        and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+	group by id_comm, code_cat_energie
 ) as a
-left join total.tpk_secten1_color as b using (id_secten1)
+left join total.tpk_cat_energie_color as b using (code_cat_energie)
 left join commun.tpk_commune_2015_2016 as c using (id_comm)
 left join cigale.epci as d on c.siren_epci_2017 = d.siren_epci
 where 
 	siren_epci = " . $siren_epci . " 
-group by b.nom_court_secten1, b.secten1_color    
+group by b.nom_court_cat_energie, b.cat_energie_color    
 ;
 ";
 
@@ -74,9 +74,9 @@ if (!$res) {
     exit;
 }
 
-$array_result_pie_finale = array();
+$array_result_pie_cat_energie = array();
 while ($row = pg_fetch_assoc( $res )) {
-  $array_result_pie_finale[] = $row;
+  $array_result_pie_cat_energie[] = $row;
 } 
 
 /* Lignes d'évolution par secteur - energie primaire */
@@ -86,7 +86,7 @@ from total.bilan_comm_v4_secten1 as a
 left join total.tpk_secten1_color as b using (id_secten1)
 where 
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-    and not (id_secten1 = '1' and code_cat_energie <> 8) -- On ne veut pas prendre le secteur de la production d'énergie sauf elec
+    and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 	and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
 group by an, id_secten1, nom_court_secten1, secten1_color
 order by id_secten1, an
@@ -99,9 +99,9 @@ if (!$res) {
     exit;
 }
 
-$array_result_line_primaire = array();
+$array_result_line = array();
 while ($row = pg_fetch_assoc( $res )) {
-  $array_result_line_primaire[] = $row;
+  $array_result_line[] = $row;
 }
 
 /* Part sur dep et reg (énergie primaire) */
@@ -118,7 +118,7 @@ from (
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
 			and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
-            and not (id_secten1 = '1' and code_cat_energie <> 8) -- On ne veut pas prendre le secteur de la production d'énergie sauf elec
+            and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 			and an = " . $an . "
 		) as epci,
 		-- Emissions de la région
@@ -126,7 +126,7 @@ from (
 		from total.bilan_comm_v4_secten1
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-            and not (id_secten1 = '1' and code_cat_energie <> 8) -- On ne veut pas prendre le secteur de la production d'énergie sauf elec
+            and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 			and an = " . $an . "
 		) as reg
 ) as a
@@ -145,9 +145,9 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Stockage des résultats */
 $array_result = array(
-    $array_result_pie_primaire,
-    $array_result_pie_finale,
-    $array_result_line_primaire,
+    $array_result_pie_secteurs,
+    $array_result_pie_cat_energie,
+    $array_result_line,
     $array_result_part,
 );
 

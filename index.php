@@ -32,6 +32,12 @@
     <script src="libs/spin.js/spin.min.js"></script>
     <script src="libs/Leaflet.Spin-1.1.0/leaflet.spin.min.js"></script>
 
+    <!-- leaflet.wms -->
+    <script src="libs/leaflet.wms-gh-pages/dist/leaflet.wms.js"></script>  
+
+    <!-- proj4js -->
+    <script src="libs/proj4/proj4.js"></script>  
+        
     <!-- Chart.js -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
 
@@ -428,16 +434,23 @@ function createMap(){
     }).addTo(map);
 
     // Prise en compte du click sur la carte 
-    map.on('click', function(e)  {   
-        
+    map.on('click', function(e){   
+
+        // Si besoin de boucler sur les couches présentes sur la carte:
+        // var clickBounds = L.latLngBounds(e.latlng, e.latlng);       
+        // for (var l in map._layers) {            
+            // if (map._layers[l].options.name == 'epci') {
+                // console.log(map._layers[l]);
+            // };
+        // };
+                
         // Cache la couche des communes si visible
         sidebar.hide();
-        
-        // if (my_layers["comm_" + polluant_actif].layer != null) {
+                
         if (map.hasLayer(my_layers["comm_" + polluant_actif].layer) == true) {           
             map.removeLayer(my_layers["comm_" + polluant_actif].layer);
         };
-        
+               
         // Affichage des EPCI et regénération de la légende
         my_layers["epci_" + polluant_actif].layer.addTo(map);
         generate_legend(my_layers["epci_" + polluant_actif].legend_text, my_layers["epci_" + polluant_actif].legend.bornes, my_layers["epci_" + polluant_actif].legend.colors);
@@ -713,7 +726,7 @@ function create_wms_layer(my_layers_object){
     dans le mapfile et l'insert dans l'objet layer déclaré
     en argument.
     Ex: create_wms_layer(my_layers.epci);
-    */   
+    */  
     my_layers_object.layer = L.tileLayer.wms(wms_address, {
         name: my_layers_object.name, // wms_layer_name
         layers: 'epci', // (required) Comma-separated list of WMS layers to show.
@@ -725,7 +738,8 @@ function create_wms_layer(my_layers_object){
 
     if (my_layers_object.onmap == true) {
         my_layers_object.layer.addTo(map);    
-    };
+    }; 
+    
 };
 
 function calc_jenks(data, field, njenks, colorscale){
@@ -1232,7 +1246,7 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
             },
             legend: {
                 position: 'bottom',
-                display: false, // On désactive la légende
+                display: true, // On désactive la légende
                 labels: {fontSize: 10,},
                 boxWidth: 1 // FIXME: Ne fonctionne pas
             },
@@ -1405,7 +1419,7 @@ function create_linechart_emi(response, div, graph_title){
                 text: graph_title,
             },
             legend: {
-                position: 'top',
+                position: 'bottom',
                 display: true,
             },
             scales: {
@@ -1560,9 +1574,9 @@ function create_graphiques_conso(siren_epci, nom_epci){
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des consommations');
             
-            create_piechart_emi(response[0], "graph1", "Consommations d'énergie primaire", "ktep");
-            create_piechart_emi(response[1], "graph2", "Consommations d'énergie finale", "ktep");
-            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie primaire en ktep)");
+            create_piechart_emi(response[0], "graph1", "Energie finale par secteur en " + an_max, "ktep");
+            create_piechart_emi(response[1], "graph2", "Energie finale par catégorie d'énergie en " + an_max, "ktep");
+            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie finale en ktep)");
             create_barchart_part(response[3], "graph4");
             sidebar.show();  
         },
@@ -1610,9 +1624,9 @@ function create_graphiques_ges(siren_epci, nom_epci){
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
             
-            create_piechart_emi(response[0], "graph1", "Emissions directes", "t");
-            create_piechart_emi(response[1], "graph2", "Emissions indirectes", "t");
-            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (émissions directes en t)");
+            create_piechart_emi(response[0], "graph1", "Emissions indirectes par secteur", "t");
+            create_piechart_emi(response[1], "graph2", "Emissions indirectes par catégorie d'énergie", "t");
+            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (émissions indirectes en t)");
             create_barchart_part(response[3], "graph4");
             sidebar.show();  
         },
