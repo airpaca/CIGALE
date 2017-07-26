@@ -1462,7 +1462,14 @@ function create_barchart_part(response, div){
                         min:0,
                         // max: 150,
                     }
-                }]
+                }],
+                xAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }],                
             }
         }
     }); 
