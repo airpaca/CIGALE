@@ -413,6 +413,24 @@ $(function() { /* Gestion des listes et couches EPCI poll */
     });    
 });
 
+function getBase64Image(img) {
+    /*
+    Converts an image to base 64
+    */
+    var canvas = document.createElement("canvas");
+
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+
+    ctx.drawImage(img, 0, 0);
+
+    var dataURL = canvas.toDataURL("image/jpeg");
+
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+
+};
+
 function createMap(){
     /* Création de la carte */
     var map = L.map('map', {layers: [], zoomControl:false}).setView([43.9, 6.0], 8);    
@@ -1187,7 +1205,7 @@ function create_sidebar_template(){
         <div class="graph2">graph2</div>\
         <div class="graph3">graph3</div>\
         <div class="graph4">graph4</div>\
-        <div class="graph5">graph5</div>\
+        <div class="graph5" id="graph5">graph5</div>\
     </section>\
     ';
     sidebar.setContent(sidebarContent);      
@@ -1198,11 +1216,13 @@ function change_graph_title(the_title){
 };
 
 function create_graph_legend(div, type){
+    
     if (type == 1) {
         $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png">');   
     } else {
         $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png"><img align="left" src="img/plots_legend_energie.png">');   
     };
+    
 };
 
 function create_piechart_emi(response, div, graph_title, tooltip_unit){
@@ -1544,6 +1564,7 @@ function create_graphiques(siren_epci, nom_epci){
             create_graph_legend("graph5", 1);
             
             sidebar.show();  
+            
         },
         error: function (request, error) {
             console.log("ERROR: create_graphiques()");
@@ -1721,10 +1742,23 @@ function export_pdf(){
     // Ajout bar chart inversé
     var canvasImg = document.getElementById("graph4_canvas").toDataURL();
     doc.addImage(canvasImg, 'PNG', 10, 240); 
-    
+   
+    // Ajout légendes au format image
+    var img = new Image();
+    img.src = "img/plots_legend_secteurs.png"; 
+    var dataURI = getBase64Image(img);
+    doc.addImage(dataURI, 'PNG', 10, 260);
+ 
+    if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges' || polluant_actif == 'conso') {    
+        var img = new Image();
+        img.src = "img/plots_legend_energie.png"; 
+        var dataURI = getBase64Image(img);
+        doc.addImage(dataURI, 'PNG', 10, 280);    
+    };
+     
     // Export
     doc.save('bilan_emissions.pdf');
-
+   
 };
 
 function create_hover_info_bar(){

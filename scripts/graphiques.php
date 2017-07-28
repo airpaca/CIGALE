@@ -174,12 +174,33 @@ while ($row = pg_fetch_assoc( $res )) {
   $array_result_part[] = $row;
 }
 
+/* Légende des secten1 */
+// $sql = "
+// select 0 as val, nom_court_secten1, secten1_color
+// from total.tpk_secten1_color 
+// order by id_secten1
+// ";
+
+// $res = pg_query($conn, $sql);
+// if (!$res) {
+    // echo "An SQL error occured.\n";
+    // exit;
+// }
+
+// $array_result_legend = array();
+// while ($row = pg_fetch_assoc( $res )) {
+  // $array_result_legend[] = $row;
+// }
+
+
+
 /* Stockage des résultats */
 $array_result = array(
     $array_result_pie,
     $array_result_bar,
     $array_result_line,
     $array_result_part,
+    // $array_result_legend,
 );
 
 /* Export en JSON */
