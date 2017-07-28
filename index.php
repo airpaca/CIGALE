@@ -921,7 +921,8 @@ function create_wfs_epci_layers(my_layers_object){
                         };
 
                         // Affichage de la couche des communes
-                        create_wfs_comm_layers(my_layers["comm_" + my_layers_object.polluant], feature.properties["siren_epci"]); 
+                        // create_wfs_comm_layers(my_layers["comm_" + my_layers_object.polluant], feature.properties["siren_epci"]); 
+                        create_wfs_comm_layers(my_layers["comm_" + polluant_actif], feature.properties["siren_epci"]); 
                         
                         // On informe l'application que l'on est au niveau communal
                         my_app.niveau = 'comm';
