@@ -447,6 +447,7 @@ function createMap(){
     var urlbasemap = 'https://{s}.tiles.mapbox.com/v3/aj.map-zfwsdp9f/{z}/{x}/{y}.png'; // AJ Ashton's Terrain Grey
     var attrib = '&copy; Air PACA, data &copy; OpenStreetMap contributors (license ODbL), design &copy; Mapbox (license Mapbox Terms of Service).';
     L.tileLayer(urlbasemap, {
+            name: "fond",
             attribution: attrib,
             opacity: 0.75
     }).addTo(map);
@@ -461,7 +462,10 @@ function createMap(){
                 // console.log(map._layers[l]);
             // };
         // };
-                
+            
+        // Supprime tous les éventuels layers des communes 
+        remove_all_comm_layers();
+             
         // Cache la couche des communes si visible
         sidebar.hide();
                 
@@ -480,6 +484,19 @@ function createMap(){
     });
     
     return map;
+};
+
+function remove_all_comm_layers(){
+    // Supprimer tous les layers des communes    
+    for (var l in map._layers) {   
+        if (map._layers[l].options.name != null) {
+            if (map._layers[l].options.name.match(/comm_.*/)) {
+                console.log("Removeing layer - " + map._layers[l].options.name);
+                map.removeLayer(map._layers[l]);
+                // map.removeLayer(my_layers[map._layers[l].options.name].layer);
+            };
+        };
+    };    
 };
 
 function create_sidebar(){
@@ -857,6 +874,7 @@ function create_wfs_epci_layers(my_layers_object){
 
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
+                name:my_layers_object.name,
                 style: function(feature) {
                     
                     // Récupération du style de l'objet et remplissage avec la bonne couleur
@@ -961,6 +979,7 @@ function create_wfs_epci_layers_filter_specifique(my_layers_object){
            
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
+                name:my_layers_object.name, 
                 filtre_polluant: function(value){
                     /*
                     Fonction spécifique permettant de filtrer 
@@ -1072,6 +1091,16 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
     en argument.
     Ex: create_wfs_comm_layers(my_layers.comm_nox);
     */     
+   
+    // Start loading bar
+    // map.spin(true, {opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5});
+
+    // Stop loading bar
+    // map.spin(false);    
+   
+    // Supprime tous les éventuels layers des communes 
+    remove_all_comm_layers();   
+   
     $.ajax({
         url: wfs_address + my_layers_object.wfs_query,
         datatype: 'json',
@@ -1105,6 +1134,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                     the_style.fillColor = find_jenks_color(the_jenks, feature.properties.val);
                     return the_style;
                 },
+                name: my_layers_object.name, 
                 filter: function(feature, layer) {
                     if (feature.properties["siren_epci"] == siren_epci) {
                         return true;
