@@ -454,7 +454,7 @@ function createMap(){
 
     // Prise en compte du click sur la carte 
     map.on('click', function(e){   
-
+   
         // Si besoin de boucler sur les couches présentes sur la carte:
         // var clickBounds = L.latLngBounds(e.latlng, e.latlng);       
         // for (var l in map._layers) {            
@@ -469,11 +469,12 @@ function createMap(){
         // Cache la couche des communes si visible
         sidebar.hide();
                 
-        if (map.hasLayer(my_layers["comm_" + polluant_actif].layer) == true) {           
-            map.removeLayer(my_layers["comm_" + polluant_actif].layer);
-        };
+        // if (map.hasLayer(my_layers["comm_" + polluant_actif].layer) == true) {           
+            // map.removeLayer(my_layers["comm_" + polluant_actif].layer);
+        // };
                
         // Affichage des EPCI et regénération de la légende
+        my_layers["epci_" + polluant_actif].layer.setStyle({fillOpacity:0.5});
         my_layers["epci_" + polluant_actif].layer.addTo(map);
         generate_legend(my_layers["epci_" + polluant_actif].legend_text, my_layers["epci_" + polluant_actif].legend.bornes, my_layers["epci_" + polluant_actif].legend.colors);
         map.fitBounds(my_layers["epci_" + polluant_actif].layer.getBounds());
@@ -491,9 +492,8 @@ function remove_all_comm_layers(){
     for (var l in map._layers) {   
         if (map._layers[l].options.name != null) {
             if (map._layers[l].options.name.match(/comm_.*/)) {
-                console.log("Removeing layer - " + map._layers[l].options.name);
+                // console.log("Removeing layer - " + map._layers[l].options.name);
                 map.removeLayer(map._layers[l]);
-                // map.removeLayer(my_layers[map._layers[l].options.name].layer);
             };
         };
     };    
@@ -605,7 +605,10 @@ function liste_epci_clean() {
     if (map.hasLayer(my_layers["comm_" + polluant_actif].layer) == true){
         map.removeLayer(my_layers["comm_" + polluant_actif].layer);
     };  
-
+   
+    // Changement de style des EPCI                      
+    my_layers["epci_" + polluant_actif].layer.setStyle({fillOpacity:0.5});
+   
     // Ajout de la couche des EPCI sur la carte et zoom max extent
     my_layers["epci_" + polluant_actif].layer.addTo(map);
     generate_legend(my_layers["epci_" + polluant_actif].legend_text, my_layers["epci_" + polluant_actif].legend.bornes, my_layers["epci_" + polluant_actif].legend.colors);
@@ -910,8 +913,13 @@ function create_wfs_epci_layers(my_layers_object){
                         map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
 
                         // Retrait de la couche EPCI
-                        map.removeLayer(my_layers_object.layer);
+                        // map.removeLayer(my_layers_object.layer);
                         
+                        // Changement de style des EPCI                      
+                        for (i in my_layers_object.layer._layers){
+                             my_layers_object.layer._layers[i].setStyle({fillOpacity:0.0});
+                        };
+
                         // Affichage de la couche des communes
                         create_wfs_comm_layers(my_layers["comm_" + my_layers_object.polluant], feature.properties["siren_epci"]); 
                         
@@ -1901,7 +1909,7 @@ var map = createMap();
 var sidebar = create_sidebar();
 var select_list = liste_epci_create(); 
 liste_epci_populate();
-create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
+// create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
 creation_couches_epci_polluant(); // Couches des ECPI par polluant
 creation_couches_comm_polluant(); // Couches des communes par polluant
 create_sidebar_template();
