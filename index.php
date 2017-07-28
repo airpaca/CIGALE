@@ -1187,6 +1187,7 @@ function create_sidebar_template(){
         <div class="graph2">graph2</div>\
         <div class="graph3">graph3</div>\
         <div class="graph4">graph4</div>\
+        <div class="graph5">graph5</div>\
     </section>\
     ';
     sidebar.setContent(sidebarContent);      
@@ -1194,6 +1195,14 @@ function create_sidebar_template(){
 
 function change_graph_title(the_title){
     $('.graph_title').html(the_title);    
+};
+
+function create_graph_legend(div, type){
+    if (type == 1) {
+        $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png">');   
+    } else {
+        $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png"><img align="left" src="img/plots_legend_energie.png">');   
+    };
 };
 
 function create_piechart_emi(response, div, graph_title, tooltip_unit){
@@ -1246,7 +1255,7 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
             },
             legend: {
                 position: 'bottom',
-                display: true, // On désactive la légende
+                display: false, // On désactive la légende
                 labels: {fontSize: 10,},
                 boxWidth: 1 // FIXME: Ne fonctionne pas
             },
@@ -1420,7 +1429,7 @@ function create_linechart_emi(response, div, graph_title){
             },
             legend: {
                 position: 'bottom',
-                display: true,
+                display: false,
             },
             scales: {
                 yAxes: [{
@@ -1474,13 +1483,17 @@ function create_barchart_part(response, div){
                     ticks: {
                         // beginAtZero:true,
                         min:0,
+                        // autoSkip: true,
+                        // maxTicksLimit: 4,
                         // max: 150,
                     }
                 }],
                 xAxes: [{
                     ticks: {
                         // beginAtZero:true,
-                        min:0,
+                        min:0,   
+                        autoSkip: true,
+                        maxTicksLimit: 4,                        
                         // max: 150,
                     }
                 }],                
@@ -1527,6 +1540,8 @@ function create_graphiques(siren_epci, nom_epci){
             create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max, "t");
             create_linechart_emi(response[2], "graph3", "Evolution sectorielle pluriannuelle (t)");
             create_barchart_part(response[3], "graph4");
+            
+            create_graph_legend("graph5", 1);
             
             sidebar.show();  
         },
@@ -1578,6 +1593,9 @@ function create_graphiques_conso(siren_epci, nom_epci){
             create_piechart_emi(response[1], "graph2", "Energie finale par catégorie d'énergie en " + an_max, "ktep");
             create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie finale en ktep)");
             create_barchart_part(response[3], "graph4");
+            
+            create_graph_legend("graph5", 2);
+            
             sidebar.show();  
         },
         error: function (request, error) {
@@ -1628,6 +1646,9 @@ function create_graphiques_ges(siren_epci, nom_epci){
             create_piechart_emi(response[1], "graph2", "Emissions indirectes par catégorie d'énergie", "t");
             create_linechart_emi(response[2], "graph3", "Evolution séctorielle (émissions indirectes en t)");
             create_barchart_part(response[3], "graph4");
+            
+            create_graph_legend("graph5", 2);
+            
             sidebar.show();  
         },
         error: function (request, error) {
