@@ -77,6 +77,7 @@
         <div class="list-group">
         
             <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
+            <img class="img-soustitre" align="middle" src="img/LogoCPERnew_small.png">
         
             <h1>CIGALE</h1>
             <h2>Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie</h2>
