@@ -628,6 +628,8 @@ function liste_epci_submit(){
     Une fois validé, on récupère le code de l'EPCI et on zoom dessus, affichant les graphiques
     */  
 
+    console.log("SUBMIT");
+    
     console.log(liste_epci_submit());
     console.log(select_list[0].selectize.getValue());
     console.log(select_list[0].selectize.getValue());
@@ -644,7 +646,7 @@ function liste_epci_submit(){
 };
 
 function epci2comm(siren_epeci, nom_epeci){
-        
+    
     // Si une couche des communes est déjà affichée on la supprime
     // if (map.hasLayer(my_layers["comm_" + polluant_actif].layer) == true){
     if (my_app.niveau == "comm"){
@@ -662,7 +664,11 @@ function epci2comm(siren_epeci, nom_epeci){
     create_wfs_comm_layers(my_layers["comm_" + polluant_actif], siren_epeci); 
     
     // Retrait de la couche EPCI
-    map.removeLayer(my_layers["epci_" + polluant_actif].layer);    
+    // map.removeLayer(my_layers["epci_" + polluant_actif].layer);    
+    
+    // Changement de style des EPCI                      
+    my_layers["epci_" + polluant_actif].layer.setStyle({fillOpacity:0.0});    
+    
     
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
     if (polluant_actif == 'conso') {
