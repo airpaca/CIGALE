@@ -214,6 +214,12 @@ var polls_names = {
 };
 var polluant_actif = "nox";
 
+var color_scales = {
+    polluants: ['#ffeda0', '#feb24c', '#f03b20'],
+    energie: ['#fde0dd', '#fa9fb5', '#c51b8a'],
+    ges: ['#f9ebea', '#cd6155', '#cb4335'],
+};
+
 var my_layers = {
     epci_wms: {
         name: "epci",
@@ -877,11 +883,11 @@ function create_wfs_epci_layers(my_layers_object){
         
             // Calcul des statistiques (echelle de couleur en fonction du polluant)
             if (['conso','prod'].includes(my_layers_object.polluant)  == true) {
-                the_jenks = calc_jenks(data, "val", 6, ['#dddd31', '#b9711b', '#940505']);
+                the_jenks = calc_jenks(data, "val", 6, color_scales.energie);
             } else if (['co2','ch4.co2e','n2o.co2e','prg100.3ges'].includes(my_layers_object.polluant)  == true) { 
-                the_jenks = calc_jenks(data, "val", 6, ['#61ccdd', '#3e6cb9', '#1a0c94']);
+                the_jenks = calc_jenks(data, "val", 6, color_scales.ges);
             } else {
-                the_jenks = calc_jenks(data, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
+                the_jenks = calc_jenks(data, "val", 6, color_scales.polluants);
             };
 
             // Création de l'objet
@@ -1139,11 +1145,11 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
             // ... colorramp en fonction du polluant
             // the_jenks = calc_jenks(data_filtered, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
             if (['conso','prod'].includes(my_layers_object.polluant)  == true) {
-                the_jenks = calc_jenks(data_filtered, "val", 6, ['#dddd31', '#b9711b', '#940505']);
+                the_jenks = calc_jenks(data_filtered, "val", 6, color_scales.energie);
             } else if (['co2','ch4.co2e','n2o.co2e','prg100.3ges'].includes(my_layers_object.polluant)  == true) {
-                the_jenks = calc_jenks(data_filtered, "val", 6, ['#61ccdd', '#3e6cb9', '#1a0c94']);
+                the_jenks = calc_jenks(data_filtered, "val", 6, color_scales.ges);
             } else {
-                the_jenks = calc_jenks(data_filtered, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
+                the_jenks = calc_jenks(data_filtered, "val", 6, color_scales.polluants);
             };           
            
             // Création de l'objet
