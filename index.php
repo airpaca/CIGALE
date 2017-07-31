@@ -468,6 +468,8 @@ function createMap(){
              
         // Cache la couche des communes si visible
         sidebar.hide();
+        // Vide la liste des EPCI
+        select_list[0].selectize.clear();
                 
         // if (map.hasLayer(my_layers["comm_" + polluant_actif].layer) == true) {           
             // map.removeLayer(my_layers["comm_" + polluant_actif].layer);
@@ -891,7 +893,8 @@ function create_wfs_epci_layers(my_layers_object){
                 onEachFeature: function (feature, layer) {
                     
                     // Ajout d'un popup
-                    var html = "<div id='popup'>" + feature.properties["nom_epci"]+"<br></div>";                   
+                    // var html = "<div id='popup'>" + feature.properties["nom_epci"]+"<br></div>";                   
+                    var html = "";                   
                     layer.bindPopup(html);
 
                     // Prise en compte du hover
@@ -908,6 +911,8 @@ function create_wfs_epci_layers(my_layers_object){
 
                     // Prise en compte du cklic
                     layer.on('click', function(){
+                        
+                        this.closePopup(); // Debug - Si on mets pas de popup, les EPCI ne changent pas de style
                         
                         // Zoom sur la couche
                         map.fitBounds(layer._bounds, {paddingBottomRight: [800, 0]});
@@ -1153,7 +1158,8 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                     
                     // Ajout d'un popup
                     // var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>";
-                    var html = "<div id='popup'>Accéder aux données tabulaires?</div>";                    
+                    // var html = "<div id='popup'>Accéder aux données tabulaires?</div>";                    
+                    var html = "<div id='popup'><a href='index.extract.php'>Extraction des données sur cette commune</a></div>";                    
                     layer.bindPopup(html);
 
                     // Prise en compte du hover
