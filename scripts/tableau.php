@@ -57,37 +57,13 @@ if ($query_entite == "93") {
     $query_entite == "84" 
 ) {
     $where =  $where . " and id_comm / 1000 in (" . $query_entite . ")";
+} elseif (strlen ($query_entite) == 9) {
+    $where =  $where . " and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $query_entite . ")";
 } else {
     $where =  $where . " and id_comm in (" . $query_entite . ")";
 };
 // echo $where;
 
-
-// SQL -- ORIGINAL: Fonctionne mais très long!
-// $sql = "
-// select 
-    // an, 
-    // " . $nom_entite . "  as nom_entite,  
-    // " . $nom_secten1 . " ,  
-    // " . $cat_energie . " , 
-    // round(sum(val)::numeric, 1) as conso, 
-    // -- case when id_polluant = 131 then -999 else round(sum(val)::numeric, 1) end as conso, 
-    // nom_abrege_polluant, 
-    // round(sum(val)::numeric, 1) as val, 
-    // lib_unite
-// from total.bilan_comm_v4_secten1 as a
-// left join commun.tpk_communes as b using (id_comm)
-// left join transversal.tpk_secten1 as c using (id_secten1)
-// left join transversal.tpk_energie as d using (code_cat_energie)
-// left join commun.tpk_polluants as e using (id_polluant)
-// left join commun.tpk_unite as f using (id_unite)
-// " . $where . " 
-// " . $group_by . "
-// order by an, nom_entite, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
-// ;
-// ";
-
-// SQL
 $sql = "
 select 
     an, 

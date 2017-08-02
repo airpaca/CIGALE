@@ -67,6 +67,7 @@
     <div id="sidebar-left">
 
         <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
+        <img class="img-soustitre" align="middle" src="img/LogoCPERnew_small.png">
     
         <h5>Extraction</h5>    
     
@@ -127,7 +128,7 @@
 var spinner_right = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"50%", left:"65%",});
 var spinner_right_element = document.getElementById('container');
 
-var spinner_left = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"40%", left:"15%",});
+var spinner_left = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"40%", left:"10%",});
 var spinner_left_element = document.getElementById('container');
 
 /* Fonctions */
@@ -369,7 +370,7 @@ function afficher_donnees(){
             jqXHR.spinner_right = spinner_right;
         },           
         success: function(response,textStatus,jqXHR){
-        
+               
             // Si la réponse est vide alors on affiche une table vide et on quitte
             if (response.length == 0) {
                 
@@ -442,7 +443,7 @@ function afficher_donnees(){
             jqXHR.spinner_right.stop();
         },        
     });    
-  
+   
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
     $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Consulter les conditions d\'utilisation et de diffusion</a>');
