@@ -63,6 +63,30 @@ if ($query_entite == "93") {
 // echo $where;
 
 
+// SQL -- ORIGINAL: Fonctionne mais très long!
+// $sql = "
+// select 
+    // an, 
+    // " . $nom_entite . "  as nom_entite,  
+    // " . $nom_secten1 . " ,  
+    // " . $cat_energie . " , 
+    // round(sum(val)::numeric, 1) as conso, 
+    // -- case when id_polluant = 131 then -999 else round(sum(val)::numeric, 1) end as conso, 
+    // nom_abrege_polluant, 
+    // round(sum(val)::numeric, 1) as val, 
+    // lib_unite
+// from total.bilan_comm_v4_secten1 as a
+// left join commun.tpk_communes as b using (id_comm)
+// left join transversal.tpk_secten1 as c using (id_secten1)
+// left join transversal.tpk_energie as d using (code_cat_energie)
+// left join commun.tpk_polluants as e using (id_polluant)
+// left join commun.tpk_unite as f using (id_unite)
+// " . $where . " 
+// " . $group_by . "
+// order by an, nom_entite, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
+// ;
+// ";
+
 // SQL
 $sql = "
 select 
@@ -75,17 +99,22 @@ select
     nom_abrege_polluant, 
     round(sum(val)::numeric, 1) as val, 
     lib_unite
-from total.bilan_comm_v4_secten1 as a
+from (
+	select an, id_comm, id_secten1, code_cat_energie, id_polluant, sum(val) as val, id_unite
+	from total.bilan_comm_v4_secten1
+	" . $where . " 
+	group by an, id_unite, id_polluant, id_comm, id_secten1, code_cat_energie
+)  as a
 left join commun.tpk_communes as b using (id_comm)
 left join transversal.tpk_secten1 as c using (id_secten1)
 left join transversal.tpk_energie as d using (code_cat_energie)
 left join commun.tpk_polluants as e using (id_polluant)
 left join commun.tpk_unite as f using (id_unite)
-" . $where . " 
 " . $group_by . "
 order by an, nom_entite, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
 ;
 ";
+
 
 // echo $sql;
 
