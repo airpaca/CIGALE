@@ -237,10 +237,13 @@ function fill_listes(){
                 {val: 65, text: "PM10"},
                 {val: 108, text: "PM2.5"},
                 {val: 38, text: "NOx"},
-                {val: 129, text: "COV"},
+                {val: 16, text: "COVNM"},
                 {val: 48, text: "SO2"},
                 {val: 36, text: "NH3"},
-                {val: 999, text: "GES eq.CO2"},        
+                {val: 15, text: "CO2 total"},  
+                {val: 123, text: "CH4 eq.CO2"}, 
+                {val: 124, text: "N2O eq.CO2"}, 
+                {val: 128, text: "PRG 100"},                 
             ];
             
             $("#select_variable").append($('<optgroup label="Energie">'));
