@@ -7,6 +7,7 @@ $pg_lgn = $_GET['pg_lgn'];
 $pg_pwd = $_GET['pg_pwd'];
 $query_ans = $_GET['query_ans'];
 $query_entite = $_GET['query_entite'];
+$query_entite_nom = $_GET['query_entite_nom'];
 $query_sect = $_GET['query_sect'];
 $query_ener = $_GET['query_ener'];
 $query_var = $_GET['query_var'];
@@ -20,7 +21,7 @@ if ($query_detail_comm == "true") {
     $group_by =  $group_by . ", nom_entite";
     $nom_entite = " nom_comm";
 } else {
-    $nom_entite = " 'TODO: Nom entite'";
+    $nom_entite = " '" . $query_entite_nom . "'";
 };
 if ($query_sect != "") {
     $group_by =  $group_by . ", nom_secten1";

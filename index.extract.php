@@ -321,11 +321,11 @@ function afficher_donnees(){
     };
     
     // Emprise géographique
-    // FIXME: Si quelqu'un sélectionne région + communes par exemple?
     if ($('#select_entites').val().length == 0) {
         query_entite = "";
     } else {
         query_entite = $('#select_entites').val().join();
+        query_entite_nom = $('#select_entites').find("option:selected").text();
     };        
 
     // Détail communal
@@ -383,6 +383,7 @@ function afficher_donnees(){
             "pg_pwd": cfg_pg_pwd,
             "query_ans": query_ans,
             "query_entite": query_entite,
+            "query_entite_nom": query_entite_nom,
             "query_sect": query_sect,
             "query_ener": query_ener,
             "query_var": query_var,
@@ -466,13 +467,10 @@ function create_table(response, display){
     Insert les données dans la table à partir de la réponse ajax
     */
     
-    console.log("create_table()");
-    
     $('#confirm').modal('hide');
     
     // Déclanchement du sablier (spinner)
     spinner_right.spin(spinner_right_element);    
-    console.log("Spinning");   
     
     // Création de la liste de définition des colonnes
     columns = [];
