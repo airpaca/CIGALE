@@ -60,7 +60,6 @@
     
 <body>
 
-
 <div id="container">
 
     <!-- Partie gauche - Sélection des données -->
@@ -117,7 +116,25 @@
 
         
     </div>
-    
+
+    <!-- Modal pour avertissement sur le nombre de lignes à afficher -->
+    <div id="confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                    
+                    <div class=texte_modal>
+                        <strong>Attention</strong></br>La sélection demandée comprote un grand nombre de lignes. Leur affichage pourrait faire ralentir votre navigateur.    
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default" data-dismiss="modal" onClick="create_table(response_global)">Continuer</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Revenir à la sélection</button>
+                    </div>                
+
+            </div>
+        </div>
+    </div>  
+ 
 </div>
 
 <script type="text/javascript">
@@ -130,6 +147,8 @@ var spinner_right_element = document.getElementById('container');
 
 var spinner_left = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"40%", left:"10%",});
 var spinner_left_element = document.getElementById('container');
+
+var response_global = null;
 
 /* Fonctions */
 function tests(){
@@ -291,7 +310,7 @@ function fill_listes(){
     });
 };
 
-function afficher_donnees(){
+function afficher_donnees(){ 
    
     // Si aucune année sélectionnée alors on ne peut pas envoyer
     if ($('#select_ans').val().length == 0) {
@@ -400,41 +419,31 @@ function afficher_donnees(){
                 
                 // Arrêt du sablier (spinner)
                 jqXHR.spinner_right.stop();
-                
+
                 return null;
             };
             
-            // Création de la liste de définition des colonnes
-            columns = [];
-            for (i in Object.keys(response[0])) {
-                field = Object.keys(response[0])[i];
-                columns.push( { title: field, name: field, data: field });
+            
+            // Si la réponse contient trop de lignes alors on averti l'utilisateur
+            if (response.length > 200) {
+                                
+                // Arrêt du sablier (spinner)
+                jqXHR.spinner_right.stop(); 
+
+                // Passage de la réponse dans une variable globale et appel du modal
+                response_global = response;
+                $('#confirm').modal('show'); //  $('#myModal').modal('hide')
+  
+            } else {
+                
+                // Arrêt du sablier (spinner)
+                jqXHR.spinner_right.stop();                  
+               
+                // Affichage des données
+                create_table(response);
+                            
             };
             
-            // Création de la table
-            the_table = $('#tableau').DataTable({
-                scrollY: '70vh',
-                scrollCollapse: true,        
-                paging: false,
-                searching: true,
-                responsive: true,
-                dom: 'lpftiBr',
-                buttons: ['copy', 'csv', 'pdf'], 
-                processing: true,
-                serverSide: false,
-                language: {
-                    "lengthMenu": "Display _MENU_ records per page",
-                    "zeroRecords": "Aucune donnée à afficher",
-                    "info": "Showing page _PAGE_ of _PAGES_",
-                    "infoEmpty": "No records available",
-                    "infoFiltered": "(filtered from _MAX_ total records)",
-                },    
-                data: response,        
-                columns:columns,
-            });
-            
-            // Arrêt du sablier (spinner)
-            jqXHR.spinner_right.stop();
         },
         
         error: function (request, error) {
@@ -450,6 +459,62 @@ function afficher_donnees(){
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
     $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Consulter les conditions d\'utilisation et de diffusion</a>');
+};
+
+function create_table(response){
+    /**
+    Insert les données dans la table à partir de la réponse ajax
+    */
+    
+    console.log("create_table()");
+    
+    $('#confirm').modal('hide');
+    
+    // Déclanchement du sablier (spinner)
+    spinner_right.spin(spinner_right_element);    
+    console.log("Spinning");   
+    
+    // Création de la liste de définition des colonnes
+    columns = [];
+    for (i in Object.keys(response[0])) {
+        field = Object.keys(response[0])[i];
+        columns.push( { title: field, name: field, data: field });
+    };
+    
+    // Création de la table
+    the_table = $('#tableau').DataTable({
+        scrollY: '70vh',
+        scrollCollapse: true,        
+        paging: false,
+        searching: true,
+        responsive: true,
+        dom: 'lpftiBr',
+        buttons: ['copy', 'csv', 'pdf'], 
+        processing: true,
+        serverSide: false,
+        language: {
+            "lengthMenu": "Display _MENU_ records per page",
+            "zeroRecords": "Aucune donnée à afficher",
+            "info": "Showing page _PAGE_ of _PAGES_",
+            "infoEmpty": "No records available",
+            "infoFiltered": "(filtered from _MAX_ total records)",
+        },    
+        data: response,        
+        columns:columns,
+    }); 
+
+    // Arrêt du sablier (spinner)
+    spinner_right.stop();       
+    
+};
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        };
+    };
 };
 
 /* Appel des fonctions */
