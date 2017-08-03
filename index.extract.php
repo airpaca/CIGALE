@@ -142,7 +142,7 @@
 /* Variables générales */
 
 // Spinner: spinner.spin(spinner_element); spinner.stop();
-var spinner_right = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"50%", left:"65%",});
+var spinner_right = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"50%", left:"60%",});
 var spinner_right_element = document.getElementById('container');
 
 var spinner_left = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"40%", left:"10%",});
@@ -425,7 +425,7 @@ function afficher_donnees(){
             
             
             // Si la réponse contient trop de lignes alors on averti l'utilisateur
-            if (response.length > 200) {
+            if (response.length > 1000) {
                                 
                 // Arrêt du sablier (spinner)
                 jqXHR.spinner_right.stop(); 
@@ -461,7 +461,7 @@ function afficher_donnees(){
     $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
-function create_table(response){
+function create_table(response, display){
     /**
     Insert les données dans la table à partir de la réponse ajax
     */
@@ -488,7 +488,7 @@ function create_table(response){
         paging: false,
         searching: true,
         responsive: true,
-        dom: 'lpftiBr',
+        dom: 'lftBr', // 'lpftiBr' = Avec nb lignes en plus
         buttons: ['copy', 'csv', 'pdf'], 
         processing: true,
         serverSide: false,
