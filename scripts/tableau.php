@@ -71,13 +71,13 @@ select
     " . $nom_entite . "  as nom_entite,  
     " . $nom_secten1 . " ,  
     " . $cat_energie . " , 
-    sum(val_conso) as conso, -- case when nom_abrege_polluant = 'conso' then null else round(sum(val)::numeric, 1) end as conso, -- round(sum(val)::numeric, 1) as conso, 
+    -- sum(val_conso) as conso, -- case when nom_abrege_polluant = 'conso' then null else round(sum(val)::numeric, 1) end as conso, -- round(sum(val)::numeric, 1) as conso, 
     -- case when id_polluant = 131 then -999 else round(sum(val)::numeric, 1) end as conso, 
     nom_abrege_polluant, 
     round(sum(val)::numeric, 1) as val, 
     lib_unite
 from (
-	select an, id_comm, id_secten1, code_cat_energie, id_polluant, sum(val) as val, id_unite, sum(val_conso) as val_conso
+	select an, id_comm, id_secten1, code_cat_energie, id_polluant, sum(val) as val, id_unite -- , sum(val_conso) as val_conso
 	from total.bilan_comm_v4_secten1
 	" . $where . " 
 	group by an, id_unite, id_polluant, id_comm, id_secten1, code_cat_energie
