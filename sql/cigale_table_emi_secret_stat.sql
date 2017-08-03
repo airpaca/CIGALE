@@ -578,7 +578,8 @@ delete from total.bilan_comm_v4_secten1 where id_comm = 99999;
 /**
 Calcul d'un champ val_conso pour pouvoir relier plus facilement 
 la consommation aux émissions lors de l'extraction
-*/
+FIXME: EN l'état l'inventaire ne permet pas de faire de lien juste émissions / consommations! Cf. #30
+
 alter table total.bilan_comm_v4_secten1 drop column if exists val_conso;
 alter table total.bilan_comm_v4_secten1 add column val_conso double precision;
 
@@ -587,15 +588,15 @@ set val_conso = b.val_conso
 from (
 	select an, id_comm, id_secten1, code_cat_energie, id_usage, id_branche, code_etab, sum(val) as val_conso
 	from total.bilan_comm_v4_secten1
-	where id_polluant = 131
+	where id_polluant = 131 
 	group by an, id_comm, id_secten1, code_cat_energie, id_usage, id_branche, code_etab
-	limit 50
 ) as b
 where 
 	(a.an, a.id_comm, a.id_secten1, a.code_cat_energie, a.id_usage, a.id_branche, a.code_etab) = 
 	(b.an, b.id_comm, b.id_secten1, b.code_cat_energie, b.id_usage, b.id_branche, b.code_etab)
-	and a.id_polluant <> 131
+	and a.id_polluant <> 131 and a.id_secten1 <> '8'
 ;
+*/
 
 /**
 Maintenance de la table
@@ -608,6 +609,3 @@ CREATE INDEX "idx.bilan_comm_v4_secten1.id_polluant" ON total.bilan_comm_v4_sect
 
 vacuum ANALYZE total.bilan_comm_v4_secten1;
 vacuum FREEZE total.bilan_comm_v4_secten1;
-
-
-

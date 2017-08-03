@@ -314,7 +314,11 @@ function afficher_donnees(){
    
     // Si aucune année sélectionnée alors on ne peut pas envoyer
     if ($('#select_ans').val().length == 0) {
-        $('#select_ans').selectpicker('setStyle', 'btn-warning');
+        console.log("TODO: Highlight lists not working");
+        // $('#select_ans').selectpicker('setStyle', 'btn-warning');
+        // $('.btn #select_ans').css('color', 'red');
+        // $('#select_ans').selectpicker('setStyle', 'color:red');
+        // $('#select_ans').selectpicker.css({'color': 'red'});
         return null;
     } else {
         query_ans = $('#select_ans').val().join();
@@ -366,7 +370,22 @@ function afficher_donnees(){
     
     // TODO: Si tout est ok, il faut remettre les styles par défauts aux listes
     // $('#select_ans').selectpicker('setStyle', 'btn');
+    // $('#select_ans').selectpicker('setStyle', 'btn-danger');
+    // $('#select_ans').selectpicker('setStyle', 'btn-success');
+    // $('#select_ans').selectpicker('setStyle', 'btn-primary');
+    // $('#select_ans').selectpicker('setStyle', 'btn-waning', 'remove');
+    // $('#select_ans').selectpicker('refresh');
+    // $('#select_ans').selectpicker('setStyle', 'btn-success', 'remove');
+    // $('#select_ans').selectpicker('setStyle', 'btn-success')
+    // $('#select_ans').selectpicker('refresh');
+    
+    // $('#select_ans').selectpicker();
+    // $('#select_ans').selectpicker('setStyle', 'btn-primary', 'add'); // add class    
+    
+    
+    
     console.log("TODO: Lists styles reset");
+   
    
     // Déclanchement du sablier (spinner)
     spinner_right.spin(spinner_right_element);
