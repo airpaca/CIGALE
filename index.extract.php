@@ -110,8 +110,8 @@
         <div class="header_extraction"></div>
 
         <div class="emplacement_tableau">
-            <table id="tableau" class="display" width="100%" cellspacing="0">
-            </table>
+            <img class="img-aide-export" src="img/export_aide.png">
+            <table id="tableau" class="display" width="100%" cellspacing="0"></table>
         </div>
 
         
@@ -389,6 +389,9 @@ function afficher_donnees(){
    
     // Déclanchement du sablier (spinner)
     spinner_right.spin(spinner_right_element);
+   
+    // Suppression de l'image d'aide 
+    $( ".img-aide-export" ).hide();
    
     // Création du tableau
     $.ajax({
