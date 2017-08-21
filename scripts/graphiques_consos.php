@@ -25,6 +25,7 @@ from (
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
         and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+        and ss is false -- Aucune donnée en Secret Stat
 	group by id_comm, id_secten1
 ) as a
 left join total.tpk_secten1_color as b using (id_secten1)
@@ -57,6 +58,7 @@ from (
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
         and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+        and ss is false -- Aucune donnée en Secret Stat
 	group by id_comm, code_cat_energie
 ) as a
 left join total.tpk_cat_energie_color as b using (code_cat_energie)
@@ -88,6 +90,7 @@ where
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
     and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 	and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
+    and ss is false -- Aucune donnée en Secret Stat
 group by an, id_secten1, nom_court_secten1, secten1_color
 order by id_secten1, an
 ;
@@ -120,6 +123,7 @@ from (
 			and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
             and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 			and an = " . $an . "
+            and ss is false -- Aucune donnée en Secret Stat
 		) as epci,
 		-- Emissions de la région
 		(select (sum(val) / 1000.) as val
@@ -128,6 +132,7 @@ from (
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
             and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 			and an = " . $an . "
+            and ss is false -- Aucune donnée en Secret Stat
 		) as reg
 ) as a
 ";

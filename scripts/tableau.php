@@ -80,6 +80,7 @@ from (
 	select an, id_comm, id_secten1, code_cat_energie, id_polluant, sum(val) as val, id_unite -- , sum(val_conso) as val_conso
 	from total.bilan_comm_v4_secten1
 	" . $where . " 
+    and ss is false -- Aucune donnée en Secret Stat
 	group by an, id_unite, id_polluant, id_comm, id_secten1, code_cat_energie
 )  as a
 left join commun.tpk_communes as b using (id_comm)
