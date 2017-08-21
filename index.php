@@ -205,7 +205,7 @@ var polls_names = {
     "nox": "NOx",
     "pm10": "PM10",
     "pm2.5": "PM2.5",
-    "cov": "COV",
+    "covnm": "COVNM",
     "nh3": "NH3",
     "co2": "CO2",
     "ch4.co2e": "CH4 eq.CO2",
