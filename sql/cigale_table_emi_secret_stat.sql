@@ -609,3 +609,9 @@ CREATE INDEX "idx.bilan_comm_v4_secten1.id_polluant" ON total.bilan_comm_v4_sect
 
 vacuum ANALYZE total.bilan_comm_v4_secten1;
 vacuum FREEZE total.bilan_comm_v4_secten1;
+
+
+
+
+
+

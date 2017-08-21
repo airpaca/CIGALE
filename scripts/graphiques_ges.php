@@ -126,7 +126,7 @@ from (
 		from total.bilan_comm_v4_secten1
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-            and code_cat_energie <> 8 -- emissions directes
+            and code_cat_energie not in (6, 8) -- emissions directes hors chaleur et froid
 			and an = " . $an . "
 		) as reg
 ) as a
