@@ -609,3 +609,14 @@ CREATE INDEX "idx.bilan_comm_v4_secten1.id_polluant" ON total.bilan_comm_v4_sect
 
 vacuum ANALYZE total.bilan_comm_v4_secten1;
 vacuum FREEZE total.bilan_comm_v4_secten1;
+
+
+/**
+Cluster de la table pour accélérer les requêtes
+*/
+CREATE INDEX "idx.bilan_comm_v4_secten1.an.ss.code_cat_energie.id_polluant"
+  ON total.bilan_comm_v4_secten1
+  USING btree
+  (an,ss,code_cat_energie,id_polluant);
+
+CLUSTER total.bilan_comm_v4_secten1 USING "idx.bilan_comm_v4_secten1.an.ss.code_cat_energie.id_polluant";
