@@ -101,8 +101,10 @@ order by an, nom_abrege_polluant, siren_epci_2017, nom_epci_2017, superficie;
 
 SELECT AddGeometryColumn ('cigale','epci_poll','geom',4326,'MULTIPOLYGON',2, false);
 
+ALTER TABLE cigale.epci_poll drop CONSTRAINT enforce_geotype_geom;
+
 update cigale.epci_poll as a
-set geom = b.geom
+set geom = ST_SimplifyPreserveTopology(b.geom,0.0004) -- Simplification de la géométrie pour rapidité d'affichage
 from cigale.epci as b
 where a.siren_epci = b.siren_epci;
 
@@ -115,8 +117,8 @@ NOTE: Pour la conso énergie primaire c''est à dire sans l''élec
 NOTE: Pour les GES, émissions directes c''est à dire sans l''élec
 ';
 
-
-
+vacuum analyze cigale.epci_poll;
+vacuum freeze cigale.epci_poll;
 
 
 
