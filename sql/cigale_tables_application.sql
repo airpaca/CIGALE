@@ -161,7 +161,7 @@ where
 SELECT AddGeometryColumn ('cigale','comm_poll','geom',4326,'MULTIPOLYGON',2, false);
 
 update cigale.comm_poll
-set geom = ST_Multi(geomtmp);
+set geom = ST_Multi(ST_SimplifyPreserveTopology(geomtmp,0.001)); -- Simplification de la géométrie pour rapidité d'affichage
 
 alter table cigale.comm_poll add constraint "pk.cigale.comm_poll" primary key (gid);
 CREATE INDEX "gidx.cigale.comm_poll.geom.gist" ON cigale.comm_poll USING GIST (geom);
