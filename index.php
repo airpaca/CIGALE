@@ -1612,7 +1612,7 @@ function create_graphiques(siren_epci, nom_epci){
         success: function(response,textStatus,jqXHR){
             
             // titre
-            change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
+            change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]); 
             
             create_barchart_emi(response[1], "graph2");
             create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max, "t");
@@ -1721,8 +1721,8 @@ function create_graphiques_ges(siren_epci, nom_epci){
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
             
-            create_piechart_emi(response[0], "graph1", "Emissions indirectes par secteur", "t");
-            create_piechart_emi(response[1], "graph2", "Emissions indirectes par catégorie d'énergie", "t");
+            create_piechart_emi(response[0], "graph1", "Emissions indirectes par secteur en " + an_max, "t");
+            create_piechart_emi(response[1], "graph2", "Emissions indirectes par catégorie d'énergie en " + an_max, "t");
             create_linechart_emi(response[2], "graph3", "Evolution séctorielle (émissions indirectes en t)");
             create_barchart_part(response[3], "graph4");
             
@@ -1779,11 +1779,15 @@ function export_pdf(){
     var doc = new jsPDF;
 
     // Titre principal
-    doc.text("Métropole d'Aix-Marseille-Provence", 10, 10);
+    doc.text(my_app.nom_epci, 10, 10);
     
     // Sous titre
     doc.setFontSize(10);
-    doc.text('Bilan des émissions de NOx', 10, 20);
+    if (polluant_actif == 'conso') {
+        doc.text('Bilan des consommations', 10, 20);
+    } else {
+        doc.text('Bilan des émissions de ' + polls_names[polluant_actif], 10, 20);  
+    };
 
     // Ajout pie chart
     var canvasImg = document.getElementById("graph1_canvas").toDataURL();
