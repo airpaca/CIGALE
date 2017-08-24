@@ -1126,10 +1126,10 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
     // map.spin(false);    
    
     // Supprime tous les éventuels layers des communes 
-    remove_all_comm_layers();   
-
+    remove_all_comm_layers();     
+    
     $.ajax({
-        url: wfs_address + my_layers_object.wfs_query + "&siren_epci=" + siren_epci + "", // wfs_address + my_layers_object.wfs_query,
+        url: wfs_address + my_layers_object.wfs_query + "&nom_abrege_polluant=" + my_layers_object.polluant + "&siren_epci=" + siren_epci,
         datatype: 'json',
         jsonCallback: 'getJson',
         success: function (data) {
@@ -1916,7 +1916,8 @@ function creation_couches_comm_polluant(){
             name: "comm_" + polls[i],
             polluant: polls[i], 
             type: "wfs",
-            wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_wfs_" + polls[i] + "&outputformat=geojson",
+            // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_wfs_" + polls[i] + "&outputformat=geojson",
+            wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_wfs&outputformat=geojson",
             layer: null,
             opacity: 0.5,
             subtitle: "Emissions " + an_max + " de " + polls[i] + " à la commune",
