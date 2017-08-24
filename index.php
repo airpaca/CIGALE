@@ -876,7 +876,7 @@ function create_wfs_epci_layers(my_layers_object){
     */
     
     $.ajax({
-        url: wfs_address + my_layers_object.wfs_query,
+        url: wfs_address + my_layers_object.wfs_query + "&nom_abrege_polluant=" + my_layers_object.polluant,
         datatype: 'json',
         jsonCallback: 'getJson',
         success: function (data) {
@@ -1873,7 +1873,7 @@ function creation_couches_epci_polluant(){
             name: "epci_" + polls[i],
             polluant: polls[i], 
             type: "wfs",
-            wfs_query: "&REQUEST=GetFeature&TYPENAME=epci_wfs_" + polls[i] + "&outputformat=geojson",
+            wfs_query: "&REQUEST=GetFeature&TYPENAME=epci_wfs&outputformat=geojson",
             layer: null,
             opacity: 0.5,
             subtitle: "Emissions " + an_max + " de " + polls[i] + " à l'EPCI",
