@@ -1127,9 +1127,9 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
    
     // Supprime tous les éventuels layers des communes 
     remove_all_comm_layers();   
-   
+
     $.ajax({
-        url: wfs_address + my_layers_object.wfs_query,
+        url: wfs_address + my_layers_object.wfs_query + "&siren_epci=" + siren_epci + "", // wfs_address + my_layers_object.wfs_query,
         datatype: 'json',
         jsonCallback: 'getJson',
         success: function (data) {
