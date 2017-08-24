@@ -2,7 +2,7 @@
 
 
 # Mapserver mapfiles
-*.map
+serv.conn
 
 # Config files and directories
 .settings/
