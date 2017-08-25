@@ -185,3 +185,30 @@ ALTER TABLE cigale.comm_poll CLUSTER ON "cigale.comm_poll.nom_abrege_polluant.si
 ALTER TABLE cigale.epci_poll CLUSTER ON "idx.cigale.epci_poll.id_polluant";
 
 
+
+
+-- Création d'une table de liste des entités administratives pour une récupération rapide de l'info
+-- et des temps d'affichage améliorés.
+drop table if exists cigale.liste_entites_admin;
+create table cigale.liste_entites_admin as
+    -- Région PACA
+    select 1 as order_field, 93 as valeur, 'Région PACA' as texte
+    union all
+    -- Départements
+    select 2 as order_field, id_dep as valeur, joli_nom_dep as texte 
+    from commun.tpk_depts
+    where id_reg = 93
+    union all
+    -- EPCI
+    select distinct 3 as order_field, siren_epci_2017, nom_epci_2017
+    from commun.tpk_commune_2015_2016
+    where siren_epci_2017 is not null
+    union all
+    -- Communes
+    select order_field, id_comm, b.nom_comm || ' (' || lpad((id_comm / 1000)::text, 2, '0') || ')' as nom_comm
+    from (
+        select distinct 4 as order_field, a.id_comm
+        from total.bilan_comm_v4_secten1 as a
+    ) as a
+    left join commun.tpk_communes as b using (id_comm)
+    order by order_field, valeur;
