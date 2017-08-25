@@ -614,9 +614,10 @@ vacuum FREEZE total.bilan_comm_v4_secten1;
 /**
 Cluster de la table pour accélérer les requêtes
 */
-CREATE INDEX "idx.bilan_comm_v4_secten1.an.ss.code_cat_energie.id_polluant"
-  ON total.bilan_comm_v4_secten1
-  USING btree
-  (an,ss,code_cat_energie,id_polluant);
+CREATE INDEX "idx.bilan_comm_v4_secten1.id_polluant.an.ss.id_secten1.code_cat_energie"
+ON total.bilan_comm_v4_secten1
+USING btree
+(id_polluant, an, ss, id_secten1, code_cat_energie);
 
-CLUSTER total.bilan_comm_v4_secten1 USING "idx.bilan_comm_v4_secten1.an.ss.code_cat_energie.id_polluant";
+ALTER TABLE total.bilan_comm_v4_secten1 CLUSTER ON "idx.bilan_comm_v4_secten1.id_polluant.an.ss.id_secten1.code_cat_energie";
+ 
