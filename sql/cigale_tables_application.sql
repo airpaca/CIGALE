@@ -175,4 +175,13 @@ vacuum analyse cigale.comm_poll;
 vacuum freeze cigale.comm_poll;
 
 
+-- Clusterisation des tables géographiques pour améliorer les temps d'affichage
+CREATE INDEX "cigale.comm_poll.nom_abrege_polluant.siren_epci"
+  ON cigale.comm_poll
+  USING btree
+  (nom_abrege_polluant, siren_epci);
+ALTER TABLE cigale.comm_poll CLUSTER ON "cigale.comm_poll.nom_abrege_polluant.siren_epci";
+
+ALTER TABLE cigale.epci_poll CLUSTER ON "idx.cigale.epci_poll.id_polluant";
+
 
