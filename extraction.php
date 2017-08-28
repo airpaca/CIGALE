@@ -51,7 +51,7 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
     
     <!-- CSS -->
-    <link rel="stylesheet" href="style.extract.css"/>
+    <link rel="stylesheet" href="extraction.css"/>
 
     <!-- Config -->
     <script type="text/javascript" src="config.js"></script>

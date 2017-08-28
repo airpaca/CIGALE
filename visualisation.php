@@ -59,7 +59,7 @@
     <script src="libs/jspdf/jsPDF-master/dist/jspdf.min.js"></script>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="visualisation.css"/>
 
     <!-- Config -->
     <script type="text/javascript" src="config.js"></script>

@@ -83,7 +83,7 @@
 		<div class="row mt centered">
 			<div class="col-lg-4">
 				<!-- <img src="assets/img/ser01.png" width="180" alt=""> -->
-                <a href="visualisation.php"><img src="img/cartography2.png" border="0" width="180"></a>
+                <a href="visualisation.php"><img class="img-visu" src="img/cartography2.png" border="0" width="180"></a>
                 <!-- <a href="www.coin.com"><img src="assets/img/ser01.png" alt="canard"/></a>-->
 				<h4>Visualisation</h4>
 				<p>Recherche géographique et production de bilans</p>
@@ -91,7 +91,7 @@
 
 			<div class="col-lg-4">
                 <!-- <img src="assets/img/export_table.png" width="180" alt=""> -->
-                <a href="extraction.php"><img src="img/csv-icon.png" border="0" width="180"></a>
+                <a href="extraction.php"><img class="img-extract" src="img/csv-icon.png" border="0" width="180"></a>
 				<h4>Extractions</h4>
 				<p>Extraction fine des données par critères</p>
 
@@ -99,7 +99,7 @@
 
 			<div class="col-lg-4">
 				<!-- <img src="assets/img/ser03.png" width="180" alt=""> -->
-                <a href="#"><img src="img/ser03.png" border="0" width="180"></a>
+                <a href="#"><img class="img-methodo" src="img/ser03.png" border="0" width="180"></a>
 				<h4>Méthodologie</h4>
 				<p>Méthodologie d'inventaire et notes utilisateurs</p>
 
@@ -119,5 +119,48 @@
     <script src="libs/jquery/jquery-3.2.1.min.js"></script> 
     <!-- <script src="../thefirm/assets/js/bootstrap.min.js"></script> -->
     <script src="libs/bootstrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    
+    
+    
+    
+<script type="text/javascript"> 
+
+
+// Changement de la source des images au hover
+$(".img-extract").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
+$(".img-methodo").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
+$(".img-visu").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
+
+
+</script>   
+    
+    
   </body>
 </html>
