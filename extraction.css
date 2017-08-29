@@ -2,6 +2,31 @@
     color: red;
 }; */
 
+.img-title {
+    display: block;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;        
+}
+
+.img-menus {
+/*     display: inline-block;
+    float:left;
+    margin-top: 10%;
+    margin-bottom: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 125px; */
+    
+    display: inline-block;
+    width: 20%;
+    float: center;
+    margin-left: 20%;
+}
+
+.boxe_formulaire{
+    height:50%;
+};
 
 
 
@@ -11,7 +36,7 @@ div.dataTables_processing { z-index: 1; }
 
 html, body, #container {
   height: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   width: 100%;
 }
 
@@ -61,9 +86,10 @@ html, body, #container {
 
  
  
+ 
 .Boutons_extractions{
     float:right;
-   /*  margin-top:30%; */
+    margin-top:3%; 
 }
  
 .img-titre{
@@ -101,10 +127,11 @@ html, body, #container {
 } */
 
 #sidebar-left{
+    background-color: #F2F2F2;
     float: left;
     height: 100%;
     max-width: 100%;
-    width: 350px;    
+    width: 30%;    
 }
 
 
@@ -230,6 +257,7 @@ h4 {
 }
 
 h5 {
+    color: #95A5A6;
     font-family: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
 	font-size: 24px;
 	font-style: normal;
@@ -237,10 +265,11 @@ h5 {
 	font-weight: 500;
 	line-height: 28px; 
     text-align: center; 
-    margin-top: 20%;
-    margin-bottom: 20%;
+    margin-top: 10%;
+    margin-bottom: 10%;
 }
 p {
+    color: #95A5A6;
     font-family: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
 	font-size: 14px;
 	font-style: normal;

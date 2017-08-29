@@ -108,7 +108,7 @@
 	</div><!-- /container -->
 	
 	<div class="container">
-		<p class="centered">Air PACA © - Theme inspired by BlackTie.co3</p>
+		<p class="centered">Air PACA © - Bootstrap theme FLATTY thanks to http://blacktie.co</p>
 	</div><!-- /container -->
 	
 

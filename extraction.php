@@ -65,16 +65,21 @@
     <!-- Partie gauche - Sélection des données -->
     <div id="sidebar-left">
 
+        <!-- 
         <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
         <img class="img-soustitre" align="middle" src="img/LogoCPERnew_small.png">
-    
-        <h5>Extraction</h5>    
-    
-        <div class="list-group hide" id="formulaire">
-
+        -->
+       
+        <img class="img-title" src="img/csv-icon.png" border="0" width="180">        
+        <h5>Extraction</h5>
+                   
+        <div class="boxe_formulaire">
+        
+            <div class="list-group hide" id="formulaire">
+        
                 <p>Année(s) d'inventaire</p>
                 <select class="selectpicker" id="select_ans" title="Années d'inventaire" mobile multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
-
+                
                 <p>Emprise géographique</p>
                 <select class="selectpicker" id="select_entites" title="Emprise géograpique" mobile multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
                 
@@ -94,14 +99,23 @@
                 <select class="selectpicker" id="select_variable" title="Consommations, Productions et Emissions" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
                 
                 <div class="Boutons_extractions">
-                    <!-- Split button -->
                     <div class="btn-group">
                         <button type="button" class="btn btn-success" onClick="afficher_donnees();">Exporter les données</button>
                     </div>
-                </div>            
-
+                </div>        
+        
+            </div> 
+        
         </div>
-
+        
+        <!-- Images de navigation dans les menus -->
+        
+        <div class="sidebar-footer">
+        <hr>
+        <img class="img-menus" src="img/cartography2.png" border="0" width="180"></img>       
+        <img class="img-menus" src="img/ser03.png" border="0" width="180"></img>
+        </div>
+        
     </div>
     
     <!-- Partie droite - Affichage des données -->    
