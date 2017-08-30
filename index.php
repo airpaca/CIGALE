@@ -79,7 +79,7 @@
                 </div><!--/col-md-4 -->
 
                 <div class="col-md-4">
-                    <a href="#"><img class="img-methodo" src="img/ser03.png" border="0" width="180"></a>
+                    <a href="#"><img class="img-methodo" src="img/document-flat.png" border="0" width="180"></a>
                     <h4>Méthodologie</h4>
                     <p>Méthodologie d'inventaire et notes utilisateurs</p>
                 </div><!--/col-md-4 -->

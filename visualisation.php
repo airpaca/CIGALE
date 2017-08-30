@@ -71,24 +71,56 @@
 ------------------------------------------------------------------------------->
 <body>
 
-<!-- ......... Side bar -->
-<div id="container">
-    <div id="sidebar-left">
-        <div class="list-group">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Corps de la page -->
+    <div class="row">
         
-            <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
-            <img class="img-soustitre" align="middle" src="img/LogoCPERnew_small.png">
-        
-            <h1>CIGALE</h1>
-            <h2>Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie</h2>
-                
-            <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm() -->
-                <select id="geonfo" placeholder="Echelon administratif ..."></select>
-                <p>
-                    <a href="javascript:liste_epci_clean();" class="btn btn-default" role="button">Réinitialiser</a> 
-                    <!-- <a href="javascript:liste_epci_submit();" class="btn btn-primary" role="button">Valider</a> -->
-                </p>
+        <!-- Zone gauche de sélection et navigation -->
+        <div class="col-md-4" id="zone-select">
             
+            <!-- Titre de la page -->
+            <img class="img-title" src="img/cartography2.png" border="0" width="140">  <!-- orig: width="180" -->
+            <h3 class="centered">Visualisation</h3>        
+        
+            <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm() -->
+            <div class="liste_select">
+                <select id="geonfo" placeholder="Echelon administratif ..."></select>              
+                <a href="javascript:liste_epci_clean();" class="btn btn-default reinit" role="button">Réinitialiser</a> 
+            </div>
+            
+        
+
+
             <!-- Liste des données sélectionnables qui s'affiche après sélection d'un EPCI -->
             <a href="#" class="list-group-item active" id="liste_polluants">
             Polluants atmosphériques
@@ -131,13 +163,7 @@
                 <a href="#" class="list-group-item hide liste_energies_items" id="conso">
                 <span class="glyphicon glyphicon-chevron-right"></span>
                 Consommations d'énergie
-                </a>
-                <!-- Productions non disponibles pour l'instant 
-                <a href="#" class="list-group-item hide liste_energies_items" id="prod">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Productions d'énergie
-                </a>
-                -->                
+                </a>   
 
             <a href="#" class="list-group-item" id="liste_ges">
             Gazs à Effet de Serre
@@ -161,31 +187,94 @@
                 <a href="#" class="list-group-item hide liste_ges_items" id="prg100.3ges">
                 <span class="glyphicon glyphicon-chevron-right"></span>
                 PRG 100 
-                </a>                  
+                </a>  
+        
+        
+        
+        
+        
+        
+        
+            <!-- Navigation dans les menus -->
+            <div class="row">
+                <div class="col-xs-4">
+                    <a href="index.php"><img class="img-menus" id="img-home" src="img/flat-blue-home-icon-4.png" border="0" width="80"></img></a>
+                </div>			
+                <div class="col-xs-4">
+                    <a href="extraction.php"><img class="img-menus" id="img-extract" src="img/csv-icon.png" border="0" width="80"></img></a>      
+                </div>
+                <div class="col-xs-4">
+                    <a href="#"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
+                </div>
+            </div>
+        
         
         </div>
         
-        <!-- Bouton de dev pour les tests
-        <a href="javascript:tests();" class="btn btn-default" role="button">Tests dev</a>
-        -->
-         
-        <a href="index.extract.php">Extraction des données</a>
         
-    </div>
-    <!-- Leaflet sidebar -->
-    <div id="sidebar">
-        <h1>leaflet-sidebar</h1>
+        
+        
+        <!-- Zone droite de consultation des donées-->
+        <div class="col-md-8" id="zone-display">
+
+
+
+            <!-- Leaflet sidebar
+            <div id="sidebar">
+                <h1>leaflet-sidebar</h1>
+            </div>  
+            -->
+             
+            <!-- Element carte -->
+            <div id="map"></div>
+            
+        </div>
+        
     </div>    
- 
-    <!-- Element carte -->
-    <div id="map"></div>             
-    
-</div>
+      
+
+
+
+
+
+
 
 <!------------------------------------------------------------------------------ 
                                     Map script
 ------------------------------------------------------------------------------->
 <script type="text/javascript">
+
+/* Navigation dans les menus */
+$("#img-methodo").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
+$("#img-extract").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
+$("#img-home").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
 
 /* Variables générales */
 var wms_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map";

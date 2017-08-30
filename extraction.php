@@ -88,12 +88,15 @@
 
             <!-- Navigation dans les menus -->
             <div class="row">
-                <div class="col-xs-6">
+                <div class="col-xs-4">
+                    <a href="index.php"><img class="img-menus" id="img-home" src="img/flat-blue-home-icon-4.png" border="0" width="80"></img></a>
+                </div>				
+                <div class="col-xs-4">
                     <a href="visualisation.php"><img class="img-menus" id="img-visu" src="img/cartography2.png" border="0" width="80"></img></a>      
                 </div>
-                <div class="col-xs-6">
-                    <a href="#"><img class="img-menus" id="img-methodo" src="img/ser03.png" border="0" width="80"></img></a>
-                </div>
+                <div class="col-xs-4">
+                    <a href="#"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
+                </div>			
             </div>
         
         
@@ -194,6 +197,17 @@ $("#img-visu").hover(function(){
         return attr.replace(".hover.png", ".png");
     });
 });
+
+$("#img-home").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
 
 /* Fonctions */
 function tests(){
