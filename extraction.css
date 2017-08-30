@@ -1,66 +1,135 @@
-/* .btn {
-    color: red;
-}; */
+body {
+    background-color: #f2f2f2;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: #555;
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Titles */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333;
+}
+
+h1 {
+	font-size: 40px;
+}
+
+h3 {
+	color: #95a5a6;
+	font-weight: 400;
+}
+
+h4 {
+	color: #95a5a6;
+	font-weight: 400;
+	font-size: 20px;
+}
+
+
+p {
+    line-height: 28px;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.centered {
+    text-align: center;
+}
+
+#zone-select {
+    /* border-right: 1px solid #95a5a6; */
+    /* background-color: red; */
+	/* background-color: #3498db; */
+    background-color: #F2F2F2;
+	background-attachment: relative;
+	background-position: center center;
+	/* width: 100%; */
+	
+    -webkit-background-size: 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
+    background-size: 100%;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;    
+}
+
+#zone-display{
+   
+    /* background-color: blue; */
+    background-color: #F2F2F2;
+	background-attachment: relative;
+	background-position: center center;
+	/* width: 100%; */
+	
+    -webkit-background-size: 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
+    background-size: 100%;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
 
 .img-title {
     display: block;
     margin-top: 10%;
     margin-left: auto;
-    margin-right: auto;        
+    margin-right: auto;   
+    max-width:100%;    
 }
 
 .img-menus {
-/*     display: inline-block;
-    float:left;
-    margin-top: 10%;
-    margin-bottom: 5%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;   
+    max-width:100%;    
+    margin-top:8%;
+}
+
+#formulaire{
+    
+    line-height: 28px;
+    font-size: 14px;    
+    color: #95a5a6;
+    
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 15px;  
+}
+
+#btn_extraction{
+    margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
-    width: 125px; */
-    
-    display: inline-block;
-    width: 20%;
-    float: center;
-    margin-left: 20%;
+    width: 100%;
 }
 
-.boxe_formulaire{
-    height:50%;
-};
-
-
-
-div.dataTables_processing { z-index: 1; }
-
-
-
-html, body, #container {
-  height: 100%;
-  /* overflow: hidden; */
-  width: 100%;
+.img-aide-export{
+    margin-left: auto;
+    margin-right: auto;    
+    max-width:100%;
+}
+@media(min-width:768px) and (orientation:landscape) {
+    .img-aide-export{margin-top: 40%;}
 }
 
-/* #sidebar-left{
-    height: 100%;
-    width: 5%;
-    border-right: solid 1px lightgrey;
-} */
-
-/* .list-group{
-    height: 100%;
-    border-right: solid 1px grey;
-}
- */
- 
- 
 .header_extraction {
     margin-bottom: 5%;
     margin-left: 3%;
-    margin-top: 3%;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 20px;
-	font-style: light;
-    color: black;
+    margin-top: 3%;    
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333;    
 }
 .header_extraction a:link {
     font-size: 15px;
@@ -78,15 +147,62 @@ html, body, #container {
 .header_extraction a:active {
     font-size: 15px;
     color: black;
-} 
+}
+
+th { font-size: 12px; }
+td { font-size: 11px; }
+label {
+    font-size: 12px;
+}
+input.form-control.input-sm{
+    font-size: 11px;
+}
+
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+
+.texte_modal{
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333;    
+    margin: 8px;
+    line-height: 28px;
+    font-size: 16px;    
+}
 
 
 
+/* .img-title {
+    display: block;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;   
+    max-width:100%;    
+}
 
+.img-menus {   
+    display: inline-block;
+    width: 20%;
+    float: center;
+    margin-left: 20%;
+}
 
+.boxe_formulaire{
+    height:50%;
+};
+
+div.dataTables_processing { z-index: 1; }
+
+html, body, #container {
+  height: 100%;
+  width: 100%;
+}
  
  
- 
+
 .Boutons_extractions{
     float:right;
     margin-top:3%; 
@@ -104,27 +220,11 @@ html, body, #container {
     margin-left: auto;
     margin-right: auto;  
     width: 80%;
-    /* height: 20%; */
 }
 
 .img-aide-export{
-    width: 70%;
-    margin-left: 15%;
-    margin-top: 30%;
-    display: block;
-     /*
-    display: block;
-    margin-left: auto;
-    margin-right: auto;   */  
+    max-width:100%;
 }
-
-/* #sidebar-left{
-    float: left;
-    height: 100%;
-    width: 30%;
-    max-width: 100%;
-    border-right: solid 1px lightgrey; 
-} */
 
 #sidebar-left{
     background-color: #F2F2F2;
@@ -133,112 +233,6 @@ html, body, #container {
     max-width: 100%;
     width: 30%;    
 }
-
-
-#sidebar-right{
-  float: left;
-  height: 100%;
-  width: 70%;
-}
-
-#map {
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
-  height: 100%;
-  width: auto;
-}
-
-#popup{
-    font-family: Andale Mono,AndaleMono,monospace;
-	font-size: 14px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 400;
-	line-height: 20px;
-}
- 
-.info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-}
-
-.legend {
-    text-align: left;
-    line-height: 18px;
-    color: #555;
-}
-.legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7;
-}
-.legend .colorcircle {
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    margin-top: 0px;
-}
-
-
-.show-graph {
-    margin-top: 5%;
-    text-align: center;
-    font-size: 15px; 
-    font-style: bold;    
-    height:10%;
-}
-
-
-
-/* .graph {
-    margin-top: 5%;
-    text-align: center;
-    font-size: 15px; 
-    font-style: bold;    
-    height:10%;
-} */
-
-.glyphicon.glyphicon-stats {
-    font-size: 55px;
-}
-
-
-
-
-
-
-
-
-
-
-
-}
-/* #sidebar {
-  float: left;
-  height: 100%;
-  max-width: 100%;
-  width: 250px;
-} */
-#map {
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  height: 100%;
-  width: auto;
-}
-/* .sidebar-wrapper {
-  height: 100%;
-  position: relative;
-  width: 100%;
-}
-@media (max-width: 767px) {
-#sidebar {
-  display: none;
-}
-} */
 
 .btn-group-vertical{
 	width: 250px;
@@ -304,209 +298,4 @@ h3 {
     bottom: 0;
 	width:250px;
     text-align: center;
-    /*
-    background-color: #FF8800;
-    font-size: 14px;
-    color: #CC0000;
-    */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-/* 
-LEAFLET SIDEBAR STYLE OVERRIDING
-############################################################################ */
-.leaflet-sidebar {
-    position: absolute;
-    height: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: 10px;
-    z-index: 2000; 
-    width: 50%;
-}
-.leaflet-sidebar.left {
-    left: -500px;
-    transition: left 0.5s, width 0.5s;
-    padding-right: 0; 
-}
-.leaflet-sidebar.left.visible {
-    left: 0; 
-}
-.leaflet-sidebar.right {
-    right: -800px;
-    transition: right 0.5s, width 0.5s;
-    padding-left: 0; 
-}
-.leaflet-sidebar.right.visible {
-    right: 0; 
-}
-.leaflet-sidebar > .leaflet-control {
-    /* height: 100%; */
-    width: 100%;
-    /* overflow: auto; */
-    -webkit-overflow-scrolling: touch;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: 8px 24px;
-    font-size: 1.1em;
-    background: white;
-    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.65);
-    -webkit-border-radius: 4px;
-    border-radius: 4px; 
-    background-color:white; /* RS - bgd color */
-    opacity:0.9; /* RS - Add opacity */
-}
-.leaflet-touch .leaflet-sidebar > .leaflet-control {
-    box-shadow: none;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    background-clip: padding-box; 
-}
-@media (max-width: 1200px) {
-    .leaflet-sidebar {
-        width: 100%;
-        padding: 0; 
-        /* overflow: auto; */
-    }
-    .leaflet-sidebar.left.visible ~ .leaflet-left {
-        left: 100%; 
-        /* overflow: auto; */
-    }
-    .leaflet-sidebar.right.visible ~ .leaflet-right {
-        right: 100%; 
-        /* overflow: auto; */
-    }
-    .leaflet-sidebar.left {
-        left: -100%; 
-        /* overflow: auto; */
-    }
-    .leaflet-sidebar.left.visible {
-        left: 0;
-        /* overflow: auto; */
-    }
-    .leaflet-sidebar.right {
-        right: -100%; 
-        /* overflow: auto; */
-    }
-    .leaflet-sidebar.right.visible {
-        right: 0; 
-        /* overflow: auto; */
-    }
-    .leaflet-sidebar > .leaflet-control {
-        box-shadow: none;
-        -webkit-border-radius: 0;
-        border-radius: 0; 
-        opacity:1.0; /* RS - Add opacity */
-        /* overflow: auto; */
-    }
-    .leaflet-touch .leaflet-sidebar > .leaflet-control {
-        border: 0; 
-        /* overflow: auto; */
-    } 
-}
-.leaflet-sidebar .close {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 31px;
-    height: 31px;
-    color: #333;
-    font-size: 25px;
-    line-height: 1em;
-    text-align: center;
-    background: white;
-    -webkit-border-radius: 16px;
-    border-radius: 16px;
-    cursor: pointer;
-    z-index: 8000; /* RS ADD - For close button to showup */
-}
-.leaflet-left {
-    transition: left 0.5s; 
-}
-.leaflet-right {
-    transition: right 0.5s; 
-}
-
-
-
-/* 
-Graphiques dans LeafletSidebar
-############################################################################ */
-.graph_container {
-    width: 100%;
-    height: 100%;
-    background: white;
-    margin: auto;
-}
-.graph1{
-    color: black;
-    background-color: white;
-    width: 50%;
-    height: 30%;
-    float: left;
-}
-.graph2{
-    color: black;   
-    background-color: white;
-    height: 30%;
-    width: 50%;
-    float: right;
-}
-.graph3{
-    color: black;
-    background-color: white;
-    width: 100%;
-    height: 50%;
-    float: left;
-}
-.graph4{
-    color: black;
-    background-color: white;
-    width: 70%;
-    height: 20%;
-    float: left;
-}
-
-/*
-Style des boutons de sélection des couches
-############################################################################ */
-a.liste_polluants_items{
-    color: #adadad;
-    margin-left:10%;    
-}
-.liste_polluants_items.active, .liste_polluants_items.active:focus{
-    border-color: yellow;
-}
-
-a.liste_energies_items{
-    color: #adadad;
-    margin-left:10%;    
-}
-.liste_energies_items.active, .liste_energies_items.active:focus{
-    border-color: yellow;
-}
-
-a.liste_ges_items{
-    color: #adadad;
-    margin-left:10%;    
-}
-.liste_ges_items.active, .liste_ges_items.active:focus{
-    border-color: yellow;
-}
-
-
-/* .selection_page{
-    position: fixed;
-    bottom: 0;
 } */

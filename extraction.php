@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
 
-    <!-- 
-    TODO: Uiliser le plugin datatables qui fait des supers exports pdf
-    -->
-
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta name="description" content="Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie - Extractions">
+    <meta name="author" content="Air PACA">    
+    
     <title>CIGALE - Extraction</title>
     
     <!-- JQuery 3.2.1 -->
@@ -27,22 +26,10 @@
     <link rel="stylesheet" href="libs/bootstrap-select-1.12.2/dist/css/bootstrap-select.min.css">
     <script src="libs/bootstrap-select-1.12.2/dist/js/bootstrap-select.min.js"></script>
     
-    <!-- Leaflet Sidebar
-    <script src="libs/leaflet-sidebar-master/src/L.Control.Sidebar.js"></script>
-    <link rel="stylesheet" href="libs/leaflet-sidebar-master/src/L.Control.Sidebar.css"/>    
-     -->
     <!-- Leaflet.Spin (including spin.js) -->
     <script src="libs/spin.js/spin.min.js"></script>
     <script src="libs/Leaflet.Spin-1.1.0/leaflet.spin.min.js"></script>
-    
-    <!-- Chart.js
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
-    -->
-    <!-- Selectize.js
-    <script src="libs/selectize.js/selectize.js" type="text/javascript"></script>
-    <link href="libs/selectize.js/selectize.css" rel="stylesheet" type="text/css"/>
-    <link href="libs/selectize.js/selectize.bootstrap3.css" rel="stylesheet" type="text/css"/> 
-     -->
+
     <!-- datatables -->
     <script type="text/javascript" src="libs/DataTables/datatables.min.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
@@ -60,84 +47,78 @@
     
 <body>
 
-<div id="container">
 
-    <!-- Partie gauche - Sélection des données -->
-    <div id="sidebar-left">
+    <!-- Corps de la page -->
+    <div class="row">
+        
+        <!-- Zone gauche de sélection et navigation -->
+        <div class="col-md-4" id="zone-select">
+            
+            <!-- Titre de la page -->
+            <img class="img-title" src="img/csv-icon.png" border="0" width="140">  <!-- orig: width="180" -->
+            <h3 class="centered">Extraction</h3>        
+        
+            <!-- Formulaire de sélection -->
+            <div class="hide" id="formulaire">
 
-        <!-- 
-        <img class="img-titre" align="middle" src="img/logo-Air-PACA_small.png">
-        <img class="img-soustitre" align="middle" src="img/LogoCPERnew_small.png">
-        -->
-       
-        <img class="img-title" src="img/csv-icon.png" border="0" width="180">        
-        <h5>Extraction</h5>
-                   
-        <div class="boxe_formulaire">
-        
-            <div class="list-group hide" id="formulaire">
-        
-                <p>Année(s) d'inventaire</p>
+                Année(s) d'inventaire
                 <select class="selectpicker" id="select_ans" title="Années d'inventaire" mobile multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
                 
-                <p>Emprise géographique</p>
+                Emprise géographique
                 <select class="selectpicker" id="select_entites" title="Emprise géograpique" mobile multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
                 
-                <p>Détail communal</p>
+                Détail communal
                 <select class="selectpicker" id="select_detail_comm" title="Détail par commune" mobile data-max-options="1" data-width="100%">
                     <option value="true">Oui</option>
                     <option value="false">Non</option>
                 </select>
-           
-                <p>Secteurs d'activités</p>
+
+                Secteurs d'activités
                 <select class="selectpicker" id="select_secteurs" title="Tous secteurs d'activités confondues" mobile data-selected-text-format="count > 1" multiple data-actions-box="true" data-width="100%"></select>             
 
-                <p>Energies</p>
+                Energies
                 <select class="selectpicker" id="select_cat_ener" title="Toutes énergies confondues" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
 
-                <p>Consommations, Productions et Emissions</p>
+                Consommations, Productions et Emissions
                 <select class="selectpicker" id="select_variable" title="Consommations, Productions et Emissions" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
                 
-                <div class="Boutons_extractions">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success" onClick="afficher_donnees();">Exporter les données</button>
-                    </div>
-                </div>        
-        
+                <button type="button" class="btn btn-success" id="btn_extraction" onClick="afficher_donnees();">Exporter les données</button>
+                   
             </div> 
+
+            <!-- Navigation dans les menus -->
+            <div class="row">
+                <div class="col-xs-6">
+                    <a href="visualisation.php"><img class="img-menus" id="img-visu" src="img/cartography2.png" border="0" width="80"></img></a>      
+                </div>
+                <div class="col-xs-6">
+                    <a href="#"><img class="img-menus" id="img-methodo" src="img/ser03.png" border="0" width="80"></img></a>
+                </div>
+            </div>
+        
         
         </div>
         
-        <!-- Images de navigation dans les menus -->
-        
-        <div class="sidebar-footer">
-        <hr>
-        <img class="img-menus" src="img/cartography2.png" border="0" width="180"></img>       
-        <img class="img-menus" src="img/ser03.png" border="0" width="180"></img>
-        </div>
-        
-    </div>
-    
-    <!-- Partie droite - Affichage des données -->    
-    <div id="sidebar-right">
+        <!-- Zone droite de consultation des donées-->
+        <div class="col-md-8" id="zone-display">
 
-        <div class="header_extraction"></div>
+            <div class="header_extraction"></div>        
 
-        <div class="emplacement_tableau">
             <img class="img-aide-export" src="img/export_aide.png">
             <table id="tableau" class="display" width="100%" cellspacing="0"></table>
-        </div>
-
         
-    </div>
-
+        </div>
+        
+    </div>    
+      
+        
     <!-- Modal pour avertissement sur le nombre de lignes à afficher -->
     <div id="confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                     
                     <div class=texte_modal>
-                        <strong>Attention</strong></br>La sélection demandée comprote un grand nombre de lignes. Leur affichage pourrait faire ralentir votre navigateur.    
+                            <strong>Attention</strong></br>La sélection demandée comprote un grand nombre de lignes. Leur affichage pourrait faire ralentir votre navigateur.    
                     </div>
                     
                     <div class="modal-footer">
@@ -147,22 +128,72 @@
 
             </div>
         </div>
-    </div>  
- 
-</div>
+    </div>         
+        
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+        
+        
+        
+        
+        
+        
+        
+    
 
 <script type="text/javascript">
-
 /* Variables générales */
+var spinner_right = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3, top: "250%",}); // top:"50%", left:"60%",
+var spinner_right_element = document.getElementById('zone-display');
 
-// Spinner: spinner.spin(spinner_element); spinner.stop();
-var spinner_right = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"50%", left:"60%",});
-var spinner_right_element = document.getElementById('container');
-
-var spinner_left = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3,top:"40%", left:"10%",});
-var spinner_left_element = document.getElementById('container');
+var spinner_left = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3, top: "150%",}); 
+var spinner_left_element = document.getElementById('zone-select');
 
 var response_global = null;
+
+/* Navigation entre les menus */
+$("#img-methodo").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
+
+$("#img-visu").hover(function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".png", ".hover.png");
+    });
+}, function(){
+    $(this).attr("src", function(index, attr){
+        return attr.replace(".hover.png", ".png");
+    });
+});
 
 /* Fonctions */
 function tests(){
@@ -499,9 +530,6 @@ function afficher_donnees(){
 };
 
 function create_table(response, display){
-    /**
-    Insert les données dans la table à partir de la réponse ajax
-    */
     
     $('#confirm').modal('hide');
     
