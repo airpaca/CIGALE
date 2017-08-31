@@ -139,8 +139,8 @@ a#liste_polluants.list-group-item, a#liste_energies.list-group-item, a#liste_ges
     text-decoration:none;
     font-size:16px;  
     border: 0px solid black;
-    border-left: 1px solid black;
-    border-bottom: 1px solid black;
+    border-left: 0px solid black;
+    border-bottom: 0px solid black;
     background-color: #f2f2f2 !important;
     background-image:none;
     margin-bottom:2px;
@@ -154,7 +154,7 @@ a#liste_polluants.list-group-item.active, a#liste_energies.list-group-item.activ
     text-decoration:none;
     font-size:16px;  
     border: 0px solid black;
-    border-left: 1px solid black;
+    border-left: 4px solid #3498DB;
     border-bottom: 0px solid black;
     background-color: #f2f2f2 !important; /* #3498DB */
     background-image:none;
