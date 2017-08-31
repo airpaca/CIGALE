@@ -1,3 +1,32 @@
+
+
+#map {
+width: 100%;
+position: inherited;
+height: 600px;
+margin:0;
+padding:0; 
+border: 1px solid black;
+border-radius: 8px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 html, body, #container {
     height: 100%;
     overflow: hidden;
@@ -10,6 +39,21 @@ html, body, #container {
     -webkit-font-smoothing: antialiased;
     -webkit-overflow-scrolling: touch;
 }
+
+
+/* #map {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  height: 100%;
+  width: auto;
+} 
+#map {
+  width: 100%;
+  position: absolute;
+  height: 800px;
+  border: 1px solid black;
+  border-radius: 8px;
+}*/
+
 
 /* Titles */
 h1, h2, h3, h4, h5, h6 {
@@ -118,11 +162,7 @@ p {
     width: 350px;    
 }
 
-#map {
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
-  height: 100%;
-  width: auto;
-}
+
 
 #popup{
     font-family: Andale Mono,AndaleMono,monospace;
@@ -170,16 +210,6 @@ p {
     height:10%;
 }
 
-
-
-/* .graph {
-    margin-top: 5%;
-    text-align: center;
-    font-size: 15px; 
-    font-style: bold;    
-    height:10%;
-} */
-
 .glyphicon.glyphicon-stats {
     font-size: 55px;
 }
@@ -195,27 +225,9 @@ p {
 
 
 }
-/* #sidebar {
-  float: left;
-  height: 100%;
-  max-width: 100%;
-  width: 250px;
-} */
-#map {
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  height: 100%;
-  width: auto;
-}
-/* .sidebar-wrapper {
-  height: 100%;
-  position: relative;
-  width: 100%;
-}
-@media (max-width: 767px) {
-#sidebar {
-  display: none;
-}
-} */
+
+
+
 
 .btn-group-vertical{
 	width: 250px;
@@ -281,11 +293,7 @@ h5 {
     bottom: 0;
 	width:250px;
     text-align: center;
-    /*
-    background-color: #FF8800;
-    font-size: 14px;
-    color: #CC0000;
-    */
+
 }
 
 

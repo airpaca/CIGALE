@@ -52,7 +52,7 @@
     <div class="row">
         
         <!-- Zone gauche de sélection et navigation -->
-        <div class="col-md-4" id="zone-select">
+        <div class="col-md-3" id="zone-select">
             
             <!-- Titre de la page -->
             <img class="img-title" src="img/csv-icon.png" border="0" width="140">  <!-- orig: width="180" -->
@@ -103,7 +103,7 @@
         </div>
         
         <!-- Zone droite de consultation des donées-->
-        <div class="col-md-8" id="zone-display">
+        <div class="col-md-9" id="zone-display">
 
             <div class="header_extraction"></div>        
 

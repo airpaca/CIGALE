@@ -96,32 +96,28 @@
 
 
 
-
-
-
-
-
+<div id="container">
 
     <!-- Corps de la page -->
     <div class="row">
         
         <!-- Zone gauche de sélection et navigation -->
-        <div class="col-md-4" id="zone-select">
+        <div class="col-md-3" id="zone-select">
             
             <!-- Titre de la page -->
             <img class="img-title" src="img/cartography2.png" border="0" width="140">  <!-- orig: width="180" -->
             <h3 class="centered">Visualisation</h3>        
         
-            <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm() -->
+            <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm()
             <div class="liste_select">
                 <select id="geonfo" placeholder="Echelon administratif ..."></select>              
                 <a href="javascript:liste_epci_clean();" class="btn btn-default reinit" role="button">Réinitialiser</a> 
             </div>
-            
+             -->
         
 
 
-            <!-- Liste des données sélectionnables qui s'affiche après sélection d'un EPCI -->
+            <!-- Liste des données sélectionnables qui s'affiche après sélection d'un EPCI
             <a href="#" class="list-group-item active" id="liste_polluants">
             Polluants atmosphériques
             </a>
@@ -188,7 +184,7 @@
                 <span class="glyphicon glyphicon-chevron-right"></span>
                 PRG 100 
                 </a>  
-        
+			 -->
         
         
         
@@ -215,7 +211,7 @@
         
         
         <!-- Zone droite de consultation des donées-->
-        <div class="col-md-8" id="zone-display">
+        <div class="col-md-9" id="zone-display">
 
 
 
@@ -231,10 +227,16 @@
         </div>
         
     </div>    
-      
 
+</div> 
+	
+<!-- 
+<div class="container fill">
+     <div id="map">
 
-
+     </div> 
+ </div>
+ -->
 
 
 
