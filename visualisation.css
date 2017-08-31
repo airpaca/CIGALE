@@ -137,7 +137,7 @@ a#liste_polluants.list-group-item, a#liste_energies.list-group-item, a#liste_ges
     font-weight:300;
     color:#333;
     text-decoration:none;
-    font-size:15px;  
+    font-size:16px;  
     border: 0px solid black;
     border-left: 1px solid black;
     border-bottom: 1px solid black;
@@ -152,11 +152,11 @@ a#liste_polluants.list-group-item.active, a#liste_energies.list-group-item.activ
     font-weight:300;
     color:#333;
     text-decoration:none;
-    font-size:15px;  
+    font-size:16px;  
     border: 0px solid black;
     border-left: 1px solid black;
     border-bottom: 0px solid black;
-    background-color: #f2f2f2 !important;
+    background-color: #f2f2f2 !important; /* #3498DB */
     background-image:none;
     margin-bottom:2px;
     text-shadow: none;
@@ -164,7 +164,6 @@ a#liste_polluants.list-group-item.active, a#liste_energies.list-group-item.activ
 
 /* Couches */
 a.list-group-item.liste_polluants_items, a.list-group-item.liste_energies_items, a.list-group-item.liste_ges_items{
-    color:red;
     font-family: 'Lato', sans-serif;
     font-weight:300;
     color:#333;   
@@ -177,13 +176,12 @@ a.list-group-item.liste_polluants_items, a.list-group-item.liste_energies_items,
     margin-left:5%;    
 }
 a.list-group-item.liste_polluants_items.active, a.list-group-item.liste_energies_items.active, a.list-group-item.liste_ges_items.active{
-    color:red;
     font-family: 'Lato', sans-serif;
     font-weight:300;
-    color:#333;   
+    color:white;   
     font-size:13px;  
     border: 0px solid black;
-    background-color: #f2f2f2;
+    background-color: #3498DB !important;
     margin-bottom:2px;
     text-shadow: none;
     background-image:none;  
@@ -191,7 +189,6 @@ a.list-group-item.liste_polluants_items.active, a.list-group-item.liste_energies
     font-weight: bold;
 }
 a.list-group-item.liste_polluants_items:hover, a.list-group-item.liste_energies_items:hover, a.list-group-item.liste_ges_items:hover{
-    color:red;
     font-family: 'Lato', sans-serif;
     font-weight:300;
     color:#333;   
@@ -204,7 +201,19 @@ a.list-group-item.liste_polluants_items:hover, a.list-group-item.liste_energies_
     margin-left:10%;  
     font-weight: bold;    
 }
-
+a.list-group-item.liste_polluants_items.active:hover, a.list-group-item.liste_energies_items.active:hover, a.list-group-item.liste_ges_items.active:hover{
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:white;   
+    font-size:13px;  
+    border: 0px solid black;
+    background-color: #f2f2f2;
+    margin-bottom:2px;
+    text-shadow: none;
+    background-image:none;  
+    margin-left:10%;  
+    font-weight: bold;    
+}
 
 
 
