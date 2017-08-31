@@ -692,7 +692,9 @@ Graphiques dans LeafletSidebar
     color: black;
     background-color: white;
     width: 20%;
-    height: 10%;
+    max-width: 100%;
+/*     width: 20%;
+    height: 10%; */
     float: right;
 }
 .graph1{

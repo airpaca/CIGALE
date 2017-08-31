@@ -1295,7 +1295,7 @@ function create_sidebar_template(){
     var sidebarContent = '\
     <section class="graph_container" id="graph_container_block">\
         <div class="graph_title">Titre du graph</div>\
-        <div class="btn_export"><img class="img-btn-export" src="img/pdf_download.png" onclick="export_pdf();"></div>\
+        <div class="btn_export"><img class="img-btn-export" src="img/pdfs-512.png" onclick="export_pdf();"></div>\
         <div class="graph1">graph1</div>\
         <div class="graph2">graph2</div>\
         <div class="graph3">graph3</div>\
