@@ -96,7 +96,7 @@
 
 
 
-<div id="container">
+
 
     <!-- Corps de la page -->
     <div class="row">
@@ -228,7 +228,7 @@
         
     </div>    
 
-</div> 
+
 	
 <!-- 
 <div class="container fill">
