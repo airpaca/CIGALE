@@ -673,7 +673,8 @@ Graphiques dans LeafletSidebar
     background: white;
     margin: auto;
 }
-.graph_title {
+
+/* .graph_title {
     color: black;
     background-color: white;
     width: 80%;
@@ -686,12 +687,27 @@ Graphiques dans LeafletSidebar
 	font-variant: normal;
 	font-weight: 500;
 	line-height: 28px; 
-    text-align: center;   
+    text-align: center;
+    color:red;   
+} */
+.graph_title {
+    background-color: white;
+    width: 80%;
+    height: 10%;
+    float: left;    
+    
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:19px; 
+    text-align: left;  
 }
+
+
 .btn_export{
     color: black;
     background-color: white;
-    width: 20%;
+    width: 15%;
     max-width: 100%;
 /*     width: 20%;
     height: 10%; */

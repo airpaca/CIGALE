@@ -593,7 +593,7 @@ function liste_epci_create(){
         labelField: 'geonm',
         searchField: ['geonm'],
         options: [
-            { geoid: "reg|93", geonm: "PACA", geotyp: "Région" },
+            // { geoid: "reg|93", geonm: "PACA", geotyp: "Région" },
         ],
         highlight: true,
         render: {
