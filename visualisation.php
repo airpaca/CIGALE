@@ -71,175 +71,121 @@
 ------------------------------------------------------------------------------->
 <body>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- Corps de la page -->
-    <div class="row">
+<!-- Corps de la page -->
+<div class="row">
+    
+    <!-- Zone gauche de sélection et navigation -->
+    <div class="col-md-3" id="zone-select">
         
-        <!-- Zone gauche de sélection et navigation -->
-        <div class="col-md-3" id="zone-select">
-            
-            <!-- Titre de la page -->
-            <img class="img-title" src="img/cartography2.png" border="0" width="140">  <!-- orig: width="180" -->
-            <h3 class="centered">Visualisation</h3>        
-        
-            <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm()
-            <div class="liste_select">
-                <select id="geonfo" placeholder="Echelon administratif ..."></select>              
-                <a href="javascript:liste_epci_clean();" class="btn btn-default reinit" role="button">Réinitialiser</a> 
-            </div>
-             -->
-        
-
-
-            <!-- Liste des données sélectionnables qui s'affiche après sélection d'un EPCI
-            <a href="#" class="list-group-item active" id="liste_polluants">
-            Polluants atmosphériques
-            </a>
-
-                <a href="#" class="list-group-item liste_polluants_items" id="nox">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de NOx
-                </a>
-
-                <a href="#" class="list-group-item liste_polluants_items" id="pm10">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de PM10
-                </a>
-
-                <a href="#" class="list-group-item liste_polluants_items" id="pm2.5">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de PM2.5
-                </a>            
-
-                <a href="#" class="list-group-item liste_polluants_items" id="covnm">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de COVNM
-                </a>  
-
-                <a href="#" class="list-group-item liste_polluants_items" id="so2">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de SO2
-                </a>  
-
-                <a href="#" class="list-group-item liste_polluants_items" id="nh3">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de NH3
-                </a>              
-            
-            <a href="#" class="list-group-item" id="liste_energies">
-            Bilans énergétiques
-            </a>
-
-                <a href="#" class="list-group-item hide liste_energies_items" id="conso">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Consommations d'énergie
-                </a>   
-
-            <a href="#" class="list-group-item" id="liste_ges">
-            Gazs à Effet de Serre
-            </a>
-
-                <a href="#" class="list-group-item hide liste_ges_items" id="co2">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de CO2
-                </a>  
-                
-                <a href="#" class="list-group-item hide liste_ges_items" id="ch4.co2e">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de CH4 eq.co2
-                </a>  
-
-                <a href="#" class="list-group-item hide liste_ges_items" id="n2o.co2e">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                Emissions de N2O eq.co2
-                </a>  
-
-                <a href="#" class="list-group-item hide liste_ges_items" id="prg100.3ges">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-                PRG 100 
-                </a>  
-			 -->
-        
-        
-        
-        
-        
-        
-            <!-- Navigation dans les menus -->
-            <div class="row">
-                <div class="col-xs-4">
-                    <a href="index.php"><img class="img-menus" id="img-home" src="img/flat-blue-home-icon-4.png" border="0" width="80"></img></a>
-                </div>			
-                <div class="col-xs-4">
-                    <a href="extraction.php"><img class="img-menus" id="img-extract" src="img/csv-icon.png" border="0" width="80"></img></a>      
-                </div>
-                <div class="col-xs-4">
-                    <a href="#"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
-                </div>
-            </div>
-        
-        
+        <!-- Titre de la page -->
+        <img class="img-title" src="img/cartography2.png" border="0" width="140">  <!-- orig: width="180" -->
+        <h3 class="centered">Visualisation</h3>        
+    
+        <!-- Sélection de l'emprise géographique qui déclanche la fonction submitForm() -->
+        <div class="liste_select">
+            <select id="geonfo" placeholder="Rechercher un EPCI ..."></select>              
+            <a href="javascript:liste_epci_clean();" class="btn btn-default reinit" role="button">Réinitialiser</a> 
         </div>
-        
-        
-        
-        
-        <!-- Zone droite de consultation des donées-->
-        <div class="col-md-9" id="zone-display">
+    
+        <!-- Liste des données sélectionnables qui s'affiche après sélection d'un EPCI -->
+        <a href="#" class="list-group-item active" id="liste_polluants">
+        Polluants atmosphériques
+        </a>
 
+            <a href="#" class="list-group-item liste_polluants_items active" id="nox">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de NOx
+            </a>
 
+            <a href="#" class="list-group-item liste_polluants_items" id="pm10">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de PM10
+            </a>
 
-            <!-- Leaflet sidebar
-            <div id="sidebar">
-                <h1>leaflet-sidebar</h1>
-            </div>  
-            -->
-             
-            <!-- Element carte -->
-            <div id="map"></div>
+            <a href="#" class="list-group-item liste_polluants_items" id="pm2.5">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de PM2.5
+            </a>            
+
+            <a href="#" class="list-group-item liste_polluants_items" id="covnm">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de COVNM
+            </a>  
+
+            <a href="#" class="list-group-item liste_polluants_items" id="so2">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de SO2
+            </a>  
+
+            <a href="#" class="list-group-item liste_polluants_items" id="nh3">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de NH3
+            </a>              
+        
+        <a href="#" class="list-group-item" id="liste_energies">
+        Bilans énergétiques
+        </a>
+
+            <a href="#" class="list-group-item hide liste_energies_items" id="conso">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Consommations d'énergie
+            </a>   
+
+        <a href="#" class="list-group-item" id="liste_ges">
+        Gazs à Effet de Serre
+        </a>
+
+            <a href="#" class="list-group-item hide liste_ges_items" id="co2">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de CO2
+            </a>  
             
-        </div>
+            <a href="#" class="list-group-item hide liste_ges_items" id="ch4.co2e">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de CH4 eq.co2
+            </a>  
+
+            <a href="#" class="list-group-item hide liste_ges_items" id="n2o.co2e">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de N2O eq.co2
+            </a>  
+
+            <a href="#" class="list-group-item hide liste_ges_items" id="prg100.3ges">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            PRG 100 
+            </a>  
         
-    </div>    
+        <!-- Navigation dans les menus -->
+        <div class="row">
+            <div class="col-xs-4">
+                <a href="index.php"><img class="img-menus" id="img-home" src="img/flat-blue-home-icon-4.png" border="0" width="80"></img></a>
+            </div>			
+            <div class="col-xs-4">
+                <a href="extraction.php"><img class="img-menus" id="img-extract" src="img/csv-icon.png" border="0" width="80"></img></a>      
+            </div>
+            <div class="col-xs-4">
+                <a href="#"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
+            </div>
+        </div>
+    
+    
+    </div>
+    
+    <!-- Zone droite de consultation des donées-->
+    <div class="col-md-9" id="zone-display">
+        
+        <!-- Element carte -->
+        <div id="map"></div>
+        
+    </div>
+    
+</div>    
 
-
-	
-<!-- 
-<div class="container fill">
-     <div id="map">
-
-     </div> 
- </div>
- -->
-
-
-
+<!-- Leaflet sidebar -->
+<div id="sidebar">
+    <h1>leaflet-sidebar</h1>
+</div>     
+    
 
 <!------------------------------------------------------------------------------ 
                                     Map script
@@ -532,7 +478,7 @@ function getBase64Image(img) {
 function createMap(){
     /* Création de la carte */
     var map = L.map('map', {layers: [], zoomControl:false}).setView([43.9, 6.0], 8);    
-    map.attributionControl.addAttribution('mes2camp &copy; <a href="http://www.airpaca.org/">Air PACA - 2017</a>');    
+    map.attributionControl.addAttribution('&copy; <a href="http://www.airpaca.org/">Air PACA - 2017</a>');    
 
     /* Chargement des fonds carto */    
     // var Hydda_Full = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
@@ -543,7 +489,7 @@ function createMap(){
     // Hydda_Full.addTo(map);
 
     var urlbasemap = 'https://{s}.tiles.mapbox.com/v3/aj.map-zfwsdp9f/{z}/{x}/{y}.png'; // AJ Ashton's Terrain Grey
-    var attrib = '&copy; Air PACA, data &copy; OpenStreetMap contributors (license ODbL), design &copy; Mapbox (license Mapbox Terms of Service).';
+    var attrib = '&copy; Mapbox';
     L.tileLayer(urlbasemap, {
             name: "fond",
             attribution: attrib,
@@ -1263,7 +1209,7 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                     // Ajout d'un popup
                     // var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>";
                     // var html = "<div id='popup'>Accéder aux données tabulaires?</div>";                    
-                    var html = "<div id='popup'><a href='index.extract.php'>Extraction des données sur cette commune</a></div>";                    
+                    var html = "<div id='popup'><a href='extraction.php'>Extraction des données sur cette commune</a></div>";                    
                     layer.bindPopup(html);
 
                     // Prise en compte du hover

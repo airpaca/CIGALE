@@ -78,6 +78,9 @@ p {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    
+    padding-right:0px;
+    padding-left:0px;    
 }
 
 .img-title {

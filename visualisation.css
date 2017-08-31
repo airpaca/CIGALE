@@ -55,6 +55,8 @@ html, body {
     background-size: cover;    
     
     height:100%;
+    padding-right:0px;
+    padding-left:0px;
 }
 
 #map {
@@ -82,6 +84,36 @@ html, body {
 }
 
 
+.liste_select{
+    width:100%;
+}
+
+#geonfo{
+    width: 100%;
+}
+input#geonfo-selectized{
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333;
+    font-size: 13px;    
+}
+div.selectize-dropdown-content{
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333;
+    font-size: 13px;  
+}
+div.item{
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333;
+    font-size: 13px;  
+}
+
+.reinit{
+    width: 100%;
+    margin-bottom:3%;
+}
 
 
 
@@ -91,6 +123,182 @@ html, body {
 
 
 
+
+
+
+
+/*
+Style des boutons de sélection des couches
+############################################################################ */
+/* Groupes */
+a#liste_polluants.list-group-item, a#liste_energies.list-group-item, a#liste_ges.list-group-item{
+    z-index: 3;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;
+    text-decoration:none;
+    font-size:15px;  
+    border: 0px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    background-color: #f2f2f2 !important;
+    background-image:none;
+    margin-bottom:2px;
+    text-shadow: none;
+}
+a#liste_polluants.list-group-item.active, a#liste_energies.list-group-item.active, a#liste_ges.list-group-item.active{
+    z-index: 3;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;
+    text-decoration:none;
+    font-size:15px;  
+    border: 0px solid black;
+    border-left: 1px solid black;
+    border-bottom: 0px solid black;
+    background-color: #f2f2f2 !important;
+    background-image:none;
+    margin-bottom:2px;
+    text-shadow: none;
+}
+
+/* Couches */
+a.list-group-item.liste_polluants_items, a.list-group-item.liste_energies_items, a.list-group-item.liste_ges_items{
+    color:red;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:13px;  
+    border: 0px solid black;
+    background-color: #f2f2f2;
+    margin-bottom:2px;
+    text-shadow: none;
+    background-image:none;   
+    margin-left:5%;    
+}
+a.list-group-item.liste_polluants_items.active, a.list-group-item.liste_energies_items.active, a.list-group-item.liste_ges_items.active{
+    color:red;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:13px;  
+    border: 0px solid black;
+    background-color: #f2f2f2;
+    margin-bottom:2px;
+    text-shadow: none;
+    background-image:none;  
+    margin-left:10%;     
+    font-weight: bold;
+}
+a.list-group-item.liste_polluants_items:hover, a.list-group-item.liste_energies_items:hover, a.list-group-item.liste_ges_items:hover{
+    color:red;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:13px;  
+    border: 0px solid black;
+    background-color: #f2f2f2;
+    margin-bottom:2px;
+    text-shadow: none;
+    background-image:none;  
+    margin-left:10%;  
+    font-weight: bold;    
+}
+
+
+
+
+
+
+/* a#liste_polluants.list-group-item:focus, a#liste_energies.list-group-item:focus, a#liste_ges.list-group-item:focus{
+    z-index: 3;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:13px;  
+    border: 0px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    background-color: #f2f2f2 !important;
+    background-image:none;
+    margin-bottom:2px;
+} */
+
+/* a#liste_polluants.list-group-item.active:focus, a#liste_energies.list-group-item.active:focus, a#liste_ges.list-group-item.active:focus{
+    z-index: 3;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:red;   
+    font-size:13px;  
+    border: 0px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    background-color: #f2f2f2 !important;
+    background-image:none;
+    margin-bottom:2px;
+} */
+
+
+
+/* Couches
+a.liste_polluants_items, a.liste_energies_items, a.liste_ges_items{
+    color:red;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:13px;  
+    border: 0px solid black;
+    background-color: #f2f2f2;
+    margin-bottom:2px;
+}
+a.liste_polluants_items, a.liste_energies_items, a.liste_ges_items{
+    color:red;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:13px;  
+    border: 0px solid black;
+    background-color: #f2f2f2;
+    margin-bottom:2px;
+} 
+ */
+
+
+
+/* a.liste_polluants_items.active, a.liste_energies_items.active, a.liste_ges_items.active{
+    color:red;
+    font-family: 'Lato', sans-serif;
+    font-weight:300;
+    color:#333;   
+    font-size:13px;  
+    border: 0px solid black;
+    background-color: #f2f2f2;
+    margin-bottom:2px;
+} 
+
+
+.liste_polluants_items.active, .liste_polluants_items.active:focus{
+    color:red;
+}
+ 
+a.liste_energies_items{
+    color: #adadad;
+    margin-left:10%;    
+}
+.liste_energies_items.active, .liste_energies_items.active:focus{
+    border-color: yellow;
+}
+
+a.liste_ges_items{
+    color: #adadad;
+    margin-left:10%;    
+}
+.liste_ges_items.active, .liste_ges_items.active:focus{
+    border-color: yellow;
+}
+
+
+*/
 
 
 
@@ -141,14 +349,6 @@ p {
 
 
 
-/* .liste_select{
-    margin-top: 10%;
-    margin-left: 3%;
-}
-
-.reinit{
-    width: 100%;
-} */
 
 
 
@@ -166,40 +366,6 @@ p {
 
 
 
-
-
-
-
-
-/* html, body, #container {
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
-} */
-
-/* .img-titre{
-    margin-top: 5%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;    
-}
-.img-soustitre{
-    margin-top: 5%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;  
-    width: 80%;
-} */
-
-/* #sidebar-left{
-    float: left;
-    height: 100%;
-    max-width: 100%;
-    width: 350px;    
-} */
-
-
-/* 
 #popup{
     font-family: Andale Mono,AndaleMono,monospace;
 	font-size: 14px;
@@ -251,7 +417,6 @@ p {
 }
 
 
- */
 
 
 
@@ -263,6 +428,35 @@ p {
 
 
 
+
+
+
+/* html, body, #container {
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+} */
+
+/* .img-titre{
+    margin-top: 5%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;    
+}
+.img-soustitre{
+    margin-top: 5%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;  
+    width: 80%;
+} */
+
+/* #sidebar-left{
+    float: left;
+    height: 100%;
+    max-width: 100%;
+    width: 350px;    
+} */
 
 
 /* .btn-group-vertical{
@@ -541,32 +735,6 @@ Graphiques dans LeafletSidebar
     height: 65%;  
 }
 
-/*
-Style des boutons de sélection des couches
-############################################################################ */
-a.liste_polluants_items{
-    color: #adadad;
-    margin-left:10%;    
-}
-.liste_polluants_items.active, .liste_polluants_items.active:focus{
-    border-color: yellow;
-}
-
-a.liste_energies_items{
-    color: #adadad;
-    margin-left:10%;    
-}
-.liste_energies_items.active, .liste_energies_items.active:focus{
-    border-color: yellow;
-}
-
-a.liste_ges_items{
-    color: #adadad;
-    margin-left:10%;    
-}
-.liste_ges_items.active, .liste_ges_items.active:focus{
-    border-color: yellow;
-}
 
 
 /* .selection_page{
