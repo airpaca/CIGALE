@@ -88,7 +88,7 @@
         </div><!-- /container -->
 
         <div class="container">
-            <p class="centered">Air PACA © - Bootstrap theme FLATTY thanks to http://blacktie.co</p>
+            <p class="centered">Air PACA © - Bootstrap theme FLATTY thanks to http://blacktie.co | <a href="methodo.php#contact">contact</a></p>
         </div><!-- /container -->
 
 
