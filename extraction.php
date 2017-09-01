@@ -95,7 +95,7 @@
                     <a href="visualisation.php"><img class="img-menus" id="img-visu" src="img/cartography2.png" border="0" width="80"></img></a>      
                 </div>
                 <div class="col-xs-4">
-                    <a href="#"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
+                    <a href="methodo.php"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
                 </div>			
             </div>
         
@@ -540,7 +540,7 @@ function afficher_donnees(){
    
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
-    $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="#">Consulter les conditions d\'utilisation et de diffusion</a>');
+    $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
 function create_table(response, display){

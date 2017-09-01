@@ -310,7 +310,7 @@ LEAFLET SIDEBAR STYLE OVERRIDING
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 10px;
-    z-index: 1000; 
+    z-index: 2000; 
     width: 50%;
 }
 .leaflet-sidebar.left {

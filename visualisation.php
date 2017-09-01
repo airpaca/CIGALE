@@ -165,7 +165,7 @@
                 <a href="extraction.php"><img class="img-menus" id="img-extract" src="img/csv-icon.png" border="0" width="80"></img></a>      
             </div>
             <div class="col-xs-4">
-                <a href="#"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
+                <a href="methodo.php"><img class="img-menus" id="img-methodo" src="img/document-flat.png" border="0" width="80"></img></a>
             </div>
         </div>
     
