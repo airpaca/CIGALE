@@ -997,15 +997,15 @@ function create_wfs_epci_layers(my_layers_object){
                         // On informe l'application que l'on est au niveau communal
                         my_app.niveau = 'comm';
                         
-                        // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques 
-                        if (my_layers_object.polluant  == 'conso'){
+                        // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                         
+                        if (polluant_actif  == 'conso'){
                             create_graphiques_conso(feature.properties["siren_epci"], feature.properties["nom_epci"]); 
                         } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges') { 
                             create_graphiques_ges(feature.properties["siren_epci"], feature.properties["nom_epci"]);                                
                         } else {
                             create_graphiques(feature.properties["siren_epci"], feature.properties["nom_epci"]);  
-                        };                        
-                        
+                        };  
+
                         // On réapplique le style mouseout pour éviter les artefacts 
                         layer.setStyle({weight: 2, color: "#000000"});
 
