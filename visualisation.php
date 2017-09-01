@@ -926,13 +926,21 @@ function create_wfs_epci_layers(my_layers_object){
         success: function (data) {
         
             // Calcul des statistiques (echelle de couleur en fonction du polluant)
-            if (['conso','prod'].includes(my_layers_object.polluant)  == true) {
+            if (my_layers_object.polluant == 'conso' || my_layers_object.polluant == 'prod'){
                 the_jenks = calc_jenks(data, "val", 6, color_scales.energie);
-            } else if (['co2','ch4.co2e','n2o.co2e','prg100.3ges'].includes(my_layers_object.polluant)  == true) { 
+            } else if (my_layers_object.polluant == 'co2' || my_layers_object.polluant == 'ch4.co2e' || my_layers_object.polluant == 'n2o.co2e' || my_layers_object.polluant == 'prg100.3ges'){
                 the_jenks = calc_jenks(data, "val", 6, color_scales.ges);
             } else {
                 the_jenks = calc_jenks(data, "val", 6, color_scales.polluants);
             };
+            // NOTE: La formulation suivante ne fonctionnait pas sous Safari
+            // if (['conso','prod'].includes(my_layers_object.polluant)  == true) {
+                // the_jenks = calc_jenks(data, "val", 6, color_scales.energie);
+            // } else if (['co2','ch4.co2e','n2o.co2e','prg100.3ges'].includes(my_layers_object.polluant)  == true) { 
+                // the_jenks = calc_jenks(data, "val", 6, color_scales.ges);
+            // } else {
+                // the_jenks = calc_jenks(data, "val", 6, color_scales.polluants);
+            // };
 
             // Création de l'objet
             my_layers_object.layer = L.geoJSON(data, {
@@ -1149,9 +1157,12 @@ function create_wfs_epci_layers_filter_specifique(my_layers_object){
                 my_layers_object.legend = {bornes: the_jenks.bornes, colors: the_jenks.colors};
             };
         },
-        error(){
+        error: function () {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
             console.log("ERROR - create_wfs_epci_layers_filter(my_layers_object)");
-        }
+        },        
     });    
 };
 
