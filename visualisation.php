@@ -71,6 +71,7 @@
 ------------------------------------------------------------------------------->
 <body>
 
+<div id="container">
 <!-- Corps de la page -->
 <div class="row">
     
@@ -180,17 +181,19 @@
     </div>
     
 </div>    
-
-<!-- Leaflet sidebar -->
+</div> 
+<!-- Leaflet sidebar --> 
 <div id="sidebar">
     <h1>leaflet-sidebar</h1>
 </div>     
-    
+
 
 <!------------------------------------------------------------------------------ 
                                     Map script
 ------------------------------------------------------------------------------->
 <script type="text/javascript">
+
+
 
 /* Navigation dans les menus */
 $("#img-methodo").hover(function(){
@@ -281,6 +284,10 @@ var legend = L.control({position: 'bottomleft'});
 var hover_info = L.control({position: 'topleft'});
 
 /* Extension de chart.js */
+Chart.defaults.global.defaultFontColor = '#333';
+Chart.defaults.global.defaultFontSize = 13;
+Chart.defaults.global.defaultFontFamily = "'Lato', sans-serif";
+Chart.defaults.global.defaultFontStyle = "normal";
 
 // Permets de dessiner des lignes sur un linechart pour les nodata
 // Source: https://stackoverflow.com/questions/36329630/chart-js-2-0-vertical-lines
@@ -1291,7 +1298,7 @@ function generate_legend(title, grades, colors){
     legend.addTo(map);    
 };
 
-function create_sidebar_template(){
+function create_sidebar_template(){ 
     var sidebarContent = '\
     <section class="graph_container" id="graph_container_block">\
         <div class="graph_title">Titre du graph</div>\
@@ -1365,7 +1372,11 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
             maintainAspectRatio: false,
             title: {
                 display: true, 
-                fontSize: 15,
+                // fontSize: 13,
+                // fontFamily: "'Lato', sans-serif",
+                // fontWeight:300,
+                // fontColor: "#333",                 
+                fontStyle: "normal", 
                 text: graph_title
             },
             legend: {
@@ -1448,7 +1459,8 @@ function create_barchart_emi(response, div){
             maintainAspectRatio: false,
             title: {
                 display: true,
-                fontSize: 15,
+                // fontSize: 15,
+                fontStyle: "normal", 
                 text: graph_title
             },
             legend: {
@@ -1539,7 +1551,8 @@ function create_linechart_emi(response, div, graph_title){
             // },            
             title: {
                 display: true,
-                fontSize: 15,
+                // fontSize: 15,
+                fontStyle: "normal", 
                 text: graph_title,
             },
             legend: {
@@ -1586,7 +1599,8 @@ function create_barchart_part(response, div){
             maintainAspectRatio: false,
             title: {
                 display: true,
-                fontSize: 15,
+                // fontSize: 15,
+                fontStyle: "normal", 
                 text: "EPCI = " + response[0].pct_reg + "% de la région en " + an_max,
             },
             legend: {
@@ -1980,6 +1994,8 @@ create_hover_info_bar();
 function tests(){
     console.log("tests()");
 };
+
+
 
 
 </script>
