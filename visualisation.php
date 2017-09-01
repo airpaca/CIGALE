@@ -1731,7 +1731,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des consommations');
             
             create_piechart_emi(response[0], "graph1", "Energie finale par secteur en " + an_max, "ktep");
-            create_piechart_emi(response[1], "graph2", "Energie finale par catégorie d'énergie en " + an_max, "ktep");
+            create_piechart_emi(response[1], "graph2", "Energie finale par énergie en " + an_max, "ktep");
             create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie finale en ktep)");
             create_barchart_part(response[3], "graph4");
             
@@ -1784,7 +1784,7 @@ function create_graphiques_ges(siren_epci, nom_epci){
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]);
             
             create_piechart_emi(response[0], "graph1", "Emissions indirectes par secteur en " + an_max, "t");
-            create_piechart_emi(response[1], "graph2", "Emissions indirectes par catégorie d'énergie en " + an_max, "t");
+            create_piechart_emi(response[1], "graph2", "Emissions indirectes par énergie en " + an_max, "t");
             create_linechart_emi(response[2], "graph3", "Evolution séctorielle (émissions indirectes en t)");
             create_barchart_part(response[3], "graph4");
             

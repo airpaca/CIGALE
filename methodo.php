@@ -77,13 +77,6 @@
         
         <!-- Zone droite affichage des documents -->
         <div class="col-md-9" id="zone-display">
-
-            <h1>Secret statistique</h1>
-            <p>
-            Les consommations et émissions déclarées entre dans les données pouvant-être soumises au secret statistique.
-            Si un donnée déclarée réponds aux critères du secret statistique à la commune, elle n'est pas prise en compte
-            dans la réalisation des cartes et ne sera pas non plus présente dans les exports de données.
-            </p>
                        
             <h1>Nomenclatures</h1>
                 <h2 data-toc-text="SECTEN">SECTEN</h2>
@@ -105,14 +98,15 @@
                     <li>Emetteurs non inclus dans le total France</li>
                     </ul>
                     </p>
-                    <p>                    
+                    <p> 
+                    Le secteur UTCF n’est actuellement pas calculé dans l’inventaire Air PACA.</br>                    
                     La catégorie « hors total » regroupe les émissions non prises en compte dans les totaux nationaux. 
                     Concernant les émissions de gaz à effet de serre direct, il s’agit des émissions du trafic maritime aérien et 
                     international ainsi que des sources non anthropiques). Pour les autres substances, il s’agit des mêmes 
                     émissions auxquelles sont ajoutées les émissions de la phase croisière du trafic aérien domestique et les émissions 
                     des sources biotiques agricoles.
                     </p>
-                    Le secteur UTCF n’est actuellement pas calculé dans l’inventaire Air PACA.</br>
+                    <p>
                     Ce format de rapportage SECTEN est adaptée à des inventaires orientés « sources », 
                     c’est-à-dire lorsque les émissions sont comptabilisées sur leur lieu de rejet. 
                     L’inventaire énergétique étant réalisé en même temps que l’inventaire des émissions, 
@@ -120,12 +114,17 @@
                     secondaires (électricité et chaleur) pour lesquelles les émissions atmosphériques sont 
                     rejetées sur le lieu de production et non sur leur lieu de consommation. 
                     Son principe est synthétisé dans le schéma suivant :
+                    <p>
                     <img src="img/diagramme_inv.png" border="0">
                     </p>
-                    
-            
-            <h2 data-toc-text="Catégories d'énergie">Catégories d'énergie</h2>            
-            <p>todo</p>
+
+            <h1>Secret statistique</h1>
+            <p>
+            Les données de consommations et d’émissions déclarées peuvent entrer dans le cadre du secret statistique. 
+            Les critères du secret statistique sont calculés au niveau communal par catégorie d’énergie et activité SECTEN1. 
+            Les données qui, après vérification sont soumises au secret statistique ne sont pas utilisées dans la création des 
+            cartes quel que soit le niveau d’agrégation et ne peuvent pas non plus être exportées.
+            </p>                    
 
             <h1 data-toc-text="Conditions d'utilisation">Conditions d'utilisation des données</h1>
                 <h2 data-toc-text="Diffusion">Conditions de diffusion</h2>
@@ -158,7 +157,15 @@
                     - L'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) Provence-Alpes-Côte dAzur et 
                     Air PACA peuvent rediffuser ce document à d'autres destinataires.        
                     </p>    
-        
+            
+            <h1>Contact</h1>
+            <p>
+            Pour nous faire remonter une erreur, incohérence ou pour plus d'information sur les données 
+            présentées, vous pouvez envoyer un mail à <a href="mailto:romain.souweine@airpaca.org">romain.souweine@airpaca.org</a>
+            </p>
+            <p>
+            Responsables de la publication: Air PACA - Gaëlle Luneau, Matthieu Moynet, Romain Souweine
+            </p>            
         </div>
         
     </div>    
