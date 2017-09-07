@@ -83,7 +83,7 @@ from (
 )  as a
 left join commun.tpk_communes as b using (id_comm)
 left join transversal.tpk_secten1 as c using (id_secten1)
-left join transversal.tpk_energie as d using (code_cat_energie)
+left join (select distinct code_cat_energie, cat_energie from transversal.tpk_energie) as d using (code_cat_energie)
 left join commun.tpk_polluants as e using (id_polluant)
 left join commun.tpk_unite as f using (id_unite)
 " . $group_by . "
