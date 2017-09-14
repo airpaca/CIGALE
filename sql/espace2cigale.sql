@@ -22,7 +22,7 @@ Polluants pris en compte:
 */
 
 
-/** ***************************************************************************
+/** user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***
 Création de la table des émissions par SECTEN1, catégorie d'énergie et prise 
 en compte du secret statistique
 
@@ -62,7 +62,7 @@ TODO:
 -- Idem, activite et energie 
 -- On fait ce calcul au niveau de détail le plus fin
 -- Si oui, on passe une donnée d'une autre commune en secret stat pou avoir deux communes en SS
-**************************************************************************** */
+user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=**** */
 
 /** 
 Récupération du nombre d'établissements 
@@ -1107,6 +1107,72 @@ order by order_field, valeur;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** 
+
+Création du compte utilisateur + acces pour grand public
+
+*/
+
+-- Création de l'utilisateur plateforme J
+CREATE USER *** WITH PASSWORD 'user=*** dbname=*** host=*** password=***';
+
+-- Autorisation de la connexion (sudo vi pg_hba.conf)
+GRANT ALL PRIVILEGES ON DATABASE "***" to ***;
+SELECT pg_reload_conf();
+
+-- Affectation des droits sur les tables
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO ***;
+GRANT USAGE ON SCHEMA public TO ***;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO ***;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO ***;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA cigale TO ***;
+GRANT USAGE ON SCHEMA cigale TO ***;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA cigale TO ***;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA cigale TO ***;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA total TO ***;
+GRANT USAGE ON SCHEMA total TO ***;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA total TO ***;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA total TO ***;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA transversal TO ***;
+GRANT USAGE ON SCHEMA transversal TO ***;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA transversal TO ***;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA transversal TO ***;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA commun TO ***;
+GRANT USAGE ON SCHEMA commun TO ***;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA commun TO ***;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA commun TO ***;
 
 
 
