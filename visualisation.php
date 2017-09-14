@@ -252,6 +252,8 @@ var polls_names = {
     "n2o.co2e": "N<SUB>2</SUB>O eq. CO<SUB>2</SUB>",
     "prg100.3ges": "PRG 100",
 };
+
+
 var polluant_actif = "nox";
 
 var color_scales = {
@@ -1424,12 +1426,25 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
     
 };
 
-function create_barchart_emi(response, div){
+function create_barchart_emi(response, div, poll){
     /*
     Création d'un graphique bar à partir de:
     @response - Réponse json de la requête ajax
     @div - Classe de l'élement auquel rattacher le graph 
     */
+
+    // On est pas arrivé à passer du HTML dans le tool tip du coup on écrit les polluants à l'arrache
+    if (poll == "SO<SUB>2</SUB>") {
+        poll = "SO2";
+    } else if (poll == "NH<SUB>3</SUB>") {
+        poll = "NH3";
+    } else if (poll == "CO<SUB>2</SUB>") {
+        poll = "CO2";
+    } else if (poll == "CH<SUB>4</SUB> eq. CO<SUB>2</SUB>") {
+        poll = "CH4 eq.CO2";
+    } else if (poll == "N<SUB>2</SUB>O eq. CO<SUB>2</SUB>") {
+        poll = "N2O eq.CO2";
+    };
     
     $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
     
@@ -1458,7 +1473,7 @@ function create_barchart_emi(response, div){
         data: {
             labels: graph_labels,
             datasets: [{
-                label: 'NO2',
+                label: poll,
                 data: graph_data,
                 backgroundColor: bg_colors,
                 borderColor: bd_colors,
@@ -1598,7 +1613,7 @@ function create_barchart_part(response, div){
         data: {
             labels: ["EPCI", "Région"],
             datasets: [{
-                label: 'LABEL A DEFINIR',
+                label: '2015',
                 data: [response[0].epci, response[0].reg],
                 backgroundColor: '#8a8a8a', // bg_colors,
                 borderColor: '#8a8a8a', // bd_colors,
@@ -1676,7 +1691,7 @@ function create_graphiques(siren_epci, nom_epci){
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Bilan des émissions de ' + jqXHR.polls_names[jqXHR.polluant]); 
             
-            create_barchart_emi(response[1], "graph2");
+            create_barchart_emi(response[1], "graph2", jqXHR.polls_names[jqXHR.polluant]);
             create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max, "t");
             create_linechart_emi(response[2], "graph3", "Evolution sectorielle pluriannuelle (t)");
             create_barchart_part(response[3], "graph4");
