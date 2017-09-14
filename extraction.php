@@ -307,7 +307,7 @@ function fill_listes(){
 
             // Remplissage des variables (fixe)
             variables_ener = [
-                {val: 131, text: "Consommations d'énergie"},
+                {val: 131, text: "Consommations finales d'énergies"},
                 // {val: 999, text: "Productions d'énergie"},       
             ];
 
