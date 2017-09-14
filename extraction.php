@@ -61,13 +61,13 @@
             <!-- Formulaire de sélection -->
             <div class="hide" id="formulaire">
 
-                Année(s) d'inventaire
+                Année(s) d'inventaire *
                 <select class="selectpicker" id="select_ans" title="Années d'inventaire" mobile multiple data-selected-text-format="count > 3" data-actions-box="true" data-width="100%"></select>
                 
-                Emprise géographique
+                Emprise géographique *
                 <select class="selectpicker" id="select_entites" title="Emprise géograpique" mobile multiple data-max-options="1" data-live-search="true" data-width="100%"></select>
                 
-                Détail communal
+                Détail communal *
                 <select class="selectpicker" id="select_detail_comm" title="Détail par commune" mobile data-max-options="1" data-width="100%">
                     <option value="true">Oui</option>
                     <option value="false">Non</option>
@@ -79,7 +79,7 @@
                 Energies
                 <select class="selectpicker" id="select_cat_ener" title="Toutes énergies confondues" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>    
 
-                Consommations, Productions et Emissions
+                Consommations, Productions et Emissions *
                 <select class="selectpicker" id="select_variable" title="Consommations, Productions et Emissions" mobile data-selected-text-format="count > 2" multiple data-actions-box="true" data-width="100%"></select>   
                 
                 <button type="button" class="btn btn-success" id="btn_extraction" onClick="afficher_donnees();">Exporter les données</button>
@@ -347,7 +347,7 @@ function fill_listes(){
             $('#select_ans').selectpicker('val', '2015');
             $("#select_entites").selectpicker('val', '93');   
             $("#select_entites").selectpicker('val', '93'); 
-            $("#select_detail_comm").selectpicker('val', 'true'); 
+            $("#select_detail_comm").selectpicker('val', 'false'); 
             $("#select_variable").selectpicker('val', '131');
             
             // Arrêt du sablier (spinner)

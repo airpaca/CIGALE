@@ -115,12 +115,12 @@
 
             <a href="#" class="list-group-item liste_polluants_items" id="so2">
             <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
-            Emissions de SO2
+            Emissions de SO<SUB>2</SUB>
             </a>  
 
             <a href="#" class="list-group-item liste_polluants_items" id="nh3">
             <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
-            Emissions de NH3
+            Emissions de NH<SUB>3</SUB>
             </a>              
         
         <a href="#" class="list-group-item" id="liste_energies">
@@ -133,22 +133,22 @@
             </a>   
 
         <a href="#" class="list-group-item" id="liste_ges">
-        Gazs à Effet de Serre
+        Gaz à Effet de Serre
         </a>
 
             <a href="#" class="list-group-item hide liste_ges_items" id="co2">
             <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
-            Emissions de CO2
+            Emissions de CO<SUB>2</SUB>
             </a>  
             
             <a href="#" class="list-group-item hide liste_ges_items" id="ch4.co2e">
             <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
-            Emissions de CH4 eq.co2
+            Emissions de CH<SUB>4</SUB> eq.CO<SUB>2</SUB>
             </a>  
 
             <a href="#" class="list-group-item hide liste_ges_items" id="n2o.co2e">
             <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
-            Emissions de N2O eq.co2
+            Emissions de N<SUB>2</SUB>O eq.CO<SUB>2</SUB>
             </a>  
 
             <a href="#" class="list-group-item hide liste_ges_items" id="prg100.3ges">
@@ -241,15 +241,15 @@ var polls = ['conso', 'so2','nox','pm10','pm2.5','covnm','nh3','co2','ch4.co2e',
 var polls_names = {
     "conso": "consommations",
     "prod": "productions",
-    "so2": "SO2",
+    "so2": "SO<SUB>2</SUB>",
     "nox": "NOx",
     "pm10": "PM10",
     "pm2.5": "PM2.5",
     "covnm": "COVNM",
-    "nh3": "NH3",
-    "co2": "CO2",
-    "ch4.co2e": "CH4 eq.CO2",
-    "n2o.co2e": "N2O eq.CO2",
+    "nh3": "NH<SUB>3</SUB>",
+    "co2": "CO<SUB>2</SUB>",
+    "ch4.co2e": "CH<SUB>4</SUB> eq. CO<SUB>2</SUB>",
+    "n2o.co2e": "N<SUB>2</SUB>O eq. CO<SUB>2</SUB>",
     "prg100.3ges": "PRG 100",
 };
 var polluant_actif = "nox";
