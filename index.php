@@ -69,19 +69,19 @@
                 <div class="col-md-4">
                     <a href="visualisation.php"><img class="img-visu" src="img/cartography2.png" border="0" width="180"></a>
                     <h4>Visualisation</h4>
-                    <p>Recherche géographique et production de bilans</p>
+                    <p>Cartes et bilans par territoire</p>
                 </div><!--/col-md-4 -->
 
                 <div class="col-md-4">
                 <a href="extraction.php"><img class="img-extract" src="img/csv-icon.png" border="0" width="180"></a>
-                <h4>Extractions</h4>
-                <p>Extraction fine des données par critères</p>
+                <h4>Extraction</h4>
+                <p>Export de données</p>
                 </div><!--/col-md-4 -->
 
                 <div class="col-md-4">
                     <a href="methodo.php"><img class="img-methodo" src="img/document-flat.png" border="0" width="180"></a>
-                    <h4>Méthodologie</h4>
-                    <p>Méthodologie d'inventaire et notes utilisateurs</p>
+                    <h4>Aide et méthodologie</h4>
+                    <p>Méthodologie d'inventaire et infos utilisateurs</p>
                 </div><!--/col-md-4 -->
                 
             </div><!-- /row -->
