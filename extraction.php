@@ -121,7 +121,7 @@
             <div class="modal-content">
                     
                     <div class=texte_modal>
-                            <strong>Attention</strong></br>La sélection demandée comprote un grand nombre de lignes. Leur affichage pourrait faire ralentir votre navigateur.    
+                            <strong>Attention</strong></br>La sélection demandée comporte un grand nombre de lignes. Leur affichage pourrait faire ralentir votre navigateur.    
                     </div>
                     
                     <div class="modal-footer">
