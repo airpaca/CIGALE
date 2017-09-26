@@ -56,7 +56,7 @@
                     </div><!-- /col-md-6 -->
                     
                     <div class="col-md-6" id=col-contributors>
-                        <img src="img/contributors.png" id="img_contributors">
+                        <img src="img/contributors2.png" id="img_contributors">
                     </div><!-- /col-md-6 -->
 
                 </div><!-- /row -->
