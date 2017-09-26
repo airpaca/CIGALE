@@ -1940,7 +1940,7 @@ function creation_couches_epci_polluant(){
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
             legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";
         } else if (polls[i] == 'prg100.3ges'){
-            legend_text = polls_names[polls[i]] + " en " + an_max + "  par km&sup2;";
+            legend_text = polls_names[polls[i]] + " en " + an_max + "  en kg/km&sup2;";
         } else {
             legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";  
         };
@@ -1983,7 +1983,7 @@ function creation_couches_comm_polluant(){
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
             legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;"; 
         } else if (polls[i] == 'prg100.3ges'){
-            legend_text = polls_names[polls[i]] + " en " + an_max + "  par km&sup2;";            
+            legend_text = polls_names[polls[i]] + " en " + an_max + "  kg/km&sup2;";            
         } else {
             legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";  
         };        
