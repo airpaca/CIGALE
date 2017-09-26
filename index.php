@@ -5,10 +5,10 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie">
+        <meta name="description" content="Consultation d'Inventaires Géolocalisés Air CLimat Energie">
         <meta name="author" content="Air PACA">
 
-        <title>CIGALE - Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie</title>
+        <title>CIGALE - Consultation d'Inventaires Géolocalisés Air CLimat Energie</title>
 
         <link rel="stylesheet" href="libs/bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css"> <!-- Bootstrap core CSS  -->
         <link href="index.css" rel="stylesheet"> <!-- Custom styles for this template -->
@@ -48,7 +48,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         
-                        <h1>Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie</h1>
+                        <h1>Consultation d'Inventaires Géolocalisés Air CLimat Energie</h1>
                         
                         <form class="form-inline" role="form">
                             <a href="visualisation.php" type="button"  class="btn btn-warning btn-lg" role="button">C'est parti!</a>
