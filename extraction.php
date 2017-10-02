@@ -168,6 +168,7 @@
     
 
 <script type="text/javascript">
+
 /* Variables générales */
 var spinner_right = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3, top: "250%",}); // top:"50%", left:"60%",
 var spinner_right_element = document.getElementById('zone-display');
@@ -349,12 +350,25 @@ function fill_listes(){
             $("#select_entites").selectpicker('val', '93'); 
             $("#select_detail_comm").selectpicker('val', 'false'); 
             $("#select_variable").selectpicker('val', '131');
-            
+ 
             // Arrêt du sablier (spinner)
             jqXHR.spinner_left.stop();
             
             // Affichage du formulaire de sélection
-            $("#formulaire").removeClass("hide");
+            $("#formulaire").removeClass("hide"); 
+
+            // Si on arrive sur cette page à partir de la visualisation d'une commune on remplit le formulaire
+            // avec les bonnes indos et on lance l'extraction           
+            if (sessionStorage.id_comm != null) {                
+                $("#select_entites").selectpicker('val', sessionStorage.id_comm);
+                $("#select_variable").selectpicker('val', sessionStorage.id_polluant);
+                $("#select_secteurs").selectpicker('selectAll');
+                $("#select_cat_ener").selectpicker('selectAll');
+                
+                afficher_donnees(); 
+                
+                sessionStorage.clear(); // Suppression des éventuelles variables de session
+            };
             
         },
         

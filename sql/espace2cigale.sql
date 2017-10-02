@@ -1015,7 +1015,7 @@ drop table if exists cigale.comm_poll;
 create table cigale.comm_poll WITH OIDS as  
 select 
 	row_number() over () as gid, 
-	nom_abrege_polluant, nom_comm, siren_epci_2017 as siren_epci, 
+	nom_abrege_polluant, id_comm, nom_comm, siren_epci_2017 as siren_epci, 
 	val / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
 	st_transform(geom, 4326) as geomtmp
 from (

@@ -252,7 +252,20 @@ var polls_names = {
     "n2o.co2e": "N<SUB>2</SUB>O eq. CO<SUB>2</SUB>",
     "prg100.3ges": "PRG 100",
 };
-
+var polls_id = {
+    "conso": "131",
+    "prod": "",
+    "so2": "48",
+    "nox": "38",
+    "pm10": "65",
+    "pm2.5": "108",
+    "covnm": "16",
+    "nh3": "36",
+    "co2": "15",
+    "ch4.co2e": "123",
+    "n2o.co2e": "124",
+    "prg100.3ges": "128",
+};
 
 var polluant_actif = "nox";
 
@@ -1226,9 +1239,10 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                 },
                 onEachFeature: function (feature, layer) {
                     
-                    // Ajout d'un popup
+                    // Ajout d'un popup et passage des arguments id_comm, id_polluant
                     // var html = "<div id='popup'>" + feature.properties["nom_comm"] +"<br>" + parseFloat(feature.properties["val"]).toFixed(1) + " t/an</div>";
-                    // var html = "<div id='popup'>Accéder aux données tabulaires?</div>";                    
+                    // var html = "<div id='popup'>Accéder aux données tabulaires?</div>";  
+                                        
                     var html = "<div id='popup'><a href='extraction.php'>Extraction des données sur cette commune</a></div>";                    
                     layer.bindPopup(html);
 
@@ -1252,7 +1266,11 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
 
                     // Prise en compte du cklic
                     layer.on('click', function(){
-                        
+ 
+                        // Stockage des informations de la commune pour l'extraction éventuelle
+                        sessionStorage.id_comm = feature.properties["id_comm"]; 
+                        sessionStorage.id_polluant = polls_id[my_layers_object.polluant]; 
+
                         return null;
                         
                         // Zoom sur la couche
