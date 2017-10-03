@@ -21,6 +21,13 @@ if ($query_detail_comm == "true") {
     $group_by =  $group_by . ", nom_entite";
     $nom_entite = " nom_comm";
 } else {
+    // $query_entite = str_replace("tropole", "!!!", $query_entite);   
+    // echo "--------";
+    // echo $query_entite_nom;
+    // $query_entite_nom = str_replace("\\'", "'", $query_entite_nom);
+    // echo $query_entite_nom;
+    // echo "--------";
+    $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
     $nom_entite = " '" . $query_entite_nom . "'";
 };
 if ($query_sect != "") {
@@ -66,8 +73,8 @@ if ($query_entite == "93") {
 // echo $where;
 
 // SS
-if ($query_detail_comm == "false") { // --  and $query_sect == "") {
-    $ss = "  ";
+if ($query_detail_comm == "false" and $query_entite == "93") { // --  and $query_sect == "") {
+    $ss = " ";
 } else {
     $ss = " and ss is false ";
 };
@@ -85,9 +92,9 @@ from (
 	select an, id_comm, id_secten1, code_cat_energie, id_polluant, sum(val) as val, id_unite 
 	from total.bilan_comm_v4_secten1
 	" . $where . " 
-    -- and ss is false 
     " . $ss . "     
-	group by an, id_unite, id_polluant, id_comm, id_secten1, code_cat_energie
+	and id_secten1 not in ('1')
+    group by an, id_unite, id_polluant, id_comm, id_secten1, code_cat_energie
 )  as a
 left join commun.tpk_communes as b using (id_comm)
 left join transversal.tpk_secten1 as c using (id_secten1)

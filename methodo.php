@@ -115,7 +115,7 @@
                     rejetées sur le lieu de production et non sur leur lieu de consommation. 
                     Son principe est synthétisé dans le schéma suivant :
                     <p>
-                    <img src="img/diagramme_inv.png" border="0">
+                    <img src="img/170724_schema_primaire_finale.jpg" border="0" width="97%">
                     </p>
 
             <h1>Secret statistique</h1>
