@@ -66,8 +66,8 @@ if ($query_entite == "93") {
 // echo $where;
 
 // SS
-if ($query_detail_comm == "false" and $query_sect == "") {
-    $ss = " ";
+if ($query_detail_comm == "false") { // --  and $query_sect == "") {
+    $ss = "  ";
 } else {
     $ss = " and ss is false ";
 };
