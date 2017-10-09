@@ -190,35 +190,36 @@ with emi as (
 
 	union all
 
-	select 
-		id_secteur,
-		id_polluant, an, a.id_comm, 
-		id_snap3,
-		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
-		id_usage, id_branche,
-		id_unite, 
-		sum(val) as val,
-		id_corresp,		
-		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end as bdrep,
-		d.code_gerep as code_etab, -- Pour calculer le SS à l'établissement
-		null::text as memo
-	from total.bilan_comm_v4_elec as a
-	left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
-	left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
-	left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
-	where id_polluant in (131,38,65,108,16,48,36)
-	group by 
-		id_secteur,
-		id_polluant, an, a.id_comm, 
-		id_snap3,
-		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
-		id_usage, id_branche,
-		id_unite, 
-		id_corresp,		
-		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end,
-		d.code_gerep
-
-	union all
+-- -- NOTE: Plus besoin d'utiliser l'élec on a tout regroupé dans bilan_comm_v4
+-- 	select 
+-- 		id_secteur,
+-- 		id_polluant, an, a.id_comm, 
+-- 		id_snap3,
+-- 		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
+-- 		id_usage, id_branche,
+-- 		id_unite, 
+-- 		sum(val) as val,
+-- 		id_corresp,		
+-- 		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end as bdrep,
+-- 		d.code_gerep as code_etab, -- Pour calculer le SS à l'établissement
+-- 		null::text as memo
+-- 	from total.bilan_comm_v4_elec as a
+-- 	left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
+-- 	left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
+-- 	left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
+-- 	where id_polluant in (131,38,65,108,16,48,36)
+-- 	group by 
+-- 		id_secteur,
+-- 		id_polluant, an, a.id_comm, 
+-- 		id_snap3,
+-- 		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
+-- 		id_usage, id_branche,
+-- 		id_unite, 
+-- 		id_corresp,		
+-- 		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end,
+-- 		d.code_gerep
+-- 
+-- 	union all
 
 	select 
 		id_secteur,
@@ -486,8 +487,7 @@ full join (
 	select an, id_polluant, sum(val) as val_secten1
 	from total.bilan_comm_v4_secten1
 	where 
-		code_cat_energie not in (8) -- On a séparé l'élec dans la table d'origine
-		and id_polluant in (38, 65, 108, 16, 48, 36, 131)
+		id_polluant in (38, 65, 108, 16, 48, 36, 131)
 	group by an, id_polluant
 ) as b using (an, id_polluant)
 order by an, id_polluant
@@ -507,7 +507,7 @@ update total.bilan_comm_v4_secten1 as a set
 	ss_85_conso_tot = 'Conso etab =' || conso_etab || ' Conso tot = ' || b.conso_tot
 from (
 	-- % de consommation de l'établissement, secten1, energie / conso tot secten1, energie, commune
-	select an, id_comm, code_etab, id_secten1, code_cat_energie, conso_etab, conso_tot, round((conso_etab / conso_tot * 100.)::numeric, 1) as pct
+	select an, id_comm, code_etab, id_secten1, code_cat_energie, conso_etab, conso_tot, round((conso_etab / nullif(conso_tot, 0) * 100.)::numeric, 1) as pct
 	from (
 		-- Calcul de la consommation par établissement, secten1, code_cat énergie pour se séparer des usages et branches
 		select an, id_comm, code_etab, id_secten1, code_cat_energie, sum(val) as conso_etab
@@ -663,8 +663,7 @@ full join (
 	select an, id_polluant, sum(val) as val_secten1
 	from total.bilan_comm_v4_secten1
 	where 
-		code_cat_energie not in (8) -- On a séparé l'élec dans la table d'origine
-		and id_polluant in (38, 65, 108, 16, 48, 36, 131)
+		id_polluant in (38, 65, 108, 16, 48, 36, 131)
 	group by an, id_polluant
 ) as b using (an, id_polluant)
 order by an, id_polluant
@@ -791,15 +790,6 @@ with emi_espace as (
 
 		union all
 
-		select id_polluant, an, sum(val) as val, 'total.bilan_comm_v4_elec' as src
-		from total.bilan_comm_v4_elec
-		where 
-			id_polluant in (38,65,108,16,48,36,123,124,128)
-			and id_comm <> 99999
-		group by id_polluant, an 
-
-		union all
-
 		select id_polluant, an, sum(val) as val, 'total.bilan_comm_v4_ges' as src
 		from total.bilan_comm_v4_ges
 		where 
@@ -892,7 +882,7 @@ PARTIE DE COPIE DES TABLES APPLICATION ET DE MISE EN FORME DES DONNEES POUR RAPI
 
 
 
-
+drop table if exists cigale.epci;
 create table cigale.epci as 
 select 
 	siren_epci_2017 as siren_epci, 
