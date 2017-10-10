@@ -1,86 +1,51 @@
-/**
+ï»¿/**
 
 espace2cigale.sql
 Air PACA - 2017 - GL/RS
 
-Insertion des données de l'inventaire des émissions dans CIGALE
+Insertion des donnÃ©es de l'inventaire des Ã©missions dans CIGALE
 et traitement du secret statistique.
 
-Polluants pris en compte:
+* Utilisation:
+Si utilisÃ© avec PgAdmin, lancer tout le code avec PgScript (pour que les commandes soient passÃ©es une par une)
+
+* Polluants pris en compte:
 - consommations 		131
-- émissions de NOx		38
-- émissions de PM10		65
-- émissions de PM2.5	108
-- émissions de COVNM	16
-- émissions de SO2		48
-- émissions de NH3		36
+- Ã©missions de NOx		38
+- Ã©missions de PM10		65
+- Ã©missions de PM2.5	108
+- Ã©missions de COVNM	16
+- Ã©missions de SO2		48
+- Ã©missions de NH3		36
 - CO2 tot				15 
 - CH4 eq_co2			123 
 - N2O eq_co2			124 
 - PRG1003GES 			128
+
+* Secret statistique:
+Pas de secret stat Ã  la commune par SECTEN 1 et catÃ©gorie d'Ã©nergie mais pas sur usages et branches.
 
 */
 
 
-/** user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***
-Création de la table des émissions par SECTEN1, catégorie d'énergie et prise 
-en compte du secret statistique
-
-2017-07-17: La dernière version de la note sur la confidentialité des données
-demande de repsecter le principe de précaution tant que l'on ne sait pas si
-le traitement des données BDREP est une mission de service public. Il 
-ne faut donc diffuser que des émissions IREP!
-
-NOTE: Uniquement pour les polluants nécessaires à l'interface de visualisation
-- consommations 		131
-- émissions de NOx		38
-- émissions de PM10		65
-- émissions de PM2.5	108
-- émissions de COVNM	16
-- émissions de SO2		48
-- émissions de NH3		36
-- CO2 tot				15 
-- CH4 eq_co2			123 
-- N2O eq_co2			124 
-- PRG1003GES 			128
-NOTE: Pas de secret stat sur usages et branches
-NOTE: Pour calculer le secret stat sur le nombre d'établissements, utilise les tables 
-	  total_ind.bilan_comm et total_ter.bilan_comm. Pour le tertiaire, à part les 
-	  établissements bdrep, on ne conserve pas l'id_etablissement du SIRENE mais 
-	  on regroupe tt au NAF. 
-	  TODO: Comment fait HC pour ses calculs SS? 
-	  TODO: Peut-on conserver facilement cet id_etab en modifiant les scripts de calcul?
-	  
-TODO: FAIRE DES TESTS D'EXTRACTION PAR EPCI POUR SAVOIR QUELS EPCI SONT TRONQUES ?!
-MAYBE: SI POSSIBLE FAUDRAIT PASSER SI UNE COMM EN SS ET FAIRE UNE EXTRACTION JUSTE A EPCI
-
-
-TODO: Verif on ne doit pas avoir un etab en SS dont une émission n'est pas en SS.
-
-TODO:
--- Quels sont les EPCI qui ont un secret stat dans une seule comm.
--- Idem, activite et energie 
--- On fait ce calcul au niveau de détail le plus fin
--- Si oui, on passe une donnée d'une autre commune en secret stat pou avoir deux communes en SS
-user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=***user=*** dbname=*** host=*** password=**** */
 
 /** 
-Récupération du nombre d'établissements 
+RÃ©cupÃ©ration du nombre d'Ã©tablissements (Uniquement si nÃ©cessaire, long)
 - Secteur industriel
 - Secteur tertiaire
-- Avec affectation d'un SESCTEN1 et catégorie d'énergie
-- Les arrondissements de marseille sont transformés en 13055
+- Avec affectation d'un SESCTEN1 et catÃ©gorie d'Ã©nergie
+- Les arrondissements de marseille sont transformÃ©s en 13055
 
 NOTE: Pour certains etablissement on a un id_etablissement = -999. L'ensemble de ces 
-	  établissements ne représentera qu'un seul étab.
-FIXME: On ne ferme aucun établissement dans le film. Du coup, on en a de plus en plus?
-*/
+	  Ã©tablissements ne reprÃ©sentera qu'un seul Ã©tab.
+FIXME: On ne ferme aucun Ã©tablissement dans le film. Du coup, on en a de plus en plus?
+
 drop table if exists public.cigale_nb_etab;
 create table public.cigale_nb_etab as 
 select an, case when id_comm between 13201 and 13216 then 13055 else id_comm end as id_comm, id_secten1, code_cat_energie, count(*) as nb_etab
 from (
 
-	-- Sélection des établissements industriels dont on connait l'id (!= -999)
+	-- SÃ©lection des Ã©tablissements industriels dont on connait l'id (!= -999)
 	select distinct an, a.id_comm, case when a.id_etablissement = -999 then code_gerep else a.id_etablissement::text end as id_etablissement, id_snap3, id_energie from total_ind.bilan_comm_v5_2015 as a left join src_ind.def_corresp_sources as b using (id_corresp) where (a.id_etablissement <> -999 or a.id_corresp is not null) and an = 2015 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
 	union all
 	select distinct an, a.id_comm, case when a.id_etablissement = -999 then code_gerep else a.id_etablissement::text end as id_etablissement, id_snap3, id_energie from total_ind.bilan_comm_v5_2014 as a left join src_ind.def_corresp_sources as b using (id_corresp) where (a.id_etablissement <> -999 or a.id_corresp is not null) and an = 2014 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
@@ -95,7 +60,7 @@ from (
 
 -- 	union all
 
--- 	-- Sélection des établissements tertiaire dont on connait l'id (!= -999)
+-- 	-- SÃ©lection des Ã©tablissements tertiaire dont on connait l'id (!= -999)
 -- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2015 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2015 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
 -- 	union all
 -- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2014 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2014 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
@@ -109,7 +74,7 @@ from (
 -- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2007 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2007 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
 
 ) as a
--- Lien avec les catégories d'énergie
+-- Lien avec les catÃ©gories d'Ã©nergie
 left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
 left join total.corresp_snap_synapse as d on a.id_snap3 = d.espace_id_snap3
@@ -119,6 +84,8 @@ where
 	-- On conserve uniquement la correspondance ind.
 	d.specificite is null or d.synapse_id_snap3 = '06040502'
 group by an, case when id_comm between 13201 and 13216 then 13055 else id_comm end, id_secten1, code_cat_energie;
+*/
+
 
 /* Validations
 select an, sum(nb_etab) 
@@ -133,11 +100,14 @@ order by an, id_secten1, code_cat_energie;
 */
 
 /**
-Création de la table des émissions par secten 1 et catégorie d'énergie
-- Récupération des données élec séparées de la table bilan
-- Récupération des données GES séparées dans autre table bilan
+CrÃ©ation de la table des Ã©missions par secten 1 et catÃ©gorie d'Ã©nergie
+- RÃ©cupÃ©ration des donnÃ©es emi et Ã©lec de la table bilan
+- RÃ©cupÃ©ration des donnÃ©es GES sÃ©parÃ©es dans vue ges bilan
+- On a des valeurs nulles dans les tables bilans de chaque schÃ©ma de calcul
+  et on ne rÃ©cupÃ¨re donc pas ces valeurs.
+- On ne rÃ©cupÃ¨re pas les Ã©missions affectÃ©es Ã  l'objet mer
 */
--- Création de la table finale vide
+-- CrÃ©ation de la table finale vide
 drop table if exists total.bilan_comm_v4_secten1;
 create table total.bilan_comm_v4_secten1 (
 	id_polluant smallint NOT NULL,
@@ -154,102 +124,77 @@ create table total.bilan_comm_v4_secten1 (
 	memo text
 );
 
-with emi as (
-	-- Premier regroupement des données conso et emi 
-	-- avec catégories d'energie mais en regroupant les SNAPs
-	-- pour traitements spécifiques
-	-- 
-	-- ATTENTION On update certains SNAP non énergétiques, qui ont quand même des id_energie dans la table totale
-	select 
-		id_secteur,
-		id_polluant, an, a.id_comm, 
-		id_snap3,
-		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
-		id_usage, id_branche,
-		id_unite, 
-		sum(val) as val,
-		id_corresp, 
-		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end as bdrep,
-		d.code_gerep as code_etab, -- Pour calculer le SS à l'établissement
-		null::text as memo
-	from total.bilan_comm_v4 as a
-	left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
-	left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
-	left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
-	where id_polluant in (131,38,65,108,16,48,36)
-	group by
-		id_secteur,
-		id_polluant, an, a.id_comm, 
-		id_snap3,
-		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
-		id_usage, id_branche,
-		id_unite, 
-		id_corresp,		
-		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end,
-		d.code_gerep
-
-	union all
-
--- -- NOTE: Plus besoin d'utiliser l'élec on a tout regroupé dans bilan_comm_v4
--- 	select 
--- 		id_secteur,
--- 		id_polluant, an, a.id_comm, 
--- 		id_snap3,
--- 		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
--- 		id_usage, id_branche,
--- 		id_unite, 
--- 		sum(val) as val,
--- 		id_corresp,		
--- 		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end as bdrep,
--- 		d.code_gerep as code_etab, -- Pour calculer le SS à l'établissement
--- 		null::text as memo
--- 	from total.bilan_comm_v4_elec as a
--- 	left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
--- 	left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
--- 	left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
--- 	where id_polluant in (131,38,65,108,16,48,36)
--- 	group by 
--- 		id_secteur,
--- 		id_polluant, an, a.id_comm, 
--- 		id_snap3,
--- 		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
--- 		id_usage, id_branche,
--- 		id_unite, 
--- 		id_corresp,		
--- 		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end,
--- 		d.code_gerep
+drop table if exists public.emi;
+create table public.emi as
+-- Premier regroupement des donnÃ©es conso et emi 
+-- avec catÃ©gories d'energie mais en regroupant les SNAPs
+-- pour traitements spÃ©cifiques
 -- 
--- 	union all
+-- ATTENTION On update certains SNAP non Ã©nergÃ©tiques, qui ont quand mÃªme des id_energie dans la table totale
+select 
+	id_secteur,
+	id_polluant, an, a.id_comm, 
+	id_snap3,
+	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
+	id_usage, id_branche,
+	id_unite, 
+	sum(val) as val,
+	id_corresp, 
+	case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end as bdrep,
+	d.code_gerep as code_etab, -- Pour calculer le SS Ã  l'Ã©tablissement
+	null::text as memo
+from total.bilan_comm_v4 as a
+left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
+left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
+left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
+where 
+	id_polluant in (131,38,65,108,16,48,36)
+	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
+	and a.id_comm <> 99999 -- Sans les Ã©missions associÃ©es Ã  l'objet mer
+group by
+	id_secteur,
+	id_polluant, an, a.id_comm, 
+	id_snap3,
+	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
+	id_usage, id_branche,
+	id_unite, 
+	id_corresp,		
+	case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end,
+	d.code_gerep
 
-	select 
-		id_secteur,
-		id_polluant, an, a.id_comm, 
-		id_snap3,
-		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
-		id_usage, id_branche,
-		id_unite, 
-		sum(val) as val,
-		id_corresp,		
-		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end as bdrep,
-		d.code_gerep as code_etab, -- Pour calculer le SS à l'établissement
-		null::text as memo
-	from total.bilan_comm_v4_ges as a
-	left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
-	left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
-	left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
-	where id_polluant in (15, 123, 124, 128)
-	group by 
-		id_secteur,
-		id_polluant, an, a.id_comm, 
-		id_snap3,
-		case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
-		id_usage, id_branche,
-		id_unite, 
-		id_corresp,		
-		case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end,
-		d.code_gerep
+union all
 
-)
+select 
+	id_secteur,
+	id_polluant, an, a.id_comm, 
+	id_snap3,
+	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
+	id_usage, id_branche,
+	id_unite, 
+	sum(val) as val,
+	id_corresp,		
+	case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end as bdrep,
+	d.code_gerep as code_etab, -- Pour calculer le SS Ã  l'Ã©tablissement
+	null::text as memo
+from total.bilan_comm_v4_ges as a
+left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
+left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
+left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
+where 
+	id_polluant in (15, 123, 124, 128)
+	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
+	and a.id_comm <> 99999 -- Sans les Ã©missions associÃ©es Ã  l'objet mer
+group by 
+	id_secteur,
+	id_polluant, an, a.id_comm, 
+	id_snap3,
+	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
+	id_usage, id_branche,
+	id_unite, 
+	id_corresp,		
+	case when id_corresp not in (-999, -888) and id_secteur <> 4 and d.code_gerep is not null then true else false end,
+	d.code_gerep
+;
 
 -- Affectation d'un SECTEN1 selon le cas de figure et insertion dans la table
 insert into total.bilan_comm_v4_secten1
@@ -268,7 +213,7 @@ select
 		memo
 from (
 	-- Passage au SECTEN 1
-	-- On ne prends pas les correspondances complexes qui doivent-être traitées séparément pour ne pas avoir de doubles comptes.
+	-- On ne prends pas les correspondances complexes qui doivent-Ãªtre traitÃ©es sÃ©parÃ©ment pour ne pas avoir de doubles comptes.
 	select 
 		a.id_polluant,
 		a.an,
@@ -282,7 +227,7 @@ from (
 		a.bdrep, 
 		coalesce(a.code_etab, '-999') as code_etab,
 		a.memo
-	from emi as a
+	from public.emi as a
 	left join total.corresp_snap_synapse as b on a.id_snap3 = b.espace_id_snap3
 	left join transversal.tpk_snap3 as c on b.synapse_id_snap3 = c.id_snap3
 	where
@@ -302,13 +247,13 @@ from (
 
 	union all 
 
-	-- Application de colles et adhésifs selon secteur
+	-- Application de colles et adhÃ©sifs selon secteur
 	select 
 		a.id_polluant,
 		a.an,
 		a.id_comm,
 		case 
-			-- Application de colles et adhésifs selon secteur
+			-- Application de colles et adhÃ©sifs selon secteur
 			when a.id_snap3 = 60405 and a.id_secteur = 1 then '2' -- 06040502 SECTEN 1 = 2
 			when a.id_snap3 = 60405 and a.id_secteur = 3 then '3' -- 06040501 SECTEN 1 = 3
 		end as id_secten1,
@@ -320,7 +265,7 @@ from (
 		a.bdrep, 
 		coalesce(a.code_etab, '-999') as code_etab,
 		a.memo
-	from emi as a
+	from public.emi as a
 	where
 		a.id_snap3 = 60405
 	group by 
@@ -328,7 +273,7 @@ from (
 		a.an,
 		a.id_comm,
 		case 
-			-- Application de colles et adhésifs selon secteur
+			-- Application de colles et adhÃ©sifs selon secteur
 			when a.id_snap3 = 60405 and a.id_secteur = 1 then '2' -- 06040502 SECTEN 1 = 2
 			when a.id_snap3 = 60405 and a.id_secteur = 3 then '3' -- 06040501 SECTEN 1 = 3
 		end,
@@ -342,7 +287,7 @@ from (
 
 	union all
 
-	-- Distinction du CH4 pour les rizières
+	-- Distinction du CH4 pour les riziÃ¨res
 	select 
 		a.id_polluant,
 		a.an,
@@ -359,7 +304,7 @@ from (
 		a.bdrep, 
 		coalesce(a.code_etab, '-999') as code_etab,
 		a.memo
-	from emi as a
+	from public.emi as a
 	where
 		a.id_snap3 = 100103
 	group by 
@@ -380,7 +325,7 @@ from (
 
 	union all
 
-	-- Distinction de NOx pour l'élevage
+	-- Distinction de NOx pour l'Ã©levage
 	select 
 		a.id_polluant,
 		a.an,
@@ -397,7 +342,7 @@ from (
 		a.bdrep, 
 		coalesce(a.code_etab, '-999') as code_etab,
 		a.memo
-	from emi as a
+	from public.emi as a
 	where
 		a.id_snap3 in (
 			100901,100902,100903,100904,100905,
@@ -438,7 +383,7 @@ from (
 		a.bdrep, 
 		coalesce(a.code_etab, '-999') as code_etab,
 		a.memo
-	from emi as a
+	from public.emi as a
 	where
 		a.id_snap3 in (100100,100101,100100,100101,100102,100102,100104,100104,100105,100105)	
 	group by 
@@ -475,8 +420,9 @@ group by
 Validation en grandes masses sur les polluants de l'interface d'extraction uniquement 
 NOx 38, PM10 65, PM2.5 108, COV 129, SO2 48, NH3 36, consommations 131
 
-select an, id_polluant, val_orig, val_secten1
+select an, id_polluant, val_orig, val_tmp, val_secten1
 from (
+	-- Table source
 	select an, id_polluant, sum(val) as val_orig
 	from total.bilan_comm_v4
 	where id_polluant in (38, 65, 108, 16, 48, 36, 131)
@@ -484,18 +430,27 @@ from (
 	group by an, id_polluant
 ) as a
 full join (
+	-- Table temporaire
+	select an, id_polluant, sum(val) as val_tmp
+	from public.emi
+	where 
+		id_polluant in (38, 65, 108, 16, 48, 36, 131)
+	group by an, id_polluant
+) as b using (an, id_polluant)
+full join (
+	-- Table finale
 	select an, id_polluant, sum(val) as val_secten1
 	from total.bilan_comm_v4_secten1
 	where 
 		id_polluant in (38, 65, 108, 16, 48, 36, 131)
 	group by an, id_polluant
-) as b using (an, id_polluant)
+) as c using (an, id_polluant)
 order by an, id_polluant
 */
 
 /**
 Calcul du pourcentage de la consommation.
-La consommation totale est stockée dans ss_85_conso_tot
+La consommation totale est stockÃ©e dans ss_85_conso_tot
 */
 alter table total.bilan_comm_v4_secten1 drop column if exists ss_85_conso;
 alter table total.bilan_comm_v4_secten1 add column ss_85_conso double precision;
@@ -506,10 +461,10 @@ update total.bilan_comm_v4_secten1 as a set
 	ss_85_conso = b.pct,
 	ss_85_conso_tot = 'Conso etab =' || conso_etab || ' Conso tot = ' || b.conso_tot
 from (
-	-- % de consommation de l'établissement, secten1, energie / conso tot secten1, energie, commune
+	-- % de consommation de l'Ã©tablissement, secten1, energie / conso tot secten1, energie, commune
 	select an, id_comm, code_etab, id_secten1, code_cat_energie, conso_etab, conso_tot, round((conso_etab / nullif(conso_tot, 0) * 100.)::numeric, 1) as pct
 	from (
-		-- Calcul de la consommation par établissement, secten1, code_cat énergie pour se séparer des usages et branches
+		-- Calcul de la consommation par Ã©tablissement, secten1, code_cat Ã©nergie pour se sÃ©parer des usages et branches
 		select an, id_comm, code_etab, id_secten1, code_cat_energie, sum(val) as conso_etab
 		from total.bilan_comm_v4_secten1
 		where 
@@ -518,7 +473,7 @@ from (
 		group by an, id_comm, code_etab, id_secten1, code_cat_energie 
 	) as a
 	left join (
-		-- Calcul de la conso tot par commune, an, groupe d'énergie et secten 1
+		-- Calcul de la conso tot par commune, an, groupe d'Ã©nergie et secten 1
 		select an, id_comm, id_secten1, code_cat_energie, sum(val) as conso_tot
 		from total.bilan_comm_v4_secten1
 		where id_polluant = 131
@@ -531,7 +486,7 @@ where
 ;
 	
 /**
-Jointure du nombre d'établissements
+Jointure du nombre d'Ã©tablissements
 */
 alter table total.bilan_comm_v4_secten1 drop column if exists ss_nb_etab;
 alter table total.bilan_comm_v4_secten1 add column ss_nb_etab double precision;
@@ -569,13 +524,13 @@ from (
 		end as ss_commentaire
 	from total.bilan_comm_v4_secten1
 	where 
-		bdrep is true -- Uniquement pour les établissements bdrep
-		and code_cat_energie <> 8 -- Sans les consommations d'élec qui ne sont pas déclarées dans bdrep
-		and not ( -- Sans les consommations de GN déclarées dans l'open data (Comprends GN, GNL, GNV)
+		bdrep is true -- Uniquement pour les Ã©tablissements bdrep
+		and code_cat_energie <> 8 -- Sans les consommations d'Ã©lec qui ne sont pas dÃ©clarÃ©es dans bdrep
+		and not ( -- Sans les consommations de GN dÃ©clarÃ©es dans l'open data (Comprends GN, GNL, GNV)
 			code_cat_energie = 1 
 			and bdrep is false
 			and (an, code_etab) not in (
-				-- Sélection des années et établissement pour lesquels on a affecté du GRT GAZ non déclaré dans BDREP
+				-- SÃ©lection des annÃ©es et Ã©tablissement pour lesquels on a affectÃ© du GRT GAZ non dÃ©clarÃ© dans BDREP
 				select distinct an, code_gerep
 				from src_ind.src_conso_source as a
 				left join src_ind.def_corresp_sources as b using (id_version_corresp, id_corresp)
@@ -597,14 +552,9 @@ where
 update total.bilan_comm_v4_secten1 set ss = FALSE where ss is null;
 
 /**
-Suppression des émissions de l'objet Mer
-*/
-delete from total.bilan_comm_v4_secten1 where id_comm = 99999;
-
-/**
 Calcul d'un champ val_conso pour pouvoir relier plus facilement 
-la consommation aux émissions lors de l'extraction
-FIXME: EN l'état l'inventaire ne permet pas de faire de lien juste émissions / consommations! Cf. #30
+la consommation aux Ã©missions lors de l'extraction
+FIXME: EN l'Ã©tat l'inventaire ne permet pas de faire de lien juste Ã©missions / consommations! Cf. #30
 
 alter table total.bilan_comm_v4_secten1 drop column if exists val_conso;
 alter table total.bilan_comm_v4_secten1 add column val_conso double precision;
@@ -638,7 +588,7 @@ vacuum FREEZE total.bilan_comm_v4_secten1;
 
 
 /**
-Cluster de la table pour accélérer les requêtes
+Cluster de la table pour accÃ©lÃ©rer les requÃªtes
 */
 CREATE INDEX "idx.bilan_comm_v4_secten1.id_polluant.an.ss.id_secten1.code_cat_energie"
 ON total.bilan_comm_v4_secten1
@@ -647,138 +597,12 @@ USING btree
 
 ALTER TABLE total.bilan_comm_v4_secten1 CLUSTER ON "idx.bilan_comm_v4_secten1.id_polluant.an.ss.id_secten1.code_cat_energie";
 
-
-/*
-Validation rapide
-
-select an, id_polluant, val_orig, val_secten1
-from (
-	select an, id_polluant, sum(val) as val_orig
-	from total.bilan_comm_v4
-	where id_polluant in (38, 65, 108, 16, 48, 36, 131)
-	and id_comm <> 99999
-	group by an, id_polluant
-) as a
-full join (
-	select an, id_polluant, sum(val) as val_secten1
-	from total.bilan_comm_v4_secten1
-	where 
-		id_polluant in (38, 65, 108, 16, 48, 36, 131)
-	group by an, id_polluant
-) as b using (an, id_polluant)
-order by an, id_polluant
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-PARTIE DE VALIDATION FINALE DES EMISSIONS
-
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
-*/
-
-
-
-
-
 /* 
-Validation des consommations et émissions
-*/
+Validation finale des consommations et Ã©missions
 
-with emi_espace as (
-	-- Emissions de l'inventaire par polluant et année
+select id_polluant, an, a.val as val_espace, b.val as val_cigale
+from (
+	-- Emissions de l'inventaire par polluant et annÃ©e
 	select id_polluant, an, sum(val) as val
 	from (
 		select id_polluant, an, sum(val) as val, 'total.bilan_comm_v4' as src
@@ -795,33 +619,23 @@ with emi_espace as (
 		where 
 			id_polluant in (38,65,108,16,48,36,123,124,128)
 			and id_comm <> 99999
-		group by id_polluant, an 
-
--- 		select distinct id_polluant from total.bilan_comm_v4_ges
--- 		select distinct id_polluant from total.bilan_comm_v4 order by id_polluant
-		
+		group by id_polluant, an 		
 	) as a
 	group by id_polluant, an
 	order by id_polluant, an
-),
-
-emi_cigale as (
-	-- Emissions CIGALE par énergie et année
+) as a
+full join (
+	-- Emissions CIGALE par Ã©nergie et annÃ©e
 	select id_polluant, an, sum(val) as val
 	from total.bilan_comm_v4_secten1 
 	where 
 		id_polluant in (38,65,108,16,48,36,15,123,124,128)
 	group by id_polluant, an
 	order by id_polluant, an
-) 
+) as b using (id_polluant, an)
+order by id_polluant, an;
 
-select id_polluant, an, a.val as val_espace, b.val as val_cigale
-from emi_espace as a
-full join emi_cigale as b using (id_polluant, an)
-
-order by id_polluant, an
-
-
+*/
 
 
 
@@ -901,9 +715,9 @@ alter table cigale.epci add constraint "pk.cigale.epci" primary key (siren_epci)
 CREATE INDEX "gidx.cigale.epci.geom.gist" ON cigale.epci USING GIST (geom);
 
 comment on table cigale.epci is '
-EPCI crée à partir des communes GEOFLA 2017
+EPCI crÃ©e Ã  partir des communes GEOFLA 2017
 Le champ superficie est en hectares
-Code SQL de création de la table:
+Code SQL de crÃ©ation de la table:
 ----------------------------------------
 create table cigale.epci as 
 select 
@@ -970,9 +784,9 @@ left join commun.tpk_polluants as c using (id_polluant)
 left join cigale.epci as d on b.siren_epci_2017 = d.siren_epci
 where 
 	an = 2015
-	and not (id_polluant in (38,65,108,16,48,36) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
+	and not (id_polluant in (38,65,108,16,48,36) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrÃ©e: Pord d'Ã©nergie mais pas d'Ã©lec ni chaleur
 	and not (id_polluant not in (38,65,108,16,48,36) and id_secten1 = '1') -- GES et Ener = Finale
-	and ss is false -- Sans aucune donnée soumise au SS	
+	and ss is false -- Sans aucune donnÃ©e soumise au SS	
 group by an, nom_abrege_polluant, siren_epci_2017, nom_epci_2017, superficie
 order by an, nom_abrege_polluant, siren_epci_2017, nom_epci_2017, superficie;
 
@@ -981,7 +795,7 @@ SELECT AddGeometryColumn ('cigale','epci_poll','geom',4326,'MULTIPOLYGON',2, fal
 ALTER TABLE cigale.epci_poll drop CONSTRAINT enforce_geotype_geom;
 
 update cigale.epci_poll as a
-set geom = ST_SimplifyPreserveTopology(b.geom,0.0004) -- Simplification de la géométrie pour rapidité d'affichage
+set geom = ST_SimplifyPreserveTopology(b.geom,0.0004) -- Simplification de la gÃ©omÃ©trie pour rapiditÃ© d'affichage
 from cigale.epci as b
 where a.siren_epci = b.siren_epci;
 
@@ -990,8 +804,8 @@ CREATE INDEX "gidx.cigale.epci_poll.geom.gist" ON cigale.epci_poll USING GIST (g
 CREATE INDEX "idx.cigale.epci_poll.id_polluant" ON cigale.epci_poll (nom_abrege_polluant);
 
 comment on table cigale.epci_poll is '
-NOTE: Pour la conso énergie primaire c''est à dire sans l''élec
-NOTE: Pour les GES, émissions directes c''est à dire sans l''élec
+NOTE: Pour la conso Ã©nergie primaire c''est Ã  dire sans l''Ã©lec
+NOTE: Pour les GES, Ã©missions directes c''est Ã  dire sans l''Ã©lec
 ';
 
 vacuum analyze cigale.epci_poll;
@@ -1006,16 +820,16 @@ create table cigale.comm_poll WITH OIDS as
 select 
 	row_number() over () as gid, 
 	nom_abrege_polluant, id_comm, nom_comm, siren_epci_2017 as siren_epci, 
-	val / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
+	val / (d.superficie / 100.) as val, -- Superficie en hectares dans les donnÃ©es geofla
 	st_transform(geom, 4326) as geomtmp
 from (
 	select id_polluant, an, id_comm, sum(val) as val
 	from total.bilan_comm_v4_secten1
 	where 
 		an = 2015
-		and not (id_polluant in (38,65,108,16,48,36,16) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
+		and not (id_polluant in (38,65,108,16,48,36,16) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrÃ©e: Pord d'Ã©nergie mais pas d'Ã©lec ni chaleur
 		and not (id_polluant not in (38,65,108,16,48,36,16) and id_secten1 = '1') -- GES et Ener = Finale
-		and ss is false -- Sans aucune donnée en SS
+		and ss is false -- Sans aucune donnÃ©e en SS
 	group by id_polluant, an, id_comm
 ) as a
 left join commun.tpk_polluants as b using (id_polluant)
@@ -1038,21 +852,21 @@ where
 SELECT AddGeometryColumn ('cigale','comm_poll','geom',4326,'MULTIPOLYGON',2, false);
 
 update cigale.comm_poll
-set geom = ST_Multi(ST_SimplifyPreserveTopology(geomtmp,0.001)); -- Simplification de la géométrie pour rapidité d'affichage
+set geom = ST_Multi(ST_SimplifyPreserveTopology(geomtmp,0.001)); -- Simplification de la gÃ©omÃ©trie pour rapiditÃ© d'affichage
 
 alter table cigale.comm_poll add constraint "pk.cigale.comm_poll" primary key (gid);
 CREATE INDEX "gidx.cigale.comm_poll.geom.gist" ON cigale.comm_poll USING GIST (geom);
 
 comment on table cigale.comm_poll is '
-NOTE: Pour la conso énergie primaire c''est à dire sans l''élec
-NOTE: Pour les GES, émissions directes c''est à dire sans l''élec
+NOTE: Pour la conso Ã©nergie primaire c''est Ã  dire sans l''Ã©lec
+NOTE: Pour les GES, Ã©missions directes c''est Ã  dire sans l''Ã©lec
 ';
 
 vacuum analyse cigale.comm_poll;
 vacuum freeze cigale.comm_poll;
 
 
--- Clusterisation des tables géographiques pour améliorer les temps d'affichage
+-- Clusterisation des tables gÃ©ographiques pour amÃ©liorer les temps d'affichage
 CREATE INDEX "cigale.comm_poll.nom_abrege_polluant.siren_epci"
   ON cigale.comm_poll
   USING btree
@@ -1064,14 +878,14 @@ ALTER TABLE cigale.epci_poll CLUSTER ON "idx.cigale.epci_poll.id_polluant";
 
 
 
--- Création d'une table de liste des entités administratives pour une récupération rapide de l'info
--- et des temps d'affichage améliorés.
+-- CrÃ©ation d'une table de liste des entitÃ©s administratives pour une rÃ©cupÃ©ration rapide de l'info
+-- et des temps d'affichage amÃ©liorÃ©s.
 drop table if exists cigale.liste_entites_admin;
 create table cigale.liste_entites_admin as
-    -- Région PACA
-    select 1 as order_field, 93 as valeur, 'Région PACA' as texte
+    -- RÃ©gion PACA
+    select 1 as order_field, 93 as valeur, 'RÃ©gion PACA' as texte
     union all
-    -- Départements
+    -- DÃ©partements
     select 2 as order_field, id_dep as valeur, joli_nom_dep as texte 
     from commun.tpk_depts
     where id_reg = 93
@@ -1127,11 +941,11 @@ order by order_field, valeur;
 
 /** 
 
-Création du compte utilisateur + acces pour grand public
+CrÃ©ation du compte utilisateur + acces pour grand public
 
 */
 
--- Création de l'utilisateur plateforme J
+-- CrÃ©ation de l'utilisateur plateforme J
 CREATE USER *** WITH PASSWORD 'user=*** dbname=*** host=*** password=***';
 
 -- Autorisation de la connexion (sudo vi pg_hba.conf)
