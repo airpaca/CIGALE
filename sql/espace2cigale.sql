@@ -107,6 +107,7 @@ Création de la table des émissions par secten 1 et catégorie d'énergie
   et on ne récupère donc pas ces valeurs.
 - On ne récupère pas les émissions affectées à l'objet mer
 */
+
 -- Création de la table finale vide
 drop table if exists total.bilan_comm_v4_secten1;
 create table total.bilan_comm_v4_secten1 (
@@ -514,11 +515,11 @@ from (
 	select 
 		id_polluant, an, id_comm, id_secten1, code_cat_energie, code_etab, 
 		case 
-			when ss_85_conso >= 58 or ss_nb_etab <= 3 then true
+			when ss_85_conso >= 85 or ss_nb_etab <= 3 then true
 			else false
 		end as ss,
 		case 
-			when ss_85_conso >= 58  then '85%'
+			when ss_85_conso >= 85  then '85%'
 			when ss_nb_etab < 3 then 'nb_etab'
 			else null
 		end as ss_commentaire
@@ -550,6 +551,10 @@ where
 ;
 
 update total.bilan_comm_v4_secten1 set ss = FALSE where ss is null;
+
+-- Si on a une valeur en ss pour une commune, une énergie, une activité, alors toutes les
+-- valeurs de la commune doivent-apparaître en SS
+
 
 /**
 Calcul d'un champ val_conso pour pouvoir relier plus facilement 
