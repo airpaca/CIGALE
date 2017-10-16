@@ -554,7 +554,15 @@ update total.bilan_comm_v4_secten1 set ss = FALSE where ss is null;
 
 -- Si on a une valeur en ss pour une commune, une énergie, une activité, alors toutes les
 -- valeurs de la commune doivent-apparaître en SS
-
+update total.bilan_comm_v4_secten1 
+set ss = true, ss_commentaire = 'ss communal'
+where 
+	(id_polluant, an, id_comm, id_secten1, code_cat_energie) in (
+		-- Commune, an, activite, energie qui ont au moins une donnée en ss
+		select distinct id_polluant, an, id_comm, id_secten1, code_cat_energie 
+		from total.bilan_comm_v4_secten1  
+		where ss is true
+	);
 
 /**
 Calcul d'un champ val_conso pour pouvoir relier plus facilement 
