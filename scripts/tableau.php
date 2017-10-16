@@ -18,7 +18,7 @@ $query_detail_comm = $_GET['query_detail_comm'];
 // Group by 
 $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
 if ($query_detail_comm == "true") {
-    $group_by =  $group_by . ", nom_entite";
+    $group_by =  $group_by . ", \"Entité administrative\"";
     $nom_entite = " nom_comm";
 } else {
     // $query_entite = str_replace("tropole", "!!!", $query_entite);   
@@ -34,13 +34,14 @@ if ($query_sect != "") {
     $group_by =  $group_by . ", nom_secten1";
     $nom_secten1 = "nom_secten1";
 } else {
-    $nom_secten1 = "'Tous secteurs' as nom_secten1";
+    // $nom_secten1 = "'Tous secteurs' as nom_secten1";
+    $nom_secten1 = "'Tous secteurs'";
 };
 if ($query_ener != "") {
     $group_by =  $group_by . ", cat_energie";
     $cat_energie = "cat_energie";
 } else {
-    $cat_energie = "'Toutes énergies' as cat_energie";
+    $cat_energie = "'Toutes énergies'";
 };
 // echo $group_by;
 
@@ -81,13 +82,13 @@ if ($query_detail_comm == "false" and $query_entite == "93") { // --  and $query
 
 $sql = "
 select 
-    an, 
-    " . $nom_entite . "  as nom_entite,  
-    " . $nom_secten1 . " ,  
-    " . $cat_energie . " , 
-    nom_abrege_polluant, 
-    round(sum(val)::numeric, 1) as val, 
-    lib_unite
+    an as \"Année\", 
+    " . $nom_entite . "  as \"Entité administrative\",  
+    " . $nom_secten1 . " as \"Activité\",  
+    " . $cat_energie . " as \"Energie\", 
+    nom_abrege_polluant as \"Variable\", 
+    round(sum(val)::numeric, 1) as \"valeur\", 
+    lib_unite as \"Unite\"
 from (
 	select an, id_comm, id_secten1, code_cat_energie, id_polluant, sum(val) as val, id_unite 
 	from total.bilan_comm_v4_secten1
@@ -102,7 +103,8 @@ left join (select distinct code_cat_energie, cat_energie from transversal.tpk_en
 left join commun.tpk_polluants as e using (id_polluant)
 left join commun.tpk_unite as f using (id_unite)
 " . $group_by . "
-order by an, nom_entite, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
+-- order by an, nom_entite, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
+order by \"Année\", \"Entité administrative\", \"Activité\", \"Energie\", \"Variable\", \"Unite\"
 ;
 ";
 
