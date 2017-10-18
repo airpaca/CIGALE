@@ -23,8 +23,8 @@ Si utilisé avec PgAdmin, lancer tout le code avec PgScript (pour que les comman
 - PRG1003GES 			128
 
 * Secret statistique:
-Pas de secret stat à la commune par SECTEN 1 et catégorie d'énergie mais pas sur usages et branches.
-
+Secret stat à la commune par SECTEN 1 et catégorie d'énergie mais pas sur usages et branches.
+Secret stat à l'EPCI par SECTEN 1 et catégorie d'énergie en secrétisant une commune si besoin. 
 */
 
 
@@ -501,7 +501,7 @@ where
 ;
 
 /**
-Calcul final du secret stat
+Calcul final du secret stat à la commune
 */
 alter table total.bilan_comm_v4_secten1 drop column if exists ss;
 alter table total.bilan_comm_v4_secten1 add column ss boolean;
@@ -532,6 +532,7 @@ from (
 			and bdrep is false
 			and (an, code_etab) not in (
 				-- Sélection des années et établissement pour lesquels on a affecté du GRT GAZ non déclaré dans BDREP
+				-- FIXME: Ne corresponds pas aux consos opendata mise à jour ou non par établissement dans bilan_comm! 
 				select distinct an, code_gerep
 				from src_ind.src_conso_source as a
 				left join src_ind.def_corresp_sources as b using (id_version_corresp, id_corresp)
@@ -539,7 +540,7 @@ from (
 					id_version_corresp = 5
 					and actif is true
 					and id_energie = 301 
-					and a.commentaire = 'GRT GAZ'			
+					and a.commentaire = 'GRT GAZ'							
 			)
 		) 
 	order by id_polluant, an, id_comm, code_etab, id_secten1, code_cat_energie
@@ -586,6 +587,262 @@ where
 	and a.id_polluant <> 131 and a.id_secten1 <> '8'
 ;
 */
+
+
+
+
+
+
+
+
+/*
+
+Calcul d'un champ SS à l'EPCI / an / secten1 / catégorie d'énergie
+
+1/ Calcul du SS théroque à l'EPCI (1 étab >= 85% conso ou < 3 etab)
+2/ Si on a du secret stat théorique à l'EPCI alors pas de diffusion de la donnée ss_epci = TRUE
+3/ Si on a pas de SS théorique à l'EPCI il faut vérifier que l'on ne puisse pas retrouver la valeur 
+   d'une commune en SS à partir de la valeur totale de son EPCI.
+4/ Si dans un EPCI sans SS théorique on a deux communes ou plus en SS alors diffusion de la donnée ss_epci = FALSE
+5/ Si dans un EPCI sans SS théorique on a une seule commune qui a du SS alors il faut pouvoir en passer une autre en SS
+6/ Si dans un EPCI sans SS théorique on a une seule commune qui a du SS mais au moins deux autres communes non SS 
+   alors on passe la conso la plus basse en SS et on diffuse la donnée ss_epic = FALSE
+7/ Si moins de deux autres communes sans SS alors pas de diffusion de la donnée ss_epci = TRUE
+8/ Tous ces calculs réalisés sur les consommations doivent ensuite être appliqués à tous les autres polluants
+9/ Dans CIGALE:
+   Si extraction comm where ss is false
+   Si extraction epci where ss_epci is false
+*/
+
+-- Uniquement pour tests
+-- update total.bilan_comm_v4_secten1 set ss = TRUE where memo = 'Secrétisation manuelle';
+
+-- Création du champ final de secret stat à l'EPCI
+alter table total.bilan_comm_v4_secten1 drop column if exists ss_epci;
+alter table total.bilan_comm_v4_secten1 add column ss_epci boolean;
+
+-- Création d'une table temporaire comportant tous les champs nécessaires au calcul du SS à l'EPCI
+drop table if exists public.tmp_ss_epci;
+create table public.tmp_ss_epci as 
+with ss_epci as (
+	-- Calcul du SS à l'EPCI, an, secten1, cat_energie pour la consommation
+	select 
+		a.*, b.nb_etab, c.conso_epci,
+		conso_etab / nullif(conso_epci, 0) * 100. as pct_conso, 
+		case 
+			when (conso_etab / nullif(conso_epci, 0) * 100. >= 85 or nb_etab < 3) and code_cat_energie <> 0 then true 
+			else false 
+		end as ss_epci
+	from (
+		-- Somme des consos à l'établissement
+		select id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, code_etab, sum(val) as conso_etab
+		from total.bilan_comm_v4_secten1
+		left join commun.tpk_commune_2015_2016 as b using (id_comm)
+		where id_polluant = 131 -- and an = 2015
+		group by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, code_etab
+	) as a
+	left join (
+		-- Calcul du nb etab à l'EPCI secten et énergie
+		select an, siren_epci_2017, id_secten1, code_cat_energie, sum(coalesce(nb_etab, 0)) as nb_etab
+		from  public.cigale_nb_etab as a
+		left join commun.tpk_commune_2015_2016 as b using (id_comm)
+		group by an, siren_epci_2017, id_secten1, code_cat_energie 
+	) as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
+	left join (
+		-- Calcul conso à l'EPCI secten et énergie
+		select an, siren_epci_2017, id_secten1, code_cat_energie, sum(val) as conso_epci
+		from total.bilan_comm_v4_secten1 as a
+		left join commun.tpk_commune_2015_2016 as b using (id_comm)
+		where a.id_polluant = 131
+		group by an, siren_epci_2017, id_secten1, code_cat_energie 
+	) as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
+	where 
+		code_etab <> '-999'
+		and code_cat_energie <> 8
+		-- FIXME: Et les clients GRT GAZ open data?
+	order by a.id_polluant, a.an, a.siren_epci_2017, a.id_secten1, a.code_cat_energie, a.code_etab
+),
+nb_comm_ss as (
+	-- nb comm avec secret stat par epci
+	select id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, count(id_comm) as nb_comm_ss
+	from (
+		select id_polluant, an, id_comm, id_secten1, code_cat_energie
+		from total.bilan_comm_v4_secten1 
+		where ss is true and id_polluant = 131
+	) as a
+	left join commun.tpk_commune_2015_2016 as b using (id_comm)
+	group by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie
+), 
+nb_comm_noss as (
+	-- nb comm sans secret stat par epci
+	select id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, count(id_comm) as nb_comm_noss
+	from (
+		select id_polluant, an, id_comm, id_secten1, code_cat_energie
+		from total.bilan_comm_v4_secten1 
+		where ss is false and id_polluant  = 131
+	) as a
+	left join commun.tpk_commune_2015_2016 as b using (id_comm)
+	group by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie
+),
+conso_min_comm_epci as (
+	-- Conso la plus faible des communes d'un EPCI par an, secten1, cat energie qui ne sont pas en SS comm
+	select *
+	from (
+		select 
+			an, siren_epci_2017, id_secten1, code_cat_energie, id_comm, val, rank()
+			OVER (PARTITION BY an, siren_epci_2017, id_secten1, code_cat_energie ORDER BY val DESC) as tri
+		from (
+			select 
+				an, siren_epci_2017, id_secten1, code_cat_energie, id_comm, sum(val) as val	
+			from total.bilan_comm_v4_secten1 as a
+			left join commun.tpk_commune_2015_2016 as b using (id_comm)
+			where a.id_polluant = 131 and ss is false
+			group by an, siren_epci_2017, id_secten1, code_cat_energie, id_comm
+		) as a
+	) as a
+	where tri = 1
+),
+stats_ss_epci as (
+select a.*, ss_epci_true, case when ss_epci_true is not null then true else false end as ss_epci
+from (		
+	select distinct a.id_polluant, a.an, a.siren_epci_2017, a.id_secten1, a.code_cat_energie, nb_comm_ss, nb_comm_noss 
+	from ss_epci as a
+	left join nb_comm_ss as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
+	left join nb_comm_noss as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
+-- 	where 
+-- 		ss_epci is true
+		-- and siren_epci_2017 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013	
+) as a
+left join (
+	select a.id_polluant, a.an, a.siren_epci_2017, a.id_secten1, a.code_cat_energie, nb_comm_ss, nb_comm_noss, true as ss_epci_true
+	from ss_epci as a
+	left join nb_comm_ss as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
+	left join nb_comm_noss as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
+	where 
+		ss_epci is true
+		-- and siren_epci_2017 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013
+) as b using (id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie)
+-- On lie toutes les statistiques calculées
+-- 	select a.*, b.nb_comm_ss, c.nb_comm_noss
+-- 	from ss_epci as a
+-- 	left join nb_comm_ss as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
+-- 	left join nb_comm_noss as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
+-- 	where siren_epci_2017 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013
+)
+-- On crée la table temporaire en calculant un champ SS_epci temporaire en fonction du cas de figure
+select 
+	a.*,
+	case 
+		when ss_epci is true then 'true' -- SI SS à l'EPCI alors SS
+		when ss_epci is FALSE and nb_comm_ss >= 2 then 'false' -- Si pas SS à l'EPCI et >2 communes SS alors noSS
+		when ss_epci is FALSE and (nb_comm_ss < 2 or nb_comm_ss is null) and nb_comm_noss >= 2 then '?'
+	end as ss_epci_tmp,
+	b.id_comm as id_comm_to_ss
+from stats_ss_epci as a
+left join conso_min_comm_epci as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
+order by an, siren_epci_2017, id_secten1, code_cat_energie
+;
+
+/**
+select *
+from public.tmp_ss_epci
+order by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie
+limit 300
+*/
+
+-- Calcul du champ ss_epci dans la table officielle
+-- Ce calcul est effectué pour tous les polluants
+update total.bilan_comm_v4_secten1 as a
+set ss_epci = case 
+	when b.ss_epci_tmp = 'true' then true
+	when b.ss_epci_tmp = 'false' then False
+	when b.ss_epci_tmp = '?' and id_comm_to_ss is not null then False
+end 
+from commun.tpk_commune_2015_2016 as c, public.tmp_ss_epci as b
+where 
+	(a.an, a.id_secten1, a.code_cat_energie) 
+	= (b.an, b.id_secten1, b.code_cat_energie)
+	and a.id_comm = c.id_comm
+	and c.siren_epci_2017 = b.siren_epci_2017
+;
+
+-- Secrétisation d'une commune quand nécessaire
+update total.bilan_comm_v4_secten1 as a
+set ss = true, memo = 'Secrétisation manuelle'
+where (an, id_secten1, code_cat_energie, id_comm) in (
+	select distinct an, id_secten1, code_cat_energie, id_comm_to_ss
+	from public.tmp_ss_epci
+	where ss_epci_tmp = '?' and id_comm_to_ss is not null
+);
+
+-- Si pas d'établissements bdrep pour une année / epci / secten / cat énergie 
+-- alors ss_epci = false
+update total.bilan_comm_v4_secten1 as a
+set ss_epci = FALSE
+where ss_epci is null;
+
+/* 
+VALIDATIONS
+-- Vérifier qu'on ait une valeur SS_EPCI unique pour un EPCI, an, id_secten1, code_cat_energie
+select an, siren_epci_2017, id_secten1, code_cat_energie, count(ss_epci) as validation
+from (
+	select distinct an, siren_epci_2017, id_secten1, code_cat_energie, ss_epci
+	from total.bilan_comm_v4_secten1 as a
+	left join commun.tpk_commune_2015_2016 as b using (id_comm)
+) as a
+group by an, siren_epci_2017, id_secten1, code_cat_energie
+order by validation desc
+
+-- On regarde quelles sont les données en SS EPCI ou non
+select distinct an, id_secten1, code_cat_energie, b.siren_epci_2017, ss_epci
+from total.bilan_comm_v4_secten1 as a
+left join commun.tpk_commune_2015_2016 as b using (id_comm)
+where id_polluant = 131 and ss_epci is false
+order by an, id_secten1, code_cat_energie, b.siren_epci_2017, ss_epci
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
 Maintenance de la table
@@ -781,7 +1038,6 @@ CREATE INDEX "gidx.cigale.epci_2154.geom.gist" ON cigale.epci_2154 USING GIST (g
 
 
 
-
 drop table if exists cigale.epci_poll;
 create table cigale.epci_poll WITH OIDS as 
 select  
@@ -799,7 +1055,7 @@ where
 	an = 2015
 	and not (id_polluant in (38,65,108,16,48,36) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
 	and not (id_polluant not in (38,65,108,16,48,36) and id_secten1 = '1') -- GES et Ener = Finale
-	and ss is false -- Sans aucune donnée soumise au SS	
+	and ss_epci is false -- Sans aucune donnée soumise au SS à l'EPCI	
 group by an, nom_abrege_polluant, siren_epci_2017, nom_epci_2017, superficie
 order by an, nom_abrege_polluant, siren_epci_2017, nom_epci_2017, superficie;
 
@@ -990,16 +1246,4 @@ GRANT SELECT ON ALL TABLES IN SCHEMA commun TO ***;
 GRANT USAGE ON SCHEMA commun TO ***;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA commun TO ***;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA commun TO ***;
-
-
-
-
-
-
-
-
-
-
-
-
 
