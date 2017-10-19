@@ -1,9 +1,7 @@
 <?php 
 
-$pg_host = $_GET['pg_host'];
-$pg_bdd = $_GET['pg_bdd'];
-$pg_lgn = $_GET['pg_lgn']; 
-$pg_pwd = $_GET['pg_pwd'];
+/* Récupération des paramètres de connexion */
+include '../config.php';
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");

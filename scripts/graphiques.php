@@ -1,9 +1,7 @@
 <?php 
+/* Récupération des paramètres de connexion */
+include '../config.php';
 
-$pg_host = $_GET['pg_host'];
-$pg_bdd = $_GET['pg_bdd'];
-$pg_lgn = $_GET['pg_lgn']; 
-$pg_pwd = $_GET['pg_pwd'];
 $siren_epci = $_GET['siren_epci'];
 $polluant = $_GET['polluant'];
 $an = $_GET['an'];

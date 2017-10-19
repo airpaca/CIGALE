@@ -1,10 +1,9 @@
 <?php 
 
 /* Récupération des paramètres de connexion */
-$pg_host = $_GET['pg_host'];
-$pg_bdd = $_GET['pg_bdd'];
-$pg_lgn = $_GET['pg_lgn']; 
-$pg_pwd = $_GET['pg_pwd'];
+include '../config.php';
+
+/* Récupération des paramètres de la requête */
 $query_ans = $_GET['query_ans'];
 $query_entite = $_GET['query_entite'];
 $query_entite_nom = $_GET['query_entite_nom'];
@@ -80,6 +79,13 @@ if ($query_detail_comm == "false" and $query_entite == "93") { // --  and $query
     $ss = "TRUE";
 };
 
+// Choix de la colonne SS à interroger
+if (strlen ($query_entite) == 9) {
+    $ss_field = "ss_epci";
+} else {
+    $ss_field = "ss";
+};
+
 $sql = "
 select 
     an as \"Année\", 
@@ -91,14 +97,14 @@ select
     coalesce(lib_unite, 'Secret Stat') as \"Unite\"
 from (
 	select an, id_comm, id_secten1, code_cat_energie, id_polluant, 
-    sum(case when " . $ss . " is TRUE and ss is TRUE then null else val end) as val, 
-    case when " . $ss . " is TRUE and ss is TRUE then NULL else id_unite end as id_unite
+    sum(case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then null else val end) as val, 
+    case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end as id_unite
 	from total.bilan_comm_v4_secten1
 	" . $where . "     
 	and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
     group by 
         an, 
-        case when " . $ss . " is TRUE and ss is TRUE then NULL else id_unite end, 
+        case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end, 
         id_polluant, id_comm, id_secten1, code_cat_energie
 )  as a
 left join commun.tpk_communes as b using (id_comm)
@@ -113,7 +119,9 @@ order by \"Année\", \"Entité administrative\", \"Activité\", \"Energie\", \"V
 ";
 
 // echo $ss;
+// echo $ss_field;
 // echo $sql;
+
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");

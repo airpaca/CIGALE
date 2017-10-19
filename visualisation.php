@@ -645,12 +645,6 @@ function liste_epci_populate() {
         type: "GET",
         url: "scripts/liste_epci_populate.php",
         dataType: 'json',   
-        data: {
-            pg_host:cfg_pg_host,
-            pg_bdd:cfg_pg_bdd, 
-            pg_lgn:cfg_pg_lgn, 
-            pg_pwd:cfg_pg_pwd,            
-        },
         success: function(response,textStatus,jqXHR){
             
             var selectize_element = select_list[0].selectize;
@@ -1689,10 +1683,6 @@ function create_graphiques(siren_epci, nom_epci){
         url: "scripts/graphiques.php",
         dataType: 'json',   
         data: {
-            pg_host: cfg_pg_host,
-            pg_bdd: cfg_pg_bdd, 
-            pg_lgn: cfg_pg_lgn, 
-            pg_pwd: cfg_pg_pwd,  
             siren_epci: siren_epci,
             polluant: polluant_actif,
             an: an_max,
@@ -1742,11 +1732,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
         type: "GET",
         url: "scripts/graphiques_consos.php",
         dataType: 'json',   
-        data: {
-            pg_host: cfg_pg_host,
-            pg_bdd: cfg_pg_bdd, 
-            pg_lgn: cfg_pg_lgn, 
-            pg_pwd: cfg_pg_pwd,  
+        data: { 
             siren_epci: siren_epci,
             polluant: polluant_actif,
             an: an_max,
@@ -1795,11 +1781,7 @@ function create_graphiques_ges(siren_epci, nom_epci){
         type: "GET",
         url: "scripts/graphiques_ges.php",
         dataType: 'json',   
-        data: {
-            pg_host: cfg_pg_host,
-            pg_bdd: cfg_pg_bdd, 
-            pg_lgn: cfg_pg_lgn, 
-            pg_pwd: cfg_pg_pwd,  
+        data: { 
             siren_epci: siren_epci,
             polluant: polluant_actif,
             an: an_max,

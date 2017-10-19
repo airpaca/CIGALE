@@ -217,12 +217,12 @@ function tests(){
         type: "GET",
         url: "scripts/tableau.php",
         dataType: 'json',   
-        data: {
-            pg_host:cfg_pg_host,
-            pg_bdd:cfg_pg_bdd, 
-            pg_lgn:cfg_pg_lgn, 
-            pg_pwd:cfg_pg_pwd,  
-        },         
+        // data: {
+            // pg_host:cfg_pg_host,
+            // pg_bdd:cfg_pg_bdd, 
+            // pg_lgn:cfg_pg_lgn, 
+            // pg_pwd:cfg_pg_pwd,  
+        // },         
         success: function(response,textStatus,jqXHR){
             
             console.log(response);
@@ -271,12 +271,6 @@ function fill_listes(){
         type: "GET",
         url: "scripts/fill_listes.php",
         dataType: 'json',   
-        data: {
-            pg_host:cfg_pg_host,
-            pg_bdd:cfg_pg_bdd, 
-            pg_lgn:cfg_pg_lgn, 
-            pg_pwd:cfg_pg_pwd,  
-        },
         beforeSend:function(jqXHR, settings){
             jqXHR.spinner_left = spinner_left;
         },          
@@ -472,10 +466,6 @@ function afficher_donnees(){
         url: "scripts/tableau.php",
         dataType: 'json',   
         data: {
-            "pg_host": cfg_pg_host,
-            "pg_bdd": cfg_pg_bdd, 
-            "pg_lgn": cfg_pg_lgn, 
-            "pg_pwd": cfg_pg_pwd,
             "query_ans": query_ans,
             "query_entite": query_entite,
             "query_entite_nom": query_entite_nom,
