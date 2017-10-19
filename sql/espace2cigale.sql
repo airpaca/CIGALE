@@ -25,6 +25,8 @@ Si utilisé avec PgAdmin, lancer tout le code avec PgScript (pour que les comman
 * Secret statistique:
 Secret stat à la commune par SECTEN 1 et catégorie d'énergie mais pas sur usages et branches.
 Secret stat à l'EPCI par SECTEN 1 et catégorie d'énergie en secrétisant une commune si besoin. 
+
+-- FIXME: Il faut peut-être passer les emissions de GES du 805XX en secten 8?
 */
 
 
@@ -235,8 +237,8 @@ from (
 		a.id_snap3 not in (select distinct espace_id_snap3 from total.corresp_snap_synapse where specificite is not null)
 	group by 
 		a.id_polluant,
-		a.an,
-		a.id_comm,
+		a.an, 
+		a.id_comm, 
 		c.id_secten1,
 		a.code_cat_energie, 
 		a.id_usage, 
@@ -416,6 +418,8 @@ group by
 		code_etab,
 		memo
 ;
+
+-- FIXME: Il faut peut-être passer les emissions de GES du 805XX en secten 8?
 
 /*
 Validation en grandes masses sur les polluants de l'interface d'extraction uniquement 
@@ -1207,12 +1211,11 @@ order by order_field, valeur;
 
 
 
-
 /** 
 
 Création du compte utilisateur + acces pour grand public
 
-*/
+
 
 -- Création de l'utilisateur plateforme J
 CREATE USER *** WITH PASSWORD 'user=*** dbname=*** host=*** password=***';
@@ -1246,4 +1249,4 @@ GRANT SELECT ON ALL TABLES IN SCHEMA commun TO ***;
 GRANT USAGE ON SCHEMA commun TO ***;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA commun TO ***;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA commun TO ***;
-
+*/
