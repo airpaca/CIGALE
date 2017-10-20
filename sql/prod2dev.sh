@@ -30,6 +30,7 @@ pg_dump -U $dev_user \
 -t cigale.epci_2154 \
 -t cigale.epci_poll \
 -t cigale.liste_entites_admin \
+-t total.bilan_comm_v4_prod \
 -Fc $dev_db > /tmp/cigale.dump
 
 # Export du dump sur le serveur prod
