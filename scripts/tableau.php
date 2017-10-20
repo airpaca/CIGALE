@@ -80,7 +80,7 @@ if ($query_detail_comm == "false" and $query_entite == "93") { // --  and $query
 };
 
 // Choix de la colonne SS à interroger
-if (strlen ($query_entite) == 9) {
+if (strlen ($query_entite) == 9 and $query_detail_comm == "false") {
     $ss_field = "ss_epci";
 } else {
     $ss_field = "ss";
