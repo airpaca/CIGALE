@@ -1751,7 +1751,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
             
             create_piechart_emi(response[0], "graph1", "Energie finale par secteur en " + an_max, "ktep");
             create_piechart_emi(response[1], "graph2", "Energie finale par énergie en " + an_max, "ktep");
-            create_linechart_emi(response[2], "graph3", "Evolution séctorielle (énergie finale en ktep)");
+            create_linechart_emi(response[2], "graph3", "Evolution sectorielle (énergie finale en ktep)");
             create_barchart_part(response[3], "graph4");
             
             create_graph_legend("graph5", 2);
