@@ -93,7 +93,7 @@ select
     " . $nom_secten1 . " as \"Activité\",  
     " . $cat_energie . " as \"Energie\", 
     nom_abrege_polluant as \"Variable\", 
-    round(sum(val)::numeric, 1) as \"valeur\", 
+    round(sum(val)::numeric, 1) as \"Valeur\", 
     coalesce(lib_unite, 'Secret Stat') as \"Unite\"
 from (
 	select an, id_comm, id_secten1, code_cat_energie, id_polluant, 
@@ -118,10 +118,16 @@ order by \"Année\", \"Entité administrative\", \"Activité\", \"Energie\", \"V
 ;
 ";
 
+// Si extraction des consos d'énergie du secteur prod énergie résultat null ce qui est normal.
+// On renvoie un texte d'avertissement
+if (str_replace("\\", "", $query_sect) == "'1'" and $query_var == "131") { 
+    // echo "Warning msg";
+    $sql = "SELECT '<font color=\"#ff6600\">Les consommations d''énergie primaire ne sont pas incluses dans le bilan des consommations finales. <a href=\"methodo.php\">[Plus d''informations]</a></font>' as Warning";
+};
+
 // echo $ss;
 // echo $ss_field;
 // echo $sql;
-
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");

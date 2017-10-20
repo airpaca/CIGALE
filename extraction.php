@@ -451,7 +451,7 @@ function afficher_donnees(){
     
     
     
-    console.log("TODO: Lists styles reset");
+    // console.log("TODO: Lists styles reset");
    
    
     // Déclanchement du sablier (spinner)
