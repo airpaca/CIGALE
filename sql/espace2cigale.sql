@@ -1211,6 +1211,131 @@ order by order_field, valeur;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+
+Intégration prod ener CIGALE 
+Dans une nouvelle table
+
+*/
+
+/*
+Mise en forme des valeurs
+- Regroupement 
+	* Par filières ENR ou autres filières Non ENR regroupées
+	* Type production
+- Ajout des champs EPCI et dep dans la table pour éviter les requêtes 
+  trop longues lors de l'extraction
+*/
+drop table if exists total.bilan_comm_v4_prod;
+create table total.bilan_comm_v4_prod as
+select 
+	a.an, 
+	a.id_comm, 
+	a.id_type_prod, b.lib_type_prod,
+	case when est_enr is true then c.id_filiere else 0 end as id_filiere, 
+		case when est_enr is true then c.lib_filiere else 'Filières non ENR' end as lib_filiere,
+	a.id_grande_filiere, d.lib_grande_filiere, c.est_enr,
+	sum(a.production) as val, 
+	a.id_unite,
+	a.id_comm / 1000 as dep,
+	e.siren_epci_2017,
+	e.nom_epci_2017
+from total_prod_energie.prod_comm_v1 as a
+left join src_prod_energie.tpk_type_prod as b using (id_type_prod)
+left join src_prod_energie.tpk_filiere as c using (id_filiere)
+left join src_prod_energie.corresp_filiere as cc using (id_filiere)
+left join src_prod_energie.tpk_grande_filiere as d on cc.id_grande_filiere = d.id_grande_filiere
+left join commun.tpk_commune_2015_2016 as e using (id_comm)
+group by
+	a.an, 
+	a.id_comm, 
+	a.id_type_prod, b.lib_type_prod,
+	case when est_enr is true then c.id_filiere else 0 end, 
+		case when est_enr is true then c.lib_filiere else 'Filières non ENR' end,	
+	a.id_grande_filiere, d.lib_grande_filiere, c.est_enr,
+	a.id_unite,
+	e.siren_epci_2017,
+	e.nom_epci_2017	
+order by
+	an, 
+	id_comm, 
+	id_type_prod, lib_type_prod,
+	id_filiere, lib_filiere,
+	id_grande_filiere, lib_grande_filiere, est_enr,
+	id_unite;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /** 
 
 Création du compte utilisateur + acces pour grand public
