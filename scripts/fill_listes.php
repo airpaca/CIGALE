@@ -100,12 +100,50 @@ while ($row = pg_fetch_assoc( $res )) {
   $cat_energie[] = $row;
 }
 
+/* Extraction des grandes filières pour prod ener */
+$sql = "
+select distinct id_grande_filiere, lib_grande_filiere
+from total.bilan_comm_v4_prod 
+order by id_grande_filiere
+";
+
+$res = pg_query($conn, $sql);
+if (!$res) {
+    echo "An SQL error occured.\n";
+    exit;
+}
+
+$grandes_filieres = array();
+while ($row = pg_fetch_assoc( $res )) {
+  $grandes_filieres[] = $row;
+}
+
+/* Extraction des filières enr ou autres prod ener */
+$sql = "
+select distinct id_filiere, lib_filiere
+from total.bilan_comm_v4_prod 
+order by id_filiere
+";
+
+$res = pg_query($conn, $sql);
+if (!$res) {
+    echo "An SQL error occured.\n";
+    exit;
+}
+
+$filieres = array();
+while ($row = pg_fetch_assoc( $res )) {
+  $filieres[] = $row;
+}
+
 /* Stockage des résultats */
 $array_result = array(
     $annees,
     $entites_geo,
     $secteurs_act,
     $cat_energie,
+    $grandes_filieres,
+    $filieres
 );
 
 /* Export en JSON */
