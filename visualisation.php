@@ -132,6 +132,11 @@
             Consommations d'énergie
             </a>   
 
+            <a href="#" class="list-group-item hide liste_energies_items" id="prod">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Productions d'énergie
+            </a>               
+            
         <a href="#" class="list-group-item" id="liste_ges">
         Gaz à Effet de Serre
         </a>
@@ -237,7 +242,7 @@ var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE
 var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&VERSION=2.0.0";
 
 var an_max = 2015;
-var polls = ['conso', 'so2','nox','pm10','pm2.5','covnm','nh3','co2','ch4.co2e','n2o.co2e','prg100.3ges']; // 'prod', 
+var polls = ['conso', 'prod', 'so2','nox','pm10','pm2.5','covnm','nh3','co2','ch4.co2e','n2o.co2e','prg100.3ges'];
 var polls_names = {
     "conso": "consommations",
     "prod": "productions",
@@ -254,7 +259,7 @@ var polls_names = {
 };
 var polls_id = {
     "conso": "131",
-    "prod": "",
+    "prod": "999",
     "so2": "48",
     "nox": "38",
     "pm10": "65",
@@ -1937,6 +1942,8 @@ function creation_couches_epci_polluant(){
         // Texte de légende en fonction du polluant
         if (polls[i] == 'conso'){
             legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
+        } else if (polls[i] == 'prod'){
+            legend_text = "Productions d'énergie primaire " + an_max + " MWh/km&sup2;";
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
             legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";
         } else if (polls[i] == 'prg100.3ges'){
@@ -1980,6 +1987,8 @@ function creation_couches_comm_polluant(){
         // Texte de légende en fonction du polluant
         if (polls[i] == 'conso'){
             legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
+        } else if (polls[i] == 'prod'){
+            legend_text = "Productions d'énergie primaire " + an_max + " MWh/km&sup2;";            
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
             legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;"; 
         } else if (polls[i] == 'prg100.3ges'){
