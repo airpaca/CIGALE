@@ -49,7 +49,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         
-                        <h1>Consultation d'Inventaires Géolocalisés Air CLimat Energie</h1>
+                        <h1>Consultation d'Inventaires Géolocalisés </br>Air CLimat Energie</h1>
                         
                         <form class="form-inline" role="form">
                             <a href="visualisation.php" type="button"  class="btn btn-warning btn-lg" role="button">C'est parti!</a>
