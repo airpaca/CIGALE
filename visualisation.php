@@ -2278,6 +2278,8 @@ function export_pdf(){
     doc.setFontSize(10);
     if (polluant_actif == 'conso') {
         doc.text('Bilan des consommations', 10, 20);
+    } else if (polluant_actif == 'prod') {
+        doc.text("Bilan des productions d'énergie", 10, 20);        
     } else {
         doc.text('Bilan des émissions de ' + polls_names[polluant_actif], 10, 20);  
     };
