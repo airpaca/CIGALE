@@ -2039,6 +2039,9 @@ function create_graphiques(siren_epci, nom_epci){
     Création des graphiques 
     */
     
+    // Mise en forme des blocs de graphiques pour les émissions
+    $(".graph4").css({"height": "10%", "width": "70%"});    
+    
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
     my_app.nom_epci = nom_epci;
@@ -2089,6 +2092,9 @@ function create_graphiques_conso(siren_epci, nom_epci){
     Création des graphiques 
     */
     
+    // Mise en forme des blocs de graphiques pour les émissions
+    $(".graph4").css({"height": "10%", "width": "70%"});  
+    
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
     my_app.nom_epci = nom_epci;
@@ -2135,8 +2141,11 @@ function create_graphiques_conso(siren_epci, nom_epci){
 
 function create_graphiques_prod(siren_epci, nom_epci){
     /*
-    Création des graphiques 
+    Création des graphiques de productions
     */
+    
+    // Mise en forme des blocs de graphiques pour les productions
+    $(".graph4").css({"height": "30%", "width": "100%"});
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
