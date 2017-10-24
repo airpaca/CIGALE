@@ -447,6 +447,8 @@ $(function() { /* Gestion des listes et couches EPCI poll */
             // Création des graphiques
             if (polluant_actif == 'conso') {
                 create_graphiques_conso(my_app.siren_epci, my_app.nom_epci);
+            } else if (polluant_actif == 'prod') {
+                create_graphiques_prod(my_app.siren_epci, my_app.nom_epci);                
             } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges') { 
                 create_graphiques_ges(my_app.siren_epci, my_app.nom_epci);                
             } else {
@@ -2164,7 +2166,7 @@ function create_graphiques_prod(siren_epci, nom_epci){
             create_linechart_prod_tmp(response[3], "graph4", "Evolution des productions primaires / secondaires (GWh)");
             // FIXME: Faut changer la position des div des graphiques et faire une barchart empilée
             
-            // create_graph_legend("graph5", 2);
+            create_graph_legend("graph5", 2);
             // FIXME: Créer la nouvelle légende
             
             sidebar.show();  
