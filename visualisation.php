@@ -1355,12 +1355,15 @@ function change_graph_title(the_title){
 
 function create_graph_legend(div, type){
     
-    if (type == 1) {
-        $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png">');   
+    if (polluant_actif == 'prod') {
+        $('.' + div).html('<img align="left" src="img/plots_legend_grandes_filieres.png">');
     } else {
-        $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png"><img align="left" src="img/plots_legend_energie.png">');   
+        if (type == 1) {
+            $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png">');   
+        } else {
+            $('.' + div).html('<img align="left" src="img/plots_legend_secteurs.png"><img align="left" src="img/plots_legend_energie.png">');   
+        };
     };
-    
 };
 
 function create_piechart_emi(response, div, graph_title, tooltip_unit){
@@ -2166,7 +2169,7 @@ function create_graphiques_prod(siren_epci, nom_epci){
             create_linechart_prod_tmp(response[3], "graph4", "Evolution des productions primaires / secondaires (GWh)");
             // FIXME: Faut changer la position des div des graphiques et faire une barchart empilée
             
-            create_graph_legend("graph5", 2);
+            create_graph_legend("graph5", 1);
             // FIXME: Créer la nouvelle légende
             
             sidebar.show();  
