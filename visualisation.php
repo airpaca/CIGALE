@@ -2369,21 +2369,38 @@ function export_pdf(){
     var canvasImg = document.getElementById("graph3_canvas").toDataURL();
     doc.addImage(canvasImg, 'PNG', 10, 120);    
 
+    // Si on est sur les pructions alors on ajoute une nouvelle page et on crée une variable Y
+    if (polluant_actif == 'prod') {
+        
+        // On ajoute la légende ici
+        var img = new Image();
+        img.src = "img/plots_legend_grandes_filieres.png"; 
+        var dataURI = getBase64Image(img);
+        doc.addImage(dataURI, 'PNG', 10, 240);  
+        
+        doc.addPage();
+        pdf_y = 30;
+    } else {
+        pdf_y = 240;
+    };
+    
     // Ajout bar chart inversé
     var canvasImg = document.getElementById("graph4_canvas").toDataURL();
-    doc.addImage(canvasImg, 'PNG', 10, 240); 
+    doc.addImage(canvasImg, 'PNG', 10, pdf_y); 
    
-    // Ajout légendes au format image
-    var img = new Image();
-    img.src = "img/plots_legend_secteurs.png"; 
-    var dataURI = getBase64Image(img);
-    doc.addImage(dataURI, 'PNG', 10, 260);
- 
-    if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges' || polluant_actif == 'conso') {    
+    // Ajout légendes au format image   
+    if (polluant_actif != 'prod') {
         var img = new Image();
-        img.src = "img/plots_legend_energie.png"; 
+        img.src = "img/plots_legend_secteurs.png"; 
         var dataURI = getBase64Image(img);
-        doc.addImage(dataURI, 'PNG', 10, 280);    
+        doc.addImage(dataURI, 'PNG', 10, pdf_y + 20);
+     
+        if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges' || polluant_actif == 'conso') {    
+            var img = new Image();
+            img.src = "img/plots_legend_energie.png"; 
+            var dataURI = getBase64Image(img);
+            doc.addImage(dataURI, 'PNG', 10, pdf_y + 40);    
+        };
     };
      
     // Export
