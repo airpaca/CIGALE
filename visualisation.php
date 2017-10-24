@@ -738,6 +738,8 @@ function epci2comm(siren_epeci, nom_epeci){
     // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                       
     if (polluant_actif == 'conso') {
         create_graphiques_conso(siren_epeci, nom_epeci);
+    } else if (polluant_actif == 'prod') {
+        create_graphiques_prod(siren_epeci, nom_epeci);
     } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges') { 
         create_graphiques_ges(siren_epeci, nom_epeci);           
     } else {
@@ -1014,6 +1016,8 @@ function create_wfs_epci_layers(my_layers_object){
                         // Récupération de l'id epci et lancement de la fonction d'affichage des graphiques                         
                         if (polluant_actif  == 'conso'){
                             create_graphiques_conso(feature.properties["siren_epci"], feature.properties["nom_epci"]); 
+                        } else if (polluant_actif  == 'prod'){
+                            create_graphiques_prod(feature.properties["siren_epci"], feature.properties["nom_epci"]);                             
                         } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges') { 
                             create_graphiques_ges(feature.properties["siren_epci"], feature.properties["nom_epci"]);                                
                         } else {
@@ -1443,6 +1447,92 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
     
 };
 
+function create_piechart_prod(response, div, graph_title, tooltip_unit){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */           
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');        
+
+    var graph_labels = [];
+    for (var i in response) {
+        graph_labels.push(response[i].lib_grande_filiere);
+    };              
+
+    // var graph_title = 'Répartition sectorielle ' + an_max;
+
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var bg_colors = [];
+    var bd_colors = [];
+    for (var i in response) {
+        bg_colors.push(response[i].color_grande_filiere);
+        bd_colors.push('#ffffff');
+    };  
+    
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'doughnut',      
+        data: {
+            labels: graph_labels,
+            datasets: [{
+                label: 'Emissions (t)',
+                data: graph_data,
+                backgroundColor: bg_colors,
+                borderColor: bd_colors,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            title: {
+                display: true, 
+                // fontSize: 13,
+                // fontFamily: "'Lato', sans-serif",
+                // fontWeight:300,
+                // fontColor: "#333",                 
+                fontStyle: "normal", 
+                text: graph_title
+            },
+            legend: {
+                position: 'bottom',
+                display: false, // On désactive la légende
+                labels: {fontSize: 10,},
+                boxWidth: 1 // FIXME: Ne fonctionne pas
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        /*
+                        Pourcentage de chaque classe et moif tooltip
+                        */
+                        
+                        var allData = data.datasets[tooltipItem.datasetIndex].data;
+                                                
+                        var tooltipLabel = data.labels[tooltipItem.index];
+                        var tooltipData = allData[tooltipItem.index];
+
+                        var total = 0;
+                        for (var i in allData) {
+                            total += parseInt(allData[i]);
+                        };
+                        
+                        var tooltipPercentage = Math.round((tooltipData / total) * 100.);
+                        return tooltipLabel + ': ' + tooltipPercentage + '% (' + tooltipData + ' ' + tooltip_unit + ')';
+                    }
+                }
+            },
+
+        }
+    });
+    
+};
+
 function create_barchart_emi(response, div, poll){
     /*
     Création d'un graphique bar à partir de:
@@ -1471,6 +1561,87 @@ function create_barchart_emi(response, div, poll){
     };              
 
     var graph_title = 'Evolution pluriannuelle (t)';
+
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var bg_colors = [];
+    var bd_colors = [];
+    for (var i in response) {
+        bg_colors.push('#8a8a8a');
+        bd_colors.push('#8a8a8a');
+    };  
+
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'bar', // 'horizontalBar',          
+        data: {
+            labels: graph_labels,
+            datasets: [{
+                label: poll,
+                data: graph_data,
+                backgroundColor: bg_colors,
+                borderColor: bd_colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                // fontSize: 15,
+                fontStyle: "normal", 
+                text: graph_title
+            },
+            legend: {
+                position: 'bottom',
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }]
+            }
+        }
+    }); 
+};
+
+function create_barchart_prod(response, div, poll){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */
+
+    // On est pas arrivé à passer du HTML dans le tool tip du coup on écrit les polluants à l'arrache
+    // if (poll == "SO<SUB>2</SUB>") {
+        // poll = "SO2";
+    // } else if (poll == "NH<SUB>3</SUB>") {
+        // poll = "NH3";
+    // } else if (poll == "CO<SUB>2</SUB>") {
+        // poll = "CO2";
+    // } else if (poll == "CH<SUB>4</SUB> eq. CO<SUB>2</SUB>") {
+        // poll = "CH4 eq.CO2";
+    // } else if (poll == "N<SUB>2</SUB>O eq. CO<SUB>2</SUB>") {
+        // poll = "N2O eq.CO2";
+    // };
+    // poll = "Productions"
+    
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
+    
+    var graph_labels = [];
+    for (var i in response) {
+        graph_labels.push(response[i].an);
+    };              
+
+    var graph_title = 'Productions totales annuelles (GWh)';
 
     var graph_data = [];
     for (var i in response) {
@@ -1555,6 +1726,190 @@ function create_linechart_emi(response, div, graph_title){
         data = [];
         for (var i in response) { 
             if (response[i].nom_court_secten1 == secteur){
+                data.push(response[i].val);
+            };
+        };
+        datasets.push({
+            label: secteur, // response[i].grand_secteur, 
+            data: data, 
+            backgroundColor: couleur, 
+            borderColor: couleur, 
+            fill: false,
+            borderWidth: 3,
+            pointHitRadius: 8,
+        });
+    };            
+    
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'line',     
+        data: {
+            labels: graph_annees,
+            datasets: datasets,
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            // tooltips: {
+                // mode: 'index',
+                // intersect: false,
+            // },
+            // hover: {
+                // mode: 'nearest',
+                // intersect: true
+            // },            
+            title: {
+                display: true,
+                // fontSize: 15,
+                fontStyle: "normal", 
+                text: graph_title,
+            },
+            legend: {
+                position: 'bottom',
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }]
+            }
+        },        
+    }); 
+};
+
+function create_linechart_prod(response, div, graph_title){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */    
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
+    
+    var graph_annees = [];
+    for (var i in response) {
+        if ($.inArray(response[i].an, graph_annees) == -1){
+            graph_annees.push(response[i].an);
+        };
+    };      
+    
+    var liste_secteurs = [];
+    var liste_couleurs = [];
+    for (var i in response) {
+        if ($.inArray(response[i].lib_grande_filiere, liste_secteurs) == -1){
+            liste_secteurs.push(response[i].lib_grande_filiere);
+            liste_couleurs.push(response[i].color_grande_filiere);
+        };
+    };    
+    
+    var datasets = [];
+    for (var isect in liste_secteurs) {   
+        secteur = liste_secteurs[isect];
+        couleur = liste_couleurs[isect];
+        
+        data = [];
+        for (var i in response) { 
+            if (response[i].lib_grande_filiere == secteur){
+                data.push(response[i].val);
+            };
+        };
+        datasets.push({
+            label: secteur, // response[i].grand_secteur, 
+            data: data, 
+            backgroundColor: couleur, 
+            borderColor: couleur, 
+            fill: false,
+            borderWidth: 3,
+            pointHitRadius: 8,
+        });
+    };            
+    
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'line',     
+        data: {
+            labels: graph_annees,
+            datasets: datasets,
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            // tooltips: {
+                // mode: 'index',
+                // intersect: false,
+            // },
+            // hover: {
+                // mode: 'nearest',
+                // intersect: true
+            // },            
+            title: {
+                display: true,
+                // fontSize: 15,
+                fontStyle: "normal", 
+                text: graph_title,
+            },
+            legend: {
+                position: 'bottom',
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }]
+            }
+        },        
+    }); 
+};
+
+function create_linechart_prod_tmp(response, div, graph_title){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */    
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
+    
+    var graph_annees = [];
+    for (var i in response) {
+        if ($.inArray(response[i].an, graph_annees) == -1){
+            graph_annees.push(response[i].an);
+        };
+    };      
+    
+    var liste_secteurs = [];
+    var liste_couleurs = [];
+    for (var i in response) {
+        if ($.inArray(response[i].prod, liste_secteurs) == -1){
+            liste_secteurs.push(response[i].prod);
+            liste_couleurs.push(response[i].prod_color);
+        };
+    };    
+    
+    var datasets = [];
+    for (var isect in liste_secteurs) {   
+        secteur = liste_secteurs[isect];
+        couleur = liste_couleurs[isect];
+        
+        data = [];
+        for (var i in response) { 
+            if (response[i].prod == secteur){
                 data.push(response[i].val);
             };
         };
@@ -1765,6 +2120,57 @@ function create_graphiques_conso(siren_epci, nom_epci){
         },
         error: function (request, error) {
             console.log("ERROR: create_graphiques_conso()");
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            $("#error_tube").show();
+        },        
+    });
+
+};
+
+function create_graphiques_prod(siren_epci, nom_epci){
+    /*
+    Création des graphiques 
+    */
+    
+    // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
+    my_app.siren_epci = siren_epci;
+    my_app.nom_epci = nom_epci;
+    
+    $.ajax({
+        type: "GET",
+        url: "scripts/graphiques_prod.php",
+        dataType: 'json',   
+        data: { 
+            siren_epci: siren_epci,
+            polluant: polluant_actif,
+            an: an_max,
+        },    
+        beforeSend:function(jqXHR, settings){
+            jqXHR.siren_epci = siren_epci;  
+            jqXHR.nom_epci = nom_epci;
+            jqXHR.polluant = polluant_actif; 
+            jqXHR.polls_names = polls_names;
+            jqXHR.an = an_max;            
+        },        
+        success: function(response,textStatus,jqXHR){
+                       
+            // titre
+            change_graph_title(jqXHR.nom_epci + '</br> Production d’énergie primaire');
+            
+            create_piechart_prod(response[0], "graph1", "Primaires par grande filière " + an_max, "GWh");
+            create_barchart_prod(response[1], "graph2", jqXHR.polls_names[jqXHR.polluant]);
+            create_linechart_prod(response[2], "graph3", "Evolution des productions primaires (grandes filières en GWh)");
+            create_linechart_prod_tmp(response[3], "graph4", "Evolution des productions primaires / secondaires (GWh)");
+            // FIXME: Faut changer la position des div des graphiques et faire une barchart empilée
+            
+            // create_graph_legend("graph5", 2);
+            // FIXME: Créer la nouvelle légende
+            
+            sidebar.show();  
+        },
+        error: function (request, error) {
+            console.log("ERROR: create_graphiques_prod()");
             console.log(arguments);
             console.log("Ajax error: " + error);
             $("#error_tube").show();

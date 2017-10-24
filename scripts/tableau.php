@@ -168,11 +168,11 @@ if ($query_var != "999") {
 
     /* Gestion du regroupement par petite filiere enr ou autre */ 
     if ($query_ener != "") {
-        $champ_filiere = " lib_filiere as \"Filières ENR\", ";
+        $champ_filiere = " lib_filiere as \"Filière détaillée\", ";
         $where_filiere = " and id_filiere in (" . str_replace("\\", "", $query_ener) . ") ";   
         $group_filiere = ", lib_filiere ";        
     } else {
-        $champ_filiere = " 'Filières ENR et autres' as \"Filières ENR\", ";
+        $champ_filiere = " 'Filières ENR et autres' as \"Filière détaillée\", ";
     };
 
     $sql = "
@@ -182,7 +182,7 @@ if ($query_var != "999") {
         lib_type_prod as \"Type de production\",
         " . $champ_grande_filiere . " 
         " . $champ_filiere . " 
-        sum(val) as \"Valeur\",
+        round(sum(val)::numeric, 1) as \"Valeur\",
         'MWh PCI' as \"Unite\"
     FROM total.bilan_comm_v4_prod as a
     LEFT JOIN commun.tpk_communes as b using (id_comm)
