@@ -2132,7 +2132,7 @@ function create_graphiques(siren_epci, nom_epci){
         success: function(response,textStatus,jqXHR){
             
             // titre
-            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant]); 
+            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + an_max + ")"); 
             
             create_barchart_emi(response[1], "graph2", jqXHR.polls_names[jqXHR.polluant]);
             create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max, "t");
@@ -2185,7 +2185,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
         success: function(response,textStatus,jqXHR){
                        
             // titre
-            change_graph_title(jqXHR.nom_epci + "</br> Consommation d’énergie finale non corrigée du climat </br>(" + response[4][0].val + " ktep en 2015)");
+            change_graph_title(jqXHR.nom_epci + "</br> Consommation d’énergie finale non corrigée du climat </br>(" + response[4][0].val + " ktep en " + an_max + ")");
             
             create_piechart_emi(response[0], "graph1", "Consommations finales par secteur en " + an_max, "ktep");
             create_piechart_emi(response[1], "graph2", "Consommations finales par énergie en " + an_max, "ktep");

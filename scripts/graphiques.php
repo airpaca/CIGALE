@@ -195,6 +195,30 @@ while ($row = pg_fetch_assoc( $res )) {
   // $array_result_legend[] = $row;
 // }
 
+// Récupération des émissions totales pour an max 
+$sql = "
+select (sum(val) / 1000.)::integer as val 
+from total.bilan_comm_v4_secten1 as a
+left join commun.tpk_commune_2015_2016 as c using (id_comm)
+where 
+    an = " . $an . " 
+    and siren_epci_2017 = " . $siren_epci . " 
+    and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+    and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
+    and ss is false -- Aucune donnée en Secret Stat 
+;
+";
+
+$res = pg_query($conn, $sql);
+if (!$res) {
+    echo "An SQL error occured.\n";
+    exit;
+}
+
+$emi_an = array();
+while ($row = pg_fetch_assoc( $res )) {
+  $emi_an[] = $row;
+} 
 
 
 /* Stockage des résultats */
@@ -203,7 +227,7 @@ $array_result = array(
     $array_result_bar,
     $array_result_line,
     $array_result_part,
-    // $array_result_legend,
+    $emi_an,
 );
 
 /* Export en JSON */
