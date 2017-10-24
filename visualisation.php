@@ -2286,7 +2286,7 @@ function create_graphiques_ges(siren_epci, nom_epci){
         success: function(response,textStatus,jqXHR){
                 
             // titre
-            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant]);
+            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + an_max + ")");
             
             create_piechart_emi(response[0], "graph1", "Emissions par secteur " + an_max, "t");
             create_piechart_emi(response[1], "graph2", "Emissions par énergie " + an_max, "t");

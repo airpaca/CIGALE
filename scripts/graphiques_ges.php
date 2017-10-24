@@ -147,12 +147,39 @@ while ($row = pg_fetch_assoc( $res )) {
   $array_result_part[] = $row;
 }
 
+
+/* Emi totale an max */
+$sql = "
+select (sum(val) / 1000.)::BIGINT as val 
+from total.bilan_comm_v4_secten1 as a
+left join commun.tpk_commune_2015_2016 as c using (id_comm)
+where 
+    an = " . $an . " 
+    and siren_epci_2017 = " . $siren_epci . " 
+    and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+    and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+    and ss is false -- Aucune donnée en Secret Stat  
+;
+";
+
+$res = pg_query($conn, $sql);
+if (!$res) {
+    echo "An SQL error occured.\n";
+    exit;
+}
+
+$emi_an_max = array();
+while ($row = pg_fetch_assoc( $res )) {
+  $emi_an_max[] = $row;
+} 
+
 /* Stockage des résultats */
 $array_result = array(
     $array_result_pie_direct,
     $array_result_pie_indirect,
     $array_result_line_directes,
     $array_result_part,
+    $emi_an_max,
 );
 
 /* Export en JSON */
