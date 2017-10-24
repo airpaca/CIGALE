@@ -53,13 +53,21 @@
                         
                         <form class="form-inline" role="form">
                             <a href="visualisation.php" type="button"  class="btn btn-warning btn-lg" role="button">C'est parti!</a>
-                        </form>					
+                        </form>	
+
+                        <div id="preambule">
+                        L'application CIGALE est réalisée par <a href="http://www.airpaca.org/">Air PACA</a>, 
+                        dans le cadre de ses missions au sein de <a href="http://oreca.regionpaca.fr/">l’Observatoire Régional de l’Energie, du Climat et de l’Air</a>. 
+                        Elle fournit, de la région à la commune, des données annuelles de consommations et de productions d’énergie, 
+                        d’émissions de polluants atmosphériques et de gaz à effet de serre.                   
+                        </div>
+                        
                     </div><!-- /col-md-6 -->
                     
                     <div class="col-md-6" id=col-contributors>
                         <img src="img/contributors2.png" id="img_contributors">
                     </div><!-- /col-md-6 -->
-
+                    
                 </div><!-- /row -->
             </div><!-- /container -->
         </div><!-- /headerwrap -->
