@@ -2185,7 +2185,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
         success: function(response,textStatus,jqXHR){
                        
             // titre
-            change_graph_title(jqXHR.nom_epci + '</br> Consommation d’énergie finale non corrigée du climat');
+            change_graph_title(jqXHR.nom_epci + "</br> Consommation d’énergie finale non corrigée du climat </br>(" + response[4][0].val + " ktep en 2015)");
             
             create_piechart_emi(response[0], "graph1", "Consommations finales par secteur en " + an_max, "ktep");
             create_piechart_emi(response[1], "graph2", "Consommations finales par énergie en " + an_max, "ktep");

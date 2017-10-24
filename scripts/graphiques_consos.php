@@ -147,12 +147,38 @@ while ($row = pg_fetch_assoc( $res )) {
   $array_result_part[] = $row;
 }
 
+// Export de la conso finale totale pour la dernière année disponible
+$sql = "
+select (sum(val) / 1000.)::integer as val 
+from total.bilan_comm_v4_secten1 as a
+left join commun.tpk_commune_2015_2016 as c using (id_comm)
+where 
+    an = " . $an . " 
+    and siren_epci_2017 = " . $siren_epci . "  
+    and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+    and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+    and ss is false -- Aucune donnée en Secret Stat	   
+;
+";
+
+$res = pg_query($conn, $sql);
+if (!$res) {
+    echo "An SQL error occured.\n";
+    exit;
+}
+
+$conso_finale_an = array();
+while ($row = pg_fetch_assoc( $res )) {
+  $conso_finale_an[] = $row;
+} 
+
 /* Stockage des résultats */
 $array_result = array(
     $array_result_pie_secteurs,
     $array_result_pie_cat_energie,
     $array_result_line,
     $array_result_part,
+    $conso_finale_an,
 );
 
 /* Export en JSON */
