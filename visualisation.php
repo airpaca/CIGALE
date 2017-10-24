@@ -2237,7 +2237,7 @@ function create_graphiques_prod(siren_epci, nom_epci){
         success: function(response,textStatus,jqXHR){
                        
             // titre
-            change_graph_title(jqXHR.nom_epci + '</br> Production d’énergie primaire');
+            change_graph_title(jqXHR.nom_epci + "</br> Production d’énergie </br>(" + response[4][0].val + " GWh en " + an_max + ")");
             
             create_piechart_prod(response[0], "graph1", "Primaires par grande filière " + an_max, "GWh");
             create_barchart_prod(response[1], "graph2", jqXHR.polls_names[jqXHR.polluant]);

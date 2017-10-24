@@ -149,12 +149,35 @@ while ($row = pg_fetch_assoc( $res )) {
   $evo_primaire_secondaire[] = $row;
 }
 
+// Prod totale an max
+$sql = "
+select sum(val / 1000.)::BIGINT as val
+from total.bilan_comm_v4_prod as a
+left join src_prod_energie.tpk_grande_filiere as b using (id_grande_filiere)
+where 
+	an = " . $an . "
+    and siren_epci_2017 = '" . $siren_epci . "' 
+;
+";
+
+$res = pg_query($conn, $sql);
+if (!$res) {
+    echo "An SQL error occured.\n";
+    exit;
+}
+
+$prod_tot_an = array();
+while ($row = pg_fetch_assoc( $res )) {
+  $prod_tot_an[] = $row;
+}
+
 /* Stockage des résultats */
 $array_result = array(
     $prod_primaires_grandes_filieres,
     $quantites_totales_annuelles,
     $evo_prod_primaires_grandes_filieres,
-    $evo_primaire_secondaire
+    $evo_primaire_secondaire,
+    $prod_tot_an
 );
 
 /* Export en JSON */
