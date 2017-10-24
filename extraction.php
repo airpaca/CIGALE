@@ -373,13 +373,18 @@ function fill_listes(){
             $("#formulaire").removeClass("hide"); 
 
             // Si on arrive sur cette page à partir de la visualisation d'une commune on remplit le formulaire
-            // avec les bonnes indos et on lance l'extraction           
+            // avec les bonnes infos et on lance l'extraction           
             if (sessionStorage.id_comm != null) {                
                 $("#select_entites").selectpicker('val', sessionStorage.id_comm);
                 $("#select_variable").selectpicker('val', sessionStorage.id_polluant);
                 $("#select_secteurs").selectpicker('selectAll');
                 $("#select_cat_ener").selectpicker('selectAll');
                 
+                // Si on est sur les productions, alors on change les listes activités et énergies
+                if (sessionStorage.id_polluant == 999) {
+                    changer_listes_prod(true);
+                };
+                                
                 afficher_donnees(); 
                 
                 sessionStorage.clear(); // Suppression des éventuelles variables de session
@@ -618,69 +623,78 @@ function sleep(milliseconds) {
     };
 };
 
+function changer_listes_prod(is_prod){
+    /*
+    Change les listes avec les variables prod si prod is true
+    avec les variables conso / emi si prod is false.
+    */
+    
+    if (is_prod == true){
+        // On ne laisse que la prod dans la liste des variables 
+        $("#select_variable").selectpicker('deselectAll');
+        $("#select_variable").selectpicker('val', '999');
+        
+        // Les secteurs d'activités deviennent les grandes filières
+        $("#label_activites")[0].innerHTML = "Grandes filières";           
+        $("#select_secteurs").selectpicker({title: "Toutes les grandes filières"}).selectpicker('render');            
+
+        $("#select_secteurs option").remove();
+    
+        for (isect in listes["grandes_filieres"]) {             
+            $("#select_secteurs").append($('<option>', {value: listes["grandes_filieres"][isect].id_grande_filiere, text: listes["grandes_filieres"][isect].lib_grande_filiere}, '</option>'));                               
+        };
+        $("#select_secteurs").selectpicker('refresh');          
+    
+        // Les énergies deviennent les petites filières ENR ou autres regroupées
+        $("#label_energies")[0].innerHTML = "Filières ENR";
+        $("#select_cat_ener").selectpicker({title: "Toutes les filières ENR et autres"}).selectpicker('render'); 
+
+        $("#select_cat_ener option").remove();
+    
+        for (isect in listes["filieres"]) {             
+            $("#select_cat_ener").append($('<option>', {value: listes["filieres"][isect].id_filiere, text: listes["filieres"][isect].lib_filiere}, '</option>'));                               
+        };
+        $("#select_cat_ener").selectpicker('refresh');          
+    } else {
+        // On supprime la prod de la liste des variables 
+        $("#select_variable")[0][1].selected = false;
+        $("#select_variable").selectpicker('render');
+        
+        // Les grandes filières deviennent les secteurs d'activités
+        $("#label_activites")[0].innerHTML = "Secteurs d'activités";
+        $("#select_secteurs").selectpicker({title: "Tous secteurs d'activités confondus"}).selectpicker('render');  
+
+        $("#select_secteurs option").remove();
+    
+        for (isect in listes["activites"]) {             
+            $("#select_secteurs").append($('<option>', {value: listes["activites"][isect].id_secten1, text: listes["activites"][isect].nom_secten1}, '</option>'));                               
+        };
+        $("#select_secteurs").selectpicker('refresh');               
+        
+        // Les petites filières ENR ou autres regroupées deviennent les énergies
+        $("#label_energies")[0].innerHTML = "Energies";
+        $("#select_cat_ener").selectpicker({title: "Toutes énergies confondues"}).selectpicker('render'); 
+        
+        $("#select_cat_ener option").remove();
+    
+        for (isect in listes["energies"]) {             
+            $("#select_cat_ener").append($('<option>', {value: listes["energies"][isect].code_cat_energie, text: listes["energies"][isect].cat_energie}, '</option>'));                               
+        };
+        $("#select_cat_ener").selectpicker('refresh');         
+    };
+};
+
 $(function () { // Gestion de la liste des variables pour faire des productions un groupe à part   
     $("#select_variable").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
         
         var selectedD = $(this).find('option').eq(clickedIndex).text();
         
         // Si on a choisi les productions
-        if ((selectedD == "Productions d'énergie" && newValue == true)) {  
-            
-            // On ne laisse que la prod dans la liste des variables 
-            $("#select_variable").selectpicker('deselectAll');
-            $("#select_variable").selectpicker('val', '999');
-            
-            // Les secteurs d'activités deviennent les grandes filières
-            $("#label_activites")[0].innerHTML = "Grandes filières";           
-            $("#select_secteurs").selectpicker({title: "Toutes les grandes filières"}).selectpicker('render');            
- 
-            $("#select_secteurs option").remove();
-        
-            for (isect in listes["grandes_filieres"]) {             
-                $("#select_secteurs").append($('<option>', {value: listes["grandes_filieres"][isect].id_grande_filiere, text: listes["grandes_filieres"][isect].lib_grande_filiere}, '</option>'));                               
-            };
-            $("#select_secteurs").selectpicker('refresh');          
-        
-            // Les énergies deviennent les petites filières ENR ou autres regroupées
-            $("#label_energies")[0].innerHTML = "Filières ENR";
-            $("#select_cat_ener").selectpicker({title: "Toutes les filières ENR et autres"}).selectpicker('render'); 
-
-            $("#select_cat_ener option").remove();
-        
-            for (isect in listes["filieres"]) {             
-                $("#select_cat_ener").append($('<option>', {value: listes["filieres"][isect].id_filiere, text: listes["filieres"][isect].lib_filiere}, '</option>'));                               
-            };
-            $("#select_cat_ener").selectpicker('refresh');  
-            
+        if ((selectedD == "Productions d'énergie" && newValue == true)) {              
+            changer_listes_prod(true);
         // Si on a pas choisi les productions
-        } else {
-            
-            // On supprime la prod de la liste des variables 
-            $("#select_variable")[0][1].selected = false;
-            $("#select_variable").selectpicker('render');
-            
-            // Les grandes filières deviennent les secteurs d'activités
-            $("#label_activites")[0].innerHTML = "Secteurs d'activités";
-            $("#select_secteurs").selectpicker({title: "Tous secteurs d'activités confondus"}).selectpicker('render');  
-
-            $("#select_secteurs option").remove();
-        
-            for (isect in listes["activites"]) {             
-                $("#select_secteurs").append($('<option>', {value: listes["activites"][isect].id_secten1, text: listes["activites"][isect].nom_secten1}, '</option>'));                               
-            };
-            $("#select_secteurs").selectpicker('refresh');               
-            
-            // Les petites filières ENR ou autres regroupées deviennent les énergies
-            $("#label_energies")[0].innerHTML = "Energies";
-            $("#select_cat_ener").selectpicker({title: "Toutes énergies confondues"}).selectpicker('render'); 
-            
-            $("#select_cat_ener option").remove();
-        
-            for (isect in listes["energies"]) {             
-                $("#select_cat_ener").append($('<option>', {value: listes["energies"][isect].code_cat_energie, text: listes["energies"][isect].cat_energie}, '</option>'));                               
-            };
-            $("#select_cat_ener").selectpicker('refresh');               
-            
+        } else { 
+            changer_listes_prod(false); 
         };
 
     });
