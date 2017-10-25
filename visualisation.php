@@ -130,7 +130,8 @@
             <a href="#" class="list-group-item hide liste_energies_items" id="conso">
             <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
             Consommations d'énergie finale 
-            <!-- <a href="methodo.php"><span class="glyphicon glyphicon-info-sign"></span></a> -->
+            <!-- <a href="methodo.php" class="lien_image_menu"><span class="glyphicon glyphicon-info-sign"></span></a> -->
+            <!-- <span class="glyphicon glyphicon-info-sign"><a href="methodo.php"></a></span> -->
             </a>   
 
             <a href="#" class="list-group-item hide liste_energies_items" id="prod">
@@ -1884,98 +1885,6 @@ function create_linechart_prod(response, div, graph_title){
     }); 
 };
 
-function create_linechart_prod_tmp(response, div, graph_title){ // FIXME: DELETE PLUS UTILISE
-    /*
-    Création d'un graphique bar à partir de:
-    @response - Réponse json de la requête ajax
-    @div - Classe de l'élement auquel rattacher le graph 
-    */    
-    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
-    
-    var graph_annees = [];
-    for (var i in response) {
-        if ($.inArray(response[i].an, graph_annees) == -1){
-            graph_annees.push(response[i].an);
-        };
-    };      
-    
-    var liste_secteurs = [];
-    var liste_couleurs = [];
-    for (var i in response) {
-        if ($.inArray(response[i].prod, liste_secteurs) == -1){
-            liste_secteurs.push(response[i].prod);
-            liste_couleurs.push(response[i].prod_color);
-        };
-    };    
-    
-    var datasets = [];
-    for (var isect in liste_secteurs) {   
-        secteur = liste_secteurs[isect];
-        couleur = liste_couleurs[isect];
-        
-        data = [];
-        for (var i in response) { 
-            if (response[i].prod == secteur){
-                data.push(response[i].val);
-            };
-        };
-        datasets.push({
-            label: secteur, // response[i].grand_secteur, 
-            data: data, 
-            backgroundColor: couleur, 
-            borderColor: couleur, 
-            fill: false,
-            borderWidth: 3,
-            pointHitRadius: 8,
-        });
-    };            
-    
-    var graph_data = [];
-    for (var i in response) {
-        graph_data.push(response[i].val);
-    };  
-
-    var ctx = document.getElementById(div + "_canvas");
-    var graph = new Chart(ctx, {
-        type: 'line',     
-        data: {
-            labels: graph_annees,
-            datasets: datasets,
-        },
-        options: {
-            responsive:true,
-            maintainAspectRatio: false,
-            // tooltips: {
-                // mode: 'index',
-                // intersect: false,
-            // },
-            // hover: {
-                // mode: 'nearest',
-                // intersect: true
-            // },            
-            title: {
-                display: true,
-                // fontSize: 15,
-                fontStyle: "normal", 
-                text: graph_title,
-            },
-            legend: {
-                position: 'bottom',
-                display: false,
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        // beginAtZero:true,
-                        min:0,
-                        // max: 150,
-                    }
-                }]
-            }
-        },        
-    }); 
-};
-
 function create_stacked_barchart_prod(response, div){
     /*
     */
@@ -1988,18 +1897,18 @@ function create_stacked_barchart_prod(response, div){
             graph_labels.push(response[i].an);
         };
     };              
-
+    
     var graph_title = 'Evolution des productions primaires / secondaires (GWh)';
 
     var graph_datasets = [
-        {label: 'Primaire', backgroundColor: "#4dffa6", borderColor: "black", borderWidth: 0, data: []}, 
-        {label: 'Secondaire', backgroundColor: "#ff471a",  borderColor: "black", borderWidth: 0, data: []}, 
+        {label: 'Primaire', backgroundColor: "#4dffa6", data: []}, // borderColor: "black", borderWidth: 0, 
+        {label: 'Secondaire', backgroundColor: "#ff471a", data: []} // borderColor: "black", borderWidth: 0, 
     ];
     for (var i in response) {
         if (response[i].prod == "Primaire") {
-            graph_datasets[0].data.push(response[i].val);
+            graph_datasets[0].data.push(Number(response[i].val));
         } else {
-            graph_datasets[1].data.push(response[i].val);
+            graph_datasets[1].data.push(Number(response[i].val));
         };
     };  
 
@@ -2007,8 +1916,8 @@ function create_stacked_barchart_prod(response, div){
         labels: graph_labels,
         datasets: graph_datasets
     };
-    
-    var ctx = document.getElementById(div + "_canvas");
+      
+    var ctx = document.getElementById(div + "_canvas"); 
     var graph = new Chart(ctx, {
         type: 'bar', // 'horizontalBar',  
         data: barChartData,
@@ -2027,19 +1936,25 @@ function create_stacked_barchart_prod(response, div){
             },
             scales: {
                 yAxes: [{
-                    ticks: {
+                    stacked: true,
+                    // ticks: {
                         // beginAtZero:true,
                         min:0,
                         // max: 150,
-                    }
+                    // }
                 }],
                 xAxes: [{
                     stacked: true,
-                    categoryPercentage: 0.40,
+                    // categoryPercentage: 0.40,
                 }]
-            }
-        }
+            }   
+        }  
     }); 
+   
+    
+    
+    
+    
 };
 
 function create_barchart_part(response, div){

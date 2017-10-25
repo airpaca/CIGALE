@@ -121,7 +121,7 @@ group by
 	an, 
 	case when est_enr is true then 'Primaire' else 'Secondaire' end, 
 	case when est_enr is true then '#33ff9c' else '#ff3390' end
-    
+
 union all
 select 2008::integer as an, 'Primaire'::text as prod, '#33ff9c'::text as prod_color, null as val
 union all
@@ -133,7 +133,7 @@ select 2009::integer as an, 'Secondaire'::text as prod, '#ff3390'::text as prod_
 union all
 select 2011::integer as an, 'Primaire'::text as prod, '#33ff9c'::text as prod_color, null as val
 union all
-select 2011::integer as an, 'Secondaire'::text as prod, '#ff3390'::text as prod_color, null as val
+select 2011::integer as an, 'Secondaire'::text as prod, '#ff3390'::text as prod_color, null as val    
 
 order by an, prod;
 ";
