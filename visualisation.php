@@ -122,7 +122,12 @@
             <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
             Emissions de NH<SUB>3</SUB>
             </a>              
-        
+
+            <a href="#" class="list-group-item liste_polluants_items" id="co">
+            <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+            Emissions de CO
+            </a>      
+            
         <a href="#" class="list-group-item" id="liste_energies">
         Bilans énergétiques
         </a>
@@ -244,7 +249,7 @@ var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE
 var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&VERSION=2.0.0";
 
 var an_max = 2015;
-var polls = ['conso', 'prod', 'so2','nox','pm10','pm2.5','covnm','nh3','co2','ch4.co2e','n2o.co2e','prg100.3ges'];
+var polls = ['conso', 'prod', 'so2','nox','pm10','pm2.5','covnm','nh3','co','co2','ch4.co2e','n2o.co2e','prg100.3ges'];
 var polls_names = {
     "conso": "consommations",
     "prod": "productions",
@@ -254,6 +259,7 @@ var polls_names = {
     "pm2.5": "PM2.5",
     "covnm": "COVNM",
     "nh3": "NH<SUB>3</SUB>",
+    "co": "CO",
     "co2": "CO<SUB>2</SUB>",
     "ch4.co2e": "CH<SUB>4</SUB> eq. CO<SUB>2</SUB>",
     "n2o.co2e": "N<SUB>2</SUB>O eq. CO<SUB>2</SUB>",
@@ -268,6 +274,7 @@ var polls_id = {
     "pm2.5": "108",
     "covnm": "16",
     "nh3": "36",
+    "co": "11",
     "co2": "15",
     "ch4.co2e": "123",
     "n2o.co2e": "124",

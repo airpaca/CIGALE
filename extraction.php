@@ -328,6 +328,7 @@ function fill_listes(){
                 {val: 16, text: "COVNM"},
                 {val: 48, text: "SO2"},
                 {val: 36, text: "NH3"},
+                {val: 11, text: "CO"},
                 {val: 15, text: "CO2 total"},  
                 {val: 123, text: "CH4 eq.CO2"}, 
                 {val: 124, text: "N2O eq.CO2"}, 
