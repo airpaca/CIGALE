@@ -106,6 +106,34 @@ while ($row = pg_fetch_assoc( $res )) {
   $evo_prod_primaires_grandes_filieres[] = $row;
 }
 
+/* Evolution des productions secondaires par grande filière */
+$sql = "
+select 
+    an, 
+	a.lib_grande_filiere, 
+	color_grande_filiere, 
+	round(sum(val / 1000.)::numeric, 1) as val
+from total.bilan_comm_v4_prod as a
+left join src_prod_energie.tpk_grande_filiere as b using (id_grande_filiere)
+where 
+	est_enr is false
+    and siren_epci_2017 = '" . $siren_epci . "' 
+group by an, a.lib_grande_filiere, color_grande_filiere
+order by an, lib_grande_filiere  
+;
+";
+
+$res = pg_query($conn, $sql);
+if (!$res) {
+    echo "An SQL error occured.\n";
+    exit;
+}
+
+$evo_prod_secondaires_grandes_filieres = array();
+while ($row = pg_fetch_assoc( $res )) {
+  $evo_prod_secondaires_grandes_filieres[] = $row;
+}
+
 /* Histogramme production primaire/secondaire (évolution annuelle)  */
 $sql = "
 select 
@@ -173,8 +201,8 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Stockage des résultats */
 $array_result = array(
-    $prod_primaires_grandes_filieres,
-    $quantites_totales_annuelles,
+    $prod_primaires_grandes_filieres,   
+    $evo_prod_secondaires_grandes_filieres, // $quantites_totales_annuelles,
     $evo_prod_primaires_grandes_filieres,
     $evo_primaire_secondaire,
     $prod_tot_an

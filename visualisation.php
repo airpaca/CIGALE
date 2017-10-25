@@ -1898,11 +1898,11 @@ function create_stacked_barchart_prod(response, div){
         };
     };              
     
-    var graph_title = 'Evolution des productions primaires / secondaires (GWh)';
+    var graph_title = 'Productions primaires / secondaires (GWh)';
 
     var graph_datasets = [
-        {label: 'Primaire', backgroundColor: "#4dffa6", data: []}, // borderColor: "black", borderWidth: 0, 
-        {label: 'Secondaire', backgroundColor: "#ff471a", data: []} // borderColor: "black", borderWidth: 0, 
+        {label: 'Primaire', backgroundColor: "#6E6E6E", data: []}, // borderColor: "black", borderWidth: 0, 
+        {label: 'Secondaire', backgroundColor: "#8a8a8a", data: []} // borderColor: "black", borderWidth: 0, 
     ];
     for (var i in response) {
         if (response[i].prod == "Primaire") {
@@ -1933,28 +1933,29 @@ function create_stacked_barchart_prod(response, div){
             legend: {
                 position: 'bottom',
                 display: true,
+                labels: {fontSize: 10,},
+                boxWidth: 1 // FIXME: Ne fonctionne pas
             },
             scales: {
                 yAxes: [{
                     stacked: true,
-                    // ticks: {
-                        // beginAtZero:true,
+                    ticks: {
                         min:0,
-                        // max: 150,
-                    // }
+                        fontSize: 10
+                    }
                 }],
                 xAxes: [{
                     stacked: true,
+                    ticks: {
+                        min:0,
+                        fontSize: 10
+                    }                    
                     // categoryPercentage: 0.40,
                 }]
             }   
         }  
     }); 
-   
-    
-    
-    
-    
+  
 };
 
 function create_barchart_part(response, div){
@@ -2023,6 +2024,7 @@ function create_graphiques(siren_epci, nom_epci){
     
     // Mise en forme des blocs de graphiques pour les émissions
     $(".graph4").css({"height": "10%", "width": "70%"});    
+    $(".graph4").show();
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2076,6 +2078,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
     
     // Mise en forme des blocs de graphiques pour les émissions
     $(".graph4").css({"height": "10%", "width": "70%"});  
+    $(".graph4").show();
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2126,9 +2129,6 @@ function create_graphiques_prod(siren_epci, nom_epci){
     Création des graphiques de productions
     */
     
-    // Mise en forme des blocs de graphiques pour les productions
-    $(".graph4").css({"height": "35%", "width": "100%"});
-    
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
     my_app.nom_epci = nom_epci;
@@ -2155,10 +2155,20 @@ function create_graphiques_prod(siren_epci, nom_epci){
             change_graph_title(jqXHR.nom_epci + "</br> Production d’énergie </br>(" + response[4][0].val + " GWh en " + an_max + ")");
             
             create_piechart_prod(response[0], "graph1", "Primaires par grande filière " + an_max, "GWh");
-            create_barchart_prod(response[1], "graph2", jqXHR.polls_names[jqXHR.polluant]);
+            create_stacked_barchart_prod(response[3], "graph2");
             create_linechart_prod(response[2], "graph3", "Evolution des productions primaires (grandes filières en GWh)");
-            create_stacked_barchart_prod(response[3], "graph4");
             
+            // Si pas de productions secondaires, alors on supprime le graphique
+            if (response[1].length == 0){
+                $(".graph4").css({"height": "0%", "width": "100%"});
+                // $(".graph4").replaceWith("");
+                $(".graph4").hide();
+            } else {
+                $(".graph4").css({"height": "35%", "width": "100%"});                
+                $(".graph4").show();
+                create_linechart_prod(response[1], "graph4", "Evolution des productions secondaires (grandes filières en GWh)");
+            };
+                        
             create_graph_legend("graph5", 1);
             
             sidebar.show();  
@@ -2177,6 +2187,10 @@ function create_graphiques_ges(siren_epci, nom_epci){
     /*
     Création des graphiques 
     */
+    
+    // Mise en forme des blocs de graphiques pour les émissions
+    $(".graph4").css({"height": "10%", "width": "70%"});  
+    $(".graph4").show();    
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2300,7 +2314,8 @@ function export_pdf(){
         pdf_y = 240;
     };
     
-    // Ajout bar chart inversé
+    // Ajout bar chart inversé (sauf si prod et pas de secondaire)
+    console.log($(".graph4").is(":visible"));
     var canvasImg = document.getElementById("graph4_canvas").toDataURL();
     doc.addImage(canvasImg, 'PNG', 10, pdf_y); 
    
