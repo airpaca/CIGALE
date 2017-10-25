@@ -17,6 +17,7 @@ Si utilisé avec PgAdmin, lancer tout le code avec PgScript (pour que les comman
 - émissions de COVNM	16
 - émissions de SO2		48
 - émissions de NH3		36
+- co					11
 - CO2 tot				15 
 - CH4 eq_co2			123 
 - N2O eq_co2			124 
@@ -151,7 +152,7 @@ left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energ
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
 left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
 where 
-	id_polluant in (131,38,65,108,16,48,36)
+	id_polluant in (131,38,65,108,16,48,36,11)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
 	and a.id_comm <> 99999 -- Sans les émissions associées à l'objet mer
 group by
@@ -423,14 +424,14 @@ group by
 
 /*
 Validation en grandes masses sur les polluants de l'interface d'extraction uniquement 
-NOx 38, PM10 65, PM2.5 108, COV 129, SO2 48, NH3 36, consommations 131
+NOx 38, PM10 65, PM2.5 108, COV 129, SO2 48, NH3 36,11, consommations 131
 
 select an, id_polluant, val_orig, val_tmp, val_secten1
 from (
 	-- Table source
 	select an, id_polluant, sum(val) as val_orig
 	from total.bilan_comm_v4
-	where id_polluant in (38, 65, 108, 16, 48, 36, 131)
+	where id_polluant in (38, 65, 108, 16, 48, 36, 11, 131)
 	and id_comm <> 99999
 	group by an, id_polluant
 ) as a
@@ -439,7 +440,7 @@ full join (
 	select an, id_polluant, sum(val) as val_tmp
 	from public.emi
 	where 
-		id_polluant in (38, 65, 108, 16, 48, 36, 131)
+		id_polluant in (38, 65, 108, 16, 48, 36, 11, 131)
 	group by an, id_polluant
 ) as b using (an, id_polluant)
 full join (
@@ -447,7 +448,7 @@ full join (
 	select an, id_polluant, sum(val) as val_secten1
 	from total.bilan_comm_v4_secten1
 	where 
-		id_polluant in (38, 65, 108, 16, 48, 36, 131)
+		id_polluant in (38, 65, 108, 16, 48, 36, 11, 131)
 	group by an, id_polluant
 ) as c using (an, id_polluant)
 order by an, id_polluant
@@ -882,7 +883,7 @@ from (
 		select id_polluant, an, sum(val) as val, 'total.bilan_comm_v4' as src
 		from total.bilan_comm_v4
 		where 
-			id_polluant in (38,65,108,16,48,36,15,123,124,128)
+			id_polluant in (38,65,108,16,48,36,11,15,123,124,128)
 			and id_comm <> 99999
 		group by id_polluant, an 
 
@@ -891,7 +892,7 @@ from (
 		select id_polluant, an, sum(val) as val, 'total.bilan_comm_v4_ges' as src
 		from total.bilan_comm_v4_ges
 		where 
-			id_polluant in (38,65,108,16,48,36,123,124,128)
+			id_polluant in (38,65,108,16,48,36,11,123,124,128)
 			and id_comm <> 99999
 		group by id_polluant, an 		
 	) as a
@@ -903,7 +904,7 @@ full join (
 	select id_polluant, an, sum(val) as val
 	from total.bilan_comm_v4_secten1 
 	where 
-		id_polluant in (38,65,108,16,48,36,15,123,124,128)
+		id_polluant in (38,65,108,16,48,36,11,15,123,124,128)
 	group by id_polluant, an
 	order by id_polluant, an
 ) as b using (id_polluant, an)
@@ -916,6 +917,57 @@ order by id_polluant, an;
 
 
 
+
+
+
+/**
+
+Intégration prod ener CIGALE 
+Dans une nouvelle table
+
+Mise en forme des valeurs
+- Regroupement 
+	* Par grande filière cigale et d&étail filière cigale
+	* Type production
+- Ajout des champs EPCI et dep dans la table pour éviter les requêtes 
+  trop longues lors de l'extraction
+*/
+drop table if exists total.bilan_comm_v4_prod;
+create table total.bilan_comm_v4_prod as
+select 
+	a.an, 
+	a.id_comm, 
+	a.id_type_prod, b.lib_type_prod,
+	c.grande_filiere_cigale,
+	c.detail_filiere_cigale,
+	sum(a.production) as val, 
+	a.id_unite,
+	a.id_comm / 1000 as dep,
+	e.siren_epci_2017,
+	e.nom_epci_2017
+from total_prod_energie.prod_comm_v1 as a
+left join src_prod_energie.tpk_type_prod as b using (id_type_prod)
+left join src_prod_energie.tpk_filiere as c using (id_filiere)
+-- left join src_prod_energie.corresp_filiere as cc using (id_filiere)
+-- left join src_prod_energie.tpk_grande_filiere as d on cc.id_grande_filiere = d.id_grande_filiere
+left join commun.tpk_commune_2015_2016 as e using (id_comm)
+group by
+	a.an, 
+	a.id_comm, 
+	a.id_type_prod, b.lib_type_prod,
+	c.grande_filiere_cigale,
+	c.detail_filiere_cigale,
+	a.id_unite,
+	a.id_comm / 1000,
+	e.siren_epci_2017,
+	e.nom_epci_2017
+order by
+	an, 
+	id_comm, 
+	id_type_prod, lib_type_prod,
+	grande_filiere_cigale,
+	detail_filiere_cigale,
+	id_unite;
 
 
 
@@ -1059,8 +1111,8 @@ from (
 	left join cigale.epci as d on b.siren_epci_2017 = d.siren_epci
 	where 
 		an = 2015
-		and not (id_polluant in (38,65,108,16,48,36) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
-		and not (id_polluant not in (38,65,108,16,48,36) and id_secten1 = '1') -- GES et Ener = Finale
+		and not (id_polluant in (38,65,108,16,48,36,11) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
+		and not (id_polluant not in (38,65,108,16,48,36,11) and id_secten1 = '1') -- GES et Ener = Finale
 		and ss_epci is false -- Sans aucune donnée soumise au SS à l'EPCI	
 	group by an, nom_abrege_polluant, siren_epci_2017, nom_epci_2017, superficie
 
@@ -1077,7 +1129,8 @@ from (
 	left join cigale.epci as d on a.siren_epci_2017 = d.siren_epci
 	where 
 		an = 2015
-		and est_enr is true
+		and grande_filiere_cigale = 'ENR' 
+		and grande_filiere_cigale is not null
 	group by an, siren_epci_2017, nom_epci_2017, superficie
 ) as a
 order by an, nom_abrege_polluant, siren_epci, nom_epci;
@@ -1119,8 +1172,8 @@ from (
 		from total.bilan_comm_v4_secten1
 		where 
 			an = 2015
-			and not (id_polluant in (38,65,108,16,48,36,16) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
-			and not (id_polluant not in (38,65,108,16,48,36,16) and id_secten1 = '1') -- GES et Ener = Finale
+			and not (id_polluant in (38,65,108,16,48,36,11,16) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
+			and not (id_polluant not in (38,65,108,16,48,36,11,16) and id_secten1 = '1') -- GES et Ener = Finale
 			and ss is false -- Sans aucune donnée en SS
 		group by id_polluant, an, id_comm
 	) as a
@@ -1138,7 +1191,7 @@ from (
 			case when insee_com::integer between 13201 and 13216 then 13055 else insee_com::integer end
 	) as d using (id_comm)
 	where 
-		nom_abrege_polluant in ('conso','so2','nox','pm10','pm2.5','covnm','nh3','co2','ch4.co2e','n2o.co2e','prg100.3ges')
+		nom_abrege_polluant in ('conso','so2','nox','pm10','pm2.5','covnm','nh3','co','co2','ch4.co2e','n2o.co2e','prg100.3ges')
 
 	union all
 
@@ -1151,7 +1204,8 @@ from (
 		from total.bilan_comm_v4_prod
 		where 
 			an = 2015
-			and est_enr is true 
+			and grande_filiere_cigale = 'ENR'
+			and grande_filiere_cigale is not null
 		group by id_polluant, an, id_comm
 	) as a
 	left join commun.tpk_commune_2015_2016 as c using (id_comm)
@@ -1220,157 +1274,6 @@ create table cigale.liste_entites_admin as
     ) as a
     left join commun.tpk_communes as b using (id_comm)
 order by order_field, valeur;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-
-Intégration prod ener CIGALE 
-Dans une nouvelle table
-
-*/
-
-/*
-Mise en forme des valeurs
-- Regroupement 
-	* Par filières ENR ou autres filières Non ENR regroupées
-	* Type production
-- Ajout des champs EPCI et dep dans la table pour éviter les requêtes 
-  trop longues lors de l'extraction
-*/
-drop table if exists total.bilan_comm_v4_prod;
-create table total.bilan_comm_v4_prod as
-select 
-	a.an, 
-	a.id_comm, 
-	a.id_type_prod, b.lib_type_prod,
-	case when est_enr is true then c.id_filiere else 0 end as id_filiere, 
-		case when est_enr is true then c.lib_filiere else 'Filières non EnR' end as lib_filiere,
-	a.id_grande_filiere, d.lib_grande_filiere, c.est_enr,
-	sum(a.production) as val, 
-	a.id_unite,
-	a.id_comm / 1000 as dep,
-	e.siren_epci_2017,
-	e.nom_epci_2017
-from total_prod_energie.prod_comm_v1 as a
-left join src_prod_energie.tpk_type_prod as b using (id_type_prod)
-left join src_prod_energie.tpk_filiere as c using (id_filiere)
-left join src_prod_energie.corresp_filiere as cc using (id_filiere)
-left join src_prod_energie.tpk_grande_filiere as d on cc.id_grande_filiere = d.id_grande_filiere
-left join commun.tpk_commune_2015_2016 as e using (id_comm)
-group by
-	a.an, 
-	a.id_comm, 
-	a.id_type_prod, b.lib_type_prod,
-	case when est_enr is true then c.id_filiere else 0 end, 
-		case when est_enr is true then c.lib_filiere else 'Filières non EnR' end,	
-	a.id_grande_filiere, d.lib_grande_filiere, c.est_enr,
-	a.id_unite,
-	e.siren_epci_2017,
-	e.nom_epci_2017	
-order by
-	an, 
-	id_comm, 
-	id_type_prod, lib_type_prod,
-	id_filiere, lib_filiere,
-	id_grande_filiere, lib_grande_filiere, est_enr,
-	id_unite;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
