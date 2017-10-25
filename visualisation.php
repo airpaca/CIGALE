@@ -1260,6 +1260,8 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
                         
                         if (my_layers_object.polluant == ("conso")){
                             the_unit = "tep";
+                        } else if (my_layers_object.polluant == ("prod")){
+                            the_unit = "MWh";
                         } else {
                             the_unit = "kg";
                         };
