@@ -2012,7 +2012,29 @@ function create_barchart_part(response, div){
                         // max: 150,
                     }
                 }],                
-            }
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        /*
+                        Ajout de l'unité dans les tooltips
+                        */
+                        if (polluant_actif == 'conso') {
+                            tooltip_unit = ' ktep';
+                        } else if (polluant_actif == 'co2' || polluant_actif == 'ch4.co2e' || polluant_actif == 'n2o.co2e' || polluant_actif == 'prg100.3ges') { 
+                            tooltip_unit = ' t';             
+                        } else {
+                            tooltip_unit = ' t';            
+                        };  
+
+                        var allData = data.datasets[tooltipItem.datasetIndex].data;
+                        var tooltipLabel = data.labels[tooltipItem.index];
+                        var tooltipData = allData[tooltipItem.index];
+
+                        return tooltipLabel + ': ' + tooltipData + tooltip_unit;
+                    }
+                }
+            },            
         }
     }); 
 };
