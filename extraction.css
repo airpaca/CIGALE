@@ -123,7 +123,7 @@ p {
     max-width:100%;
 }
 @media(min-width:768px) and (orientation:landscape) {
-    .img-aide-export{margin-top: 40%;}
+    .img-aide-export{margin-top: 30%;}
 }
 
 .header_extraction {
