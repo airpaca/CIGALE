@@ -317,6 +317,7 @@ Chart.defaults.global.defaultFontColor = '#333';
 Chart.defaults.global.defaultFontSize = 13;
 Chart.defaults.global.defaultFontFamily = "'Lato', sans-serif";
 Chart.defaults.global.defaultFontStyle = "normal";
+Chart.defaults.global.legend.labels.boxWidth = 20;
 
 // Permets de dessiner des lignes sur un linechart pour les nodata
 // Source: https://stackoverflow.com/questions/36329630/chart-js-2-0-vertical-lines
@@ -1432,8 +1433,7 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
             legend: {
                 position: 'bottom',
                 display: false, // On désactive la légende
-                labels: {fontSize: 10,},
-                boxWidth: 1 // FIXME: Ne fonctionne pas
+                labels: {fontSize: 10,},                
             },
             tooltips: {
                 callbacks: {
@@ -1519,7 +1519,6 @@ function create_piechart_prod(response, div, graph_title, tooltip_unit){
                 position: 'bottom',
                 display: false, // On désactive la légende
                 labels: {fontSize: 10,},
-                boxWidth: 1 // FIXME: Ne fonctionne pas
             },
             tooltips: {
                 callbacks: {
@@ -1880,6 +1879,7 @@ function create_linechart_prod_primaire(response, div, graph_title){
             legend: {
                 position: 'bottom',
                 display: true,
+                labels: {fontSize: 10,},              
             },
             scales: {
                 yAxes: [{
@@ -1972,6 +1972,7 @@ function create_linechart_prod_secondaire(response, div, graph_title){
             legend: {
                 position: 'bottom',
                 display: true,
+                labels: {fontSize: 10,},               
             },
             scales: {
                 yAxes: [{
@@ -2035,7 +2036,6 @@ function create_stacked_barchart_prod(response, div){
                 position: 'bottom',
                 display: true,
                 labels: {fontSize: 10,},
-                boxWidth: 1 // FIXME: Ne fonctionne pas
             },
             scales: {
                 yAxes: [{
