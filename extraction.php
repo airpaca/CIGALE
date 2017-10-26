@@ -642,18 +642,18 @@ function changer_listes_prod(is_prod){
         $("#select_secteurs option").remove();
     
         for (isect in listes["grandes_filieres"]) {             
-            $("#select_secteurs").append($('<option>', {value: listes["grandes_filieres"][isect].id_grande_filiere, text: listes["grandes_filieres"][isect].lib_grande_filiere}, '</option>'));                               
+            $("#select_secteurs").append($('<option>', {value: listes["grandes_filieres"][isect].id_grande_filiere_cigale, text: listes["grandes_filieres"][isect].grande_filiere_cigale}, '</option>'));                               
         };
         $("#select_secteurs").selectpicker('refresh');          
     
         // Les énergies deviennent les petites filières ENR ou autres regroupées
-        $("#label_energies")[0].innerHTML = "Filières ENR";
-        $("#select_cat_ener").selectpicker({title: "Toutes les filières ENR et autres"}).selectpicker('render'); 
+        $("#label_energies")[0].innerHTML = "Filières détaillées";
+        $("#select_cat_ener").selectpicker({title: "Toutes les filières détaillées"}).selectpicker('render'); 
 
         $("#select_cat_ener option").remove();
     
         for (isect in listes["filieres"]) {             
-            $("#select_cat_ener").append($('<option>', {value: listes["filieres"][isect].id_filiere, text: listes["filieres"][isect].lib_filiere}, '</option>'));                               
+            $("#select_cat_ener").append($('<option>', {value: listes["filieres"][isect].id_detail_filiere_cigale, text: listes["filieres"][isect].detail_filiere_cigale}, '</option>'));                               
         };
         $("#select_cat_ener").selectpicker('refresh');          
     } else {

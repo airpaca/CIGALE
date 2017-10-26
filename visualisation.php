@@ -1473,7 +1473,7 @@ function create_piechart_prod(response, div, graph_title, tooltip_unit){
 
     var graph_labels = [];
     for (var i in response) {
-        graph_labels.push(response[i].lib_grande_filiere);
+        graph_labels.push(response[i].detail_filiere_cigale);
     };              
 
     // var graph_title = 'Répartition sectorielle ' + an_max;
@@ -1486,7 +1486,7 @@ function create_piechart_prod(response, div, graph_title, tooltip_unit){
     var bg_colors = [];
     var bd_colors = [];
     for (var i in response) {
-        bg_colors.push(response[i].color_grande_filiere);
+        bg_colors.push(response[i].color_detail_filiere_cigale);
         bd_colors.push('#ffffff');
     };  
     
@@ -1802,7 +1802,7 @@ function create_linechart_emi(response, div, graph_title){
     }); 
 };
 
-function create_linechart_prod(response, div, graph_title){
+function create_linechart_prod_primaire(response, div, graph_title){
     /*
     Création d'un graphique bar à partir de:
     @response - Réponse json de la requête ajax
@@ -1820,9 +1820,9 @@ function create_linechart_prod(response, div, graph_title){
     var liste_secteurs = [];
     var liste_couleurs = [];
     for (var i in response) {
-        if ($.inArray(response[i].lib_grande_filiere, liste_secteurs) == -1){
-            liste_secteurs.push(response[i].lib_grande_filiere);
-            liste_couleurs.push(response[i].color_grande_filiere);
+        if ($.inArray(response[i].detail_filiere_cigale, liste_secteurs) == -1){
+            liste_secteurs.push(response[i].detail_filiere_cigale);
+            liste_couleurs.push(response[i].color_detail_filiere_cigale);
         };
     };    
     
@@ -1833,7 +1833,7 @@ function create_linechart_prod(response, div, graph_title){
         
         data = [];
         for (var i in response) { 
-            if (response[i].lib_grande_filiere == secteur){
+            if (response[i].detail_filiere_cigale == secteur){
                 data.push(response[i].val);
             };
         };
@@ -1879,7 +1879,99 @@ function create_linechart_prod(response, div, graph_title){
             },
             legend: {
                 position: 'bottom',
-                display: false,
+                display: true,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        // beginAtZero:true,
+                        min:0,
+                        // max: 150,
+                    }
+                }]
+            }
+        },        
+    }); 
+};
+
+function create_linechart_prod_secondaire(response, div, graph_title){
+    /*
+    Création d'un graphique bar à partir de:
+    @response - Réponse json de la requête ajax
+    @div - Classe de l'élement auquel rattacher le graph 
+    */    
+    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
+    
+    var graph_annees = [];
+    for (var i in response) {
+        if ($.inArray(response[i].an, graph_annees) == -1){
+            graph_annees.push(response[i].an);
+        };
+    };      
+    
+    var liste_secteurs = [];
+    var liste_couleurs = [];
+    for (var i in response) {
+        if ($.inArray(response[i].grande_filiere_cigale, liste_secteurs) == -1){
+            liste_secteurs.push(response[i].grande_filiere_cigale);
+            liste_couleurs.push(response[i].color_grande_filiere_cigale);
+        };
+    };    
+    
+    var datasets = [];
+    for (var isect in liste_secteurs) {   
+        secteur = liste_secteurs[isect];
+        couleur = liste_couleurs[isect];
+        
+        data = [];
+        for (var i in response) { 
+            if (response[i].grande_filiere_cigale == secteur){
+                data.push(response[i].val);
+            };
+        };
+        datasets.push({
+            label: secteur, // response[i].grand_secteur, 
+            data: data, 
+            backgroundColor: couleur, 
+            borderColor: couleur, 
+            fill: false,
+            borderWidth: 3,
+            pointHitRadius: 8,
+        });
+    };            
+    
+    var graph_data = [];
+    for (var i in response) {
+        graph_data.push(response[i].val);
+    };  
+
+    var ctx = document.getElementById(div + "_canvas");
+    var graph = new Chart(ctx, {
+        type: 'line',     
+        data: {
+            labels: graph_annees,
+            datasets: datasets,
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            // tooltips: {
+                // mode: 'index',
+                // intersect: false,
+            // },
+            // hover: {
+                // mode: 'nearest',
+                // intersect: true
+            // },            
+            title: {
+                display: true,
+                // fontSize: 15,
+                fontStyle: "normal", 
+                text: graph_title,
+            },
+            legend: {
+                position: 'bottom',
+                display: true,
             },
             scales: {
                 yAxes: [{
@@ -2056,6 +2148,7 @@ function create_graphiques(siren_epci, nom_epci){
     // Mise en forme des blocs de graphiques pour les émissions
     $(".graph4").css({"height": "10%", "width": "70%"});    
     $(".graph4").show();
+    $(".graph5").show();
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2110,6 +2203,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
     // Mise en forme des blocs de graphiques pour les émissions
     $(".graph4").css({"height": "10%", "width": "70%"});  
     $(".graph4").show();
+    $(".graph5").show();
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2185,9 +2279,12 @@ function create_graphiques_prod(siren_epci, nom_epci){
             // titre
             change_graph_title(jqXHR.nom_epci + "</br> Production d’énergie </br>(" + response[4][0].val + " GWh en " + an_max + ")");
             
-            create_piechart_prod(response[0], "graph1", "Primaires par grande filière " + an_max, "GWh");
+            create_piechart_prod(response[0], "graph1", "Primaires par filières " + an_max, "GWh");
             create_stacked_barchart_prod(response[3], "graph2");
-            create_linechart_prod(response[2], "graph3", "Evolution des productions primaires (grandes filières en GWh)");
+            create_linechart_prod_primaire(response[2], "graph3", "Evolution des productions primaires (par filières en GWh)");
+            
+            // Pour les production, on utilise les légendes dynamiques
+            $(".graph5").hide();
             
             // Si pas de productions secondaires, alors on supprime le graphique
             if (response[1].length == 0){
@@ -2197,10 +2294,10 @@ function create_graphiques_prod(siren_epci, nom_epci){
             } else {
                 $(".graph4").css({"height": "35%", "width": "100%"});                
                 $(".graph4").show();
-                create_linechart_prod(response[1], "graph4", "Evolution des productions secondaires (grandes filières en GWh)");
+                create_linechart_prod_secondaire(response[1], "graph4", "Evolution des productions secondaires (par filières en GWh)");
             };
                         
-            create_graph_legend("graph5", 1);
+            // create_graph_legend("graph5", 1);
             
             sidebar.show();  
         },
@@ -2221,7 +2318,8 @@ function create_graphiques_ges(siren_epci, nom_epci){
     
     // Mise en forme des blocs de graphiques pour les émissions
     $(".graph4").css({"height": "10%", "width": "70%"});  
-    $(".graph4").show();    
+    $(".graph4").show();  
+    $(".graph5").show();    
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2334,10 +2432,10 @@ function export_pdf(){
     if (polluant_actif == 'prod') {
         
         // On ajoute la légende ici
-        var img = new Image();
-        img.src = "img/plots_legend_grandes_filieres.png"; 
-        var dataURI = getBase64Image(img);
-        doc.addImage(dataURI, 'PNG', 10, 240);  
+        // var img = new Image();
+        // img.src = "img/plots_legend_grandes_filieres.png"; 
+        // var dataURI = getBase64Image(img);
+        // doc.addImage(dataURI, 'PNG', 10, 240);  
         
         doc.addPage();
         pdf_y = 30;

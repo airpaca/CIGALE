@@ -925,21 +925,26 @@ order by id_polluant, an;
 Intégration prod ener CIGALE 
 Dans une nouvelle table
 
+src_prod_energie.tpk_grande_filiere_cigale - Grandes filières avec codes_couleur.
+src_prod_energie.tpk_detail_filiere_cigale - Détail des filières avec code_couleur pour ENR.
+src_prod_energie.tpk_filiere - Les id_filiere de la table bilan_prod et les liens vers les deux tables précédentes.
+
 Mise en forme des valeurs
 - Regroupement 
-	* Par grande filière cigale et d&étail filière cigale
+	* Par grande_filiere_cigale et detail_filiere_cigale
 	* Type production
 - Ajout des champs EPCI et dep dans la table pour éviter les requêtes 
   trop longues lors de l'extraction
 */
+
 drop table if exists total.bilan_comm_v4_prod;
 create table total.bilan_comm_v4_prod as
 select 
 	a.an, 
 	a.id_comm, 
 	a.id_type_prod, b.lib_type_prod,
-	c.grande_filiere_cigale,
-	c.detail_filiere_cigale,
+	c.id_grande_filiere_cigale, d.grande_filiere_cigale, d.color_grande_filiere_cigale,
+	c.id_detail_filiere_cigale, dd.detail_filiere_cigale, dd.color_detail_filiere_cigale,
 	sum(a.production) as val, 
 	a.id_unite,
 	a.id_comm / 1000 as dep,
@@ -948,15 +953,15 @@ select
 from total_prod_energie.prod_comm_v1 as a
 left join src_prod_energie.tpk_type_prod as b using (id_type_prod)
 left join src_prod_energie.tpk_filiere as c using (id_filiere)
--- left join src_prod_energie.corresp_filiere as cc using (id_filiere)
--- left join src_prod_energie.tpk_grande_filiere as d on cc.id_grande_filiere = d.id_grande_filiere
+left join src_prod_energie.tpk_grande_filiere_cigale as d using (id_grande_filiere_cigale)
+left join src_prod_energie.tpk_detail_filiere_cigale as dd using (id_detail_filiere_cigale)
 left join commun.tpk_commune_2015_2016 as e using (id_comm)
 group by
 	a.an, 
 	a.id_comm, 
 	a.id_type_prod, b.lib_type_prod,
-	c.grande_filiere_cigale,
-	c.detail_filiere_cigale,
+	c.id_grande_filiere_cigale, d.grande_filiere_cigale, d.color_grande_filiere_cigale,
+	c.id_detail_filiere_cigale, dd.detail_filiere_cigale, dd.color_detail_filiere_cigale,
 	a.id_unite,
 	a.id_comm / 1000,
 	e.siren_epci_2017,
@@ -1129,8 +1134,7 @@ from (
 	left join cigale.epci as d on a.siren_epci_2017 = d.siren_epci
 	where 
 		an = 2015
-		and grande_filiere_cigale = 'ENR' 
-		and grande_filiere_cigale is not null
+		and id_grande_filiere_cigale = 1 -- ENR
 	group by an, siren_epci_2017, nom_epci_2017, superficie
 ) as a
 order by an, nom_abrege_polluant, siren_epci, nom_epci;
@@ -1195,6 +1199,7 @@ from (
 
 	union all
 
+	-- Ajout des prod
 	select 
 		'prod'::text as nom_abrege_polluant, id_comm, nom_comm, siren_epci_2017 as siren_epci, 
 		val / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
@@ -1204,8 +1209,7 @@ from (
 		from total.bilan_comm_v4_prod
 		where 
 			an = 2015
-			and grande_filiere_cigale = 'ENR'
-			and grande_filiere_cigale is not null
+			and id_grande_filiere_cigale = 1
 		group by id_polluant, an, id_comm
 	) as a
 	left join commun.tpk_commune_2015_2016 as c using (id_comm)

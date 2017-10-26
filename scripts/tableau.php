@@ -159,20 +159,20 @@ if ($query_var != "999") {
 
     /* Gestion du regroupement par filiere */ 
     if ($query_sect != "") {
-        $champ_grande_filiere = " lib_grande_filiere as \"Filière de production\", ";
-        $where_grande_filiere = " and id_grande_filiere in (" . str_replace("\\", "", $query_sect) . ") "; 
-        $group_grande_filiere = ", lib_grande_filiere ";
+        $champ_grande_filiere = " grande_filiere_cigale as \"Filière de production\", ";
+        $where_grande_filiere = " and id_grande_filiere_cigale in (" . str_replace("\\", "", $query_sect) . ") "; 
+        $group_grande_filiere = ", grande_filiere_cigale ";
     } else {
-        $champ_grande_filiere = " 'Toutes les grandes filières' as \"Filière de production\", ";
+        $champ_grande_filiere = " 'Filières EnR et autres' as \"Filière de production\", ";
     };
 
     /* Gestion du regroupement par petite filiere enr ou autre */ 
     if ($query_ener != "") {
-        $champ_filiere = " lib_filiere as \"Filière détaillée\", ";
-        $where_filiere = " and id_filiere in (" . str_replace("\\", "", $query_ener) . ") ";   
-        $group_filiere = ", lib_filiere ";        
+        $champ_filiere = " detail_filiere_cigale as \"Filière détaillée\", ";
+        $where_filiere = " and id_detail_filiere_cigale in (" . str_replace("\\", "", $query_ener) . ") ";   
+        $group_filiere = ", detail_filiere_cigale ";        
     } else {
-        $champ_filiere = " 'Filières ENR et autres' as \"Filière détaillée\", ";
+        $champ_filiere = " 'Toutes' as \"Filière détaillée\", ";
     };
 
     $sql = "
@@ -196,7 +196,13 @@ if ($query_var != "999") {
         " . $champ_geo . " ,
         lib_type_prod 
         " . $group_grande_filiere . " 
-        " . $group_filiere . " 
+        " . $group_filiere . "
+    ORDER BY    
+        an, 
+        " . $champ_geo . " ,
+        lib_type_prod 
+        " . $group_grande_filiere . " 
+        " . $group_filiere . "        
     ;    
     ";
 };

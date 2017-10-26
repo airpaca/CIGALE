@@ -19,20 +19,19 @@ if (!$conn) {
     exit;
 }
 
-// Export des productions primaire an_max par grande filière
+// Export des productions primaire an_max par filières détaillées
 $sql = "
 select 
-	a.lib_grande_filiere, 
-	color_grande_filiere, 
+	a.detail_filiere_cigale, 
+	color_detail_filiere_cigale, 
 	round(sum(val / 1000.)::numeric, 1) as val
 from total.bilan_comm_v4_prod as a
-left join src_prod_energie.tpk_grande_filiere as b using (id_grande_filiere)
 where 
 	an = " . $an . "
-	and est_enr is true
+    and grande_filiere_cigale = 'ENR'
     and siren_epci_2017 = '" . $siren_epci . "' 
-group by a.lib_grande_filiere, color_grande_filiere
-order by lib_grande_filiere  
+group by a.detail_filiere_cigale, color_detail_filiere_cigale
+order by detail_filiere_cigale  
 ;
 ";
 
@@ -78,20 +77,19 @@ while ($row = pg_fetch_assoc( $res )) {
   $quantites_totales_annuelles[] = $row;
 }
 
-/* Evolution des productions primaire par grande filière */
+/* Evolution des productions primaire par filières détaillées */
 $sql = "
 select 
     an, 
-	a.lib_grande_filiere, 
-	color_grande_filiere, 
+	a.detail_filiere_cigale, 
+	color_detail_filiere_cigale, 
 	round(sum(val / 1000.)::numeric, 1) as val
 from total.bilan_comm_v4_prod as a
-left join src_prod_energie.tpk_grande_filiere as b using (id_grande_filiere)
 where 
-	est_enr is true
+	grande_filiere_cigale = 'ENR'
     and siren_epci_2017 = '" . $siren_epci . "' 
-group by an, a.lib_grande_filiere, color_grande_filiere
-order by an, lib_grande_filiere  
+group by an, a.detail_filiere_cigale, color_detail_filiere_cigale
+order by an, detail_filiere_cigale  
 ;
 ";
 
@@ -110,16 +108,15 @@ while ($row = pg_fetch_assoc( $res )) {
 $sql = "
 select 
     an, 
-	a.lib_grande_filiere, 
-	color_grande_filiere, 
+	a.grande_filiere_cigale, 
+	color_grande_filiere_cigale, 
 	round(sum(val / 1000.)::numeric, 1) as val
 from total.bilan_comm_v4_prod as a
-left join src_prod_energie.tpk_grande_filiere as b using (id_grande_filiere)
 where 
-	est_enr is false
+	grande_filiere_cigale <> 'ENR'
     and siren_epci_2017 = '" . $siren_epci . "' 
-group by an, a.lib_grande_filiere, color_grande_filiere
-order by an, lib_grande_filiere  
+group by an, a.grande_filiere_cigale, color_grande_filiere_cigale
+order by an, grande_filiere_cigale  
 ;
 ";
 
@@ -138,17 +135,16 @@ while ($row = pg_fetch_assoc( $res )) {
 $sql = "
 select 
     an, 
-	case when est_enr is true then 'Primaire' else 'Secondaire' end as prod, 
-	case when est_enr is true then '#33ff9c' else '#ff3390' end as prod_color, 
+	case when grande_filiere_cigale = 'ENR' then 'Primaire' else 'Secondaire' end as prod, 
+	case when grande_filiere_cigale = 'ENR' then '#33ff9c' else '#ff3390' end as prod_color, 
 	round(sum(val / 1000.)::numeric, 1) as val
 from total.bilan_comm_v4_prod as a
-left join src_prod_energie.tpk_grande_filiere as b using (id_grande_filiere)
 where 
     siren_epci_2017 = '" . $siren_epci . "' 
 group by 
 	an, 
-	case when est_enr is true then 'Primaire' else 'Secondaire' end, 
-	case when est_enr is true then '#33ff9c' else '#ff3390' end
+	case when grande_filiere_cigale = 'ENR' then 'Primaire' else 'Secondaire' end, 
+	case when grande_filiere_cigale = 'ENR' then '#33ff9c' else '#ff3390' end
 
 union all
 select 2008::integer as an, 'Primaire'::text as prod, '#33ff9c'::text as prod_color, null as val
@@ -181,7 +177,6 @@ while ($row = pg_fetch_assoc( $res )) {
 $sql = "
 select sum(val / 1000.)::BIGINT as val
 from total.bilan_comm_v4_prod as a
-left join src_prod_energie.tpk_grande_filiere as b using (id_grande_filiere)
 where 
 	an = " . $an . "
     and siren_epci_2017 = '" . $siren_epci . "' 

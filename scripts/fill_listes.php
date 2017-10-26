@@ -102,9 +102,9 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Extraction des grandes filières pour prod ener */
 $sql = "
-select distinct id_grande_filiere, lib_grande_filiere
-from total.bilan_comm_v4_prod 
-order by id_grande_filiere
+select id_grande_filiere_cigale, grande_filiere_cigale
+from src_prod_energie.tpk_grande_filiere_cigale
+order by id_grande_filiere_cigale
 ";
 
 $res = pg_query($conn, $sql);
@@ -120,9 +120,9 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Extraction des filières enr ou autres prod ener */
 $sql = "
-select distinct id_filiere, lib_filiere
-from total.bilan_comm_v4_prod 
-order by id_filiere
+select id_detail_filiere_cigale, detail_filiere_cigale
+from src_prod_energie.tpk_detail_filiere_cigale
+order by id_detail_filiere_cigale
 ";
 
 $res = pg_query($conn, $sql);
