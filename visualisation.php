@@ -1629,87 +1629,6 @@ function create_barchart_emi(response, div, poll){
     }); 
 };
 
-function create_barchart_prod(response, div, poll){
-    /*
-    Création d'un graphique bar à partir de:
-    @response - Réponse json de la requête ajax
-    @div - Classe de l'élement auquel rattacher le graph 
-    */
-
-    // On est pas arrivé à passer du HTML dans le tool tip du coup on écrit les polluants à l'arrache
-    // if (poll == "SO<SUB>2</SUB>") {
-        // poll = "SO2";
-    // } else if (poll == "NH<SUB>3</SUB>") {
-        // poll = "NH3";
-    // } else if (poll == "CO<SUB>2</SUB>") {
-        // poll = "CO2";
-    // } else if (poll == "CH<SUB>4</SUB> eq. CO<SUB>2</SUB>") {
-        // poll = "CH4 eq.CO2";
-    // } else if (poll == "N<SUB>2</SUB>O eq. CO<SUB>2</SUB>") {
-        // poll = "N2O eq.CO2";
-    // };
-    // poll = "Productions"
-    
-    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
-    
-    var graph_labels = [];
-    for (var i in response) {
-        graph_labels.push(response[i].an);
-    };              
-
-    var graph_title = 'Productions totales annuelles (GWh)';
-
-    var graph_data = [];
-    for (var i in response) {
-        graph_data.push(response[i].val);
-    };  
-
-    var bg_colors = [];
-    var bd_colors = [];
-    for (var i in response) {
-        bg_colors.push('#8a8a8a');
-        bd_colors.push('#8a8a8a');
-    };  
-
-    var ctx = document.getElementById(div + "_canvas");
-    var graph = new Chart(ctx, {
-        type: 'bar', // 'horizontalBar',          
-        data: {
-            labels: graph_labels,
-            datasets: [{
-                label: poll,
-                data: graph_data,
-                backgroundColor: bg_colors,
-                borderColor: bd_colors,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive:true,
-            maintainAspectRatio: false,
-            title: {
-                display: true,
-                // fontSize: 15,
-                fontStyle: "normal", 
-                text: graph_title
-            },
-            legend: {
-                position: 'bottom',
-                display: false,
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        // beginAtZero:true,
-                        min:0,
-                        // max: 150,
-                    }
-                }]
-            }
-        }
-    }); 
-};
-
 function create_linechart_emi(response, div, graph_title){
     /*
     Création d'un graphique bar à partir de:
@@ -1717,14 +1636,7 @@ function create_linechart_emi(response, div, graph_title){
     @div - Classe de l'élement auquel rattacher le graph 
     */    
     $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
-    
-    var graph_annees = [];
-    for (var i in response) {
-        if ($.inArray(response[i].an, graph_annees) == -1){
-            graph_annees.push(response[i].an);
-        };
-    };      
-    
+       
     var liste_secteurs = [];
     var liste_couleurs = [];
     for (var i in response) {
@@ -1733,18 +1645,33 @@ function create_linechart_emi(response, div, graph_title){
             liste_couleurs.push(response[i].secten1_color);
         };
     };    
-    
+
+    // Il faut ajouter les valeurs en face de la bonne année et mettre une val nulle si besoin.
     var datasets = [];
-    for (var isect in liste_secteurs) {   
-        secteur = liste_secteurs[isect];
-        couleur = liste_couleurs[isect];
+    
+    for (var isect in liste_secteurs) {
         
         data = [];
-        for (var i in response) { 
-            if (response[i].nom_court_secten1 == secteur){
-                data.push(response[i].val);
+        
+        for (ian in ans_film) {
+            
+            secteur = liste_secteurs[isect];
+            couleur = liste_couleurs[isect];
+            an = ans_film[ian];
+            
+            found_val = 0;
+            for (var i in response) {
+                if (response[i].nom_court_secten1 == secteur && response[i].an == an){
+                    found_val = 1;
+                    data.push(response[i].val);
+                    break;
+                };
+            };
+            if (found_val == 0){
+                data.push(null);
             };
         };
+        
         datasets.push({
             label: secteur, // response[i].grand_secteur, 
             data: data, 
@@ -1753,19 +1680,15 @@ function create_linechart_emi(response, div, graph_title){
             fill: false,
             borderWidth: 3,
             pointHitRadius: 8,
-        });
-    };            
-    
-    var graph_data = [];
-    for (var i in response) {
-        graph_data.push(response[i].val);
-    };  
+        });        
+        
+    };   
 
     var ctx = document.getElementById(div + "_canvas");
     var graph = new Chart(ctx, {
         type: 'line',     
         data: {
-            labels: graph_annees,
+            labels: ans_film,
             datasets: datasets,
         },
         options: {
@@ -2592,7 +2515,6 @@ var map = createMap();
 var sidebar = create_sidebar();
 var select_list = liste_epci_create(); 
 liste_epci_populate();
-// create_wms_layer(my_layers.epci_wms); // Fond de carte des EPCI WMS
 creation_couches_epci_polluant(); // Couches des ECPI par polluant
 creation_couches_comm_polluant(); // Couches des communes par polluant
 create_sidebar_template();
