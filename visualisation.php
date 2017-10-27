@@ -248,6 +248,7 @@ var wms_attrib = "Air PACA";
 var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0";
 var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&VERSION=2.0.0";
 
+var ans_film = [2007, 2010, 2012, 2013, 2014, 2015];
 var an_max = 2015;
 var polls = ['conso', 'prod', 'so2','nox','pm10','pm2.5','covnm','nh3','co','co2','ch4.co2e','n2o.co2e','prg100.3ges'];
 var polls_names = {
@@ -1809,14 +1810,6 @@ function create_linechart_prod_primaire(response, div, graph_title){
     */    
     $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
     
-    // Création de la liste des années
-    var graph_annees = [];
-    for (var i in response) {
-        if ($.inArray(response[i].an, graph_annees) == -1){
-            graph_annees.push(response[i].an);
-        };
-    };      
-    
     var liste_secteurs = [];
     var liste_couleurs = [];
     for (var i in response) {
@@ -1833,13 +1826,11 @@ function create_linechart_prod_primaire(response, div, graph_title){
         
         data = [];
         
-        for (ian in graph_annees) {
+        for (ian in ans_film) {
             
             secteur = liste_secteurs[isect];
             couleur = liste_couleurs[isect];
-            an = graph_annees[ian];
-        
-            console.log(secteur, an);
+            an = ans_film[ian];
             
             found_val = 0;
             for (var i in response) {
@@ -1870,7 +1861,7 @@ function create_linechart_prod_primaire(response, div, graph_title){
     var graph = new Chart(ctx, {
         type: 'line',     
         data: {
-            labels: graph_annees,
+            labels: ans_film,
             datasets: datasets,
         },
         options: {
@@ -1916,13 +1907,6 @@ function create_linechart_prod_secondaire(response, div, graph_title){
     */    
     $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
     
-    var graph_annees = [];
-    for (var i in response) {
-        if ($.inArray(response[i].an, graph_annees) == -1){
-            graph_annees.push(response[i].an);
-        };
-    };      
-    
     var liste_secteurs = [];
     var liste_couleurs = [];
     for (var i in response) {
@@ -1931,18 +1915,33 @@ function create_linechart_prod_secondaire(response, div, graph_title){
             liste_couleurs.push(response[i].color_grande_filiere_cigale);
         };
     };    
-    
+
+    // Il faut ajouter les valeurs en face de la bonne année et mettre une val nulle si besoin.
     var datasets = [];
-    for (var isect in liste_secteurs) {   
-        secteur = liste_secteurs[isect];
-        couleur = liste_couleurs[isect];
+    
+    for (var isect in liste_secteurs) {
         
         data = [];
-        for (var i in response) { 
-            if (response[i].grande_filiere_cigale == secteur){
-                data.push(response[i].val);
+        
+        for (ian in ans_film) {
+            
+            secteur = liste_secteurs[isect];
+            couleur = liste_couleurs[isect];
+            an = ans_film[ian];
+            
+            found_val = 0;
+            for (var i in response) {
+                if (response[i].grande_filiere_cigale == secteur && response[i].an == an){
+                    found_val = 1;
+                    data.push(response[i].val);
+                    break;
+                };
+            };
+            if (found_val == 0){
+                data.push(null);
             };
         };
+        
         datasets.push({
             label: secteur, // response[i].grand_secteur, 
             data: data, 
@@ -1951,19 +1950,15 @@ function create_linechart_prod_secondaire(response, div, graph_title){
             fill: false,
             borderWidth: 3,
             pointHitRadius: 8,
-        });
-    };            
-    
-    var graph_data = [];
-    for (var i in response) {
-        graph_data.push(response[i].val);
-    };  
+        });        
+        
+    };
 
     var ctx = document.getElementById(div + "_canvas");
     var graph = new Chart(ctx, {
         type: 'line',     
         data: {
-            labels: graph_annees,
+            labels: ans_film,
             datasets: datasets,
         },
         options: {
