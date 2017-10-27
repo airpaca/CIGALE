@@ -1809,6 +1809,7 @@ function create_linechart_prod_primaire(response, div, graph_title){
     */    
     $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');
     
+    // Création de la liste des années
     var graph_annees = [];
     for (var i in response) {
         if ($.inArray(response[i].an, graph_annees) == -1){
@@ -1825,17 +1826,34 @@ function create_linechart_prod_primaire(response, div, graph_title){
         };
     };    
     
+    // Il faut ajouter les valeurs en face de la bonne année et mettre une val nulle si besoin.
     var datasets = [];
-    for (var isect in liste_secteurs) {   
-        secteur = liste_secteurs[isect];
-        couleur = liste_couleurs[isect];
+    
+    for (var isect in liste_secteurs) {
         
         data = [];
-        for (var i in response) { 
-            if (response[i].detail_filiere_cigale == secteur){
-                data.push(response[i].val);
+        
+        for (ian in graph_annees) {
+            
+            secteur = liste_secteurs[isect];
+            couleur = liste_couleurs[isect];
+            an = graph_annees[ian];
+        
+            console.log(secteur, an);
+            
+            found_val = 0;
+            for (var i in response) {
+                if (response[i].detail_filiere_cigale == secteur && response[i].an == an){
+                    found_val = 1;
+                    data.push(response[i].val);
+                    break;
+                };
+            };
+            if (found_val == 0){
+                data.push(null);
             };
         };
+        
         datasets.push({
             label: secteur, // response[i].grand_secteur, 
             data: data, 
@@ -1844,13 +1862,9 @@ function create_linechart_prod_primaire(response, div, graph_title){
             fill: false,
             borderWidth: 3,
             pointHitRadius: 8,
-        });
-    };            
-    
-    var graph_data = [];
-    for (var i in response) {
-        graph_data.push(response[i].val);
-    };  
+        });        
+        
+    };             
 
     var ctx = document.getElementById(div + "_canvas");
     var graph = new Chart(ctx, {
