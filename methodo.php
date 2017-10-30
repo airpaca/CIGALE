@@ -236,7 +236,7 @@
                     publiées ou utilisées dans le cadre de travaux, d'études ou d'analyse avec les conditions suivantes:
                     </p>
                     <p>
-                    - Toute utilisation des données brutes issues de la base de données Energ'air devra faire référence à 
+                    - Toute utilisation des données brutes issues de la base de données CIGALE devra faire référence à 
                     l'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) et à Air PACA en ces termes :
                     'Source: Base de donnes CIGALE - Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) 
                     Provence-Alpes-Côte d'Azur / inventaire Air PACA'
@@ -245,7 +245,7 @@
                     - Toute utilisation de données retravaillées par l'utilisateur final à partir de données 
                     brutes issues de l'application CIGALE devra faire référence à l'Observatoire Régional de l'Energie, 
                     du Climat et de l'Air (ORECA) et à Air PACA en ces termes :
-                    'Source: *Utilisateur final* d'après la base de données Energ'air - Observatoire Régional de l'Energie, 
+                    'Source: *Utilisateur final* d'après la base de données CIGALE - Observatoire Régional de l'Energie, 
                     du Climat et de l'Air (ORECA) Provence-Alpes-Côte d'Azur / inventaire Air PACA'
                     </p>
                     <p>
