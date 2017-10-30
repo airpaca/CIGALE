@@ -8,7 +8,7 @@
     <meta name="description" content="Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie - Extractions">
     <meta name="author" content="Air PACA">    
     
-    <title>CIGALE - Extraction</title>
+    <title>Air PACA - Extraction CIGALE</title> <!-- <title>CIGALE - Extraction</title> -->
     
     <!-- JQuery 3.2.1 -->
     <script src="libs/jquery/jquery-3.2.1.min.js"></script>    
@@ -184,6 +184,15 @@ var listes = {
     energies: "",
     filieres: "",    
 };
+
+var cgu = 'Conditions d\'utilisation: \n\n \
+Les données fournies dans le cadre de l\'application CIGALE peuvent librement être diffusées, publiées ou utilisées dans le cadre de travaux, d\'études ou d\'analyse avec les conditions suivantes: \n\n \
+- Toute utilisation des données brutes issues de la base de données Energ\'air devra faire référence à l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) et à Air PACA en ces termes : \'Source: Base de donnes CIGALE - Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte d\'Azur / inventaire Air PACA\' \n\n \
+- Toute utilisation de données retravaillées par l\'utilisateur final à partir de données brutes issues de l\'application CIGALE devra faire référence à l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) et à Air PACA en ces termes : \'Source: *Utilisateur final* d\'après la base de données CIGALE - Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte d\'Azur / inventaire Air PACA\' \n\n \
+- Sur demande, l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte d\'Azur et Air PACA mettent à disposition les méthodes d\'exploitation des données mises en œuvre. \n\n \
+- Les données contenues dans ce document restent la propriété de l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte dAzur et d\'Air PACA. \n\n \
+- L\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte dAzur et Air PACA peuvent rediffuser ce document à d\'autres destinataires. \
+'; 
 
 /* Navigation entre les menus */
 $("#img-methodo").hover(function(){
@@ -596,7 +605,15 @@ function create_table(response, display){
         searching: true,
         responsive: true,
         dom: 'lftBr', // 'lpftiBr' = Avec nb lignes en plus
-        buttons: ['copy', 'csv', 'pdf'], 
+        buttons: [
+            'copy', 
+            'csv',         
+            {
+                extend: 'pdfHtml5',
+                title: 'Air PACA - Export CIGALE du ' + datehour(),
+                message: cgu, 
+            }
+        ], 
         processing: true,
         serverSide: false,
         language: {

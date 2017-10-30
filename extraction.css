@@ -127,7 +127,7 @@ p {
 }
 
 .header_extraction {
-    margin-bottom: 5%;
+    margin-bottom: 0%; /* 5 */
     margin-left: 3%;
     margin-top: 3%;    
     font-family: 'Lato', sans-serif;
