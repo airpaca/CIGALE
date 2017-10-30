@@ -544,3 +544,19 @@ Graphiques dans LeafletSidebar
                         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
                         border-radius: 5px;
                 } */
+                
+  /*               
+.leaflet-verticalcenter {
+    position: absolute;
+    right: 50%;
+    top: 92%; possible because the placeholder's parent is the map */
+    /* transform: translateY(-50%); using the CSS3 Transform technique */
+    /* transform: translateY(-40%); using the CSS3 Transform technique */
+    /* transform: translateX(-80%); /* using the CSS3 Transform technique */
+    /* padding-top: 10px; */
+    /* margin-bottom: 10px; */
+}
+
+/* .leaflet-verticalcenter .leaflet-control {
+    margin-bottom: 10px;
+} */

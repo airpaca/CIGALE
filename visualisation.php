@@ -311,6 +311,7 @@ var my_app = {
 
 /* Déclaration des Controles Leaflet */
 var legend = L.control({position: 'bottomleft'});
+var logo = L.control({position: 'topleft'});
 var hover_info = L.control({position: 'topleft'});
 
 /* Extension de chart.js */
@@ -2510,8 +2511,18 @@ function creation_couches_comm_polluant(){
     };
 };
 
+function ajouter_logo(){
+    logo.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info logo');  
+        div.innerHTML = '<img src="img/logo-Air-PACA_small.png">'; //  id="img_contributors"
+        return div;
+    };
+    logo.addTo(map);  
+};
+
 /* Appel des fonctions */
 var map = createMap();
+ajouter_logo();
 var sidebar = create_sidebar();
 var select_list = liste_epci_create(); 
 liste_epci_populate();
@@ -2526,6 +2537,17 @@ function tests(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+ 
 
 </script>
 
