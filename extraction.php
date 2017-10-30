@@ -571,7 +571,7 @@ function afficher_donnees(){
    
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
-    $(".header_extraction").html('Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
+    $(".header_extraction").html('<img src="img/logo-Air-PACA_small.png"><br/><br/>Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
 function create_table(response, display){
