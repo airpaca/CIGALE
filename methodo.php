@@ -263,7 +263,7 @@
             
 			<h1>Liens utiles</h1>
 			<p>
-			<a href="img/171017_Methodo_TDB_conso.pdf">Note méthodologique d'élaboration de l'inventaire régional des consommations d'énergies en Provence Alpes Côte d'Azur</a>
+			<a href="img/171030_Methodo_TDB_conso_prod_cigale.pdf">Note méthodologique d'élaboration de l'inventaire régional des consommations et productions d'énergies en Provence Alpes Côte d'Azur</a>
 			</p>
 			<p>
 			<a href="img/171016_NoteMethodoInventaire.pdf">Note méthodologique d'élaboration de l'inventaire des émissions de polluants en Provence Alpes Côte d'Azur</a>
