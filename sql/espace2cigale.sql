@@ -1230,14 +1230,20 @@ from (
 	left join commun.tpk_commune_2015_2016 as c using (id_comm)
 	left join (
 		select 
-			case when insee_com::integer between 13201 and 13216 then 13055 else insee_com::integer end as id_comm,
+			case 
+				when insee_com::integer between 13201 and 13216 then 13055 
+				when insee_com in ('04198', '04033') then 4033 -- Fusion 2017
+				else insee_com::integer end as id_comm,
 			sum(superficie) as superficie,
 			st_union(geom) as geom
 		from sig.geofla2016_communes
 		where
 			code_reg = '93'
 		group by 
-			case when insee_com::integer between 13201 and 13216 then 13055 else insee_com::integer end
+			case 
+				when insee_com::integer between 13201 and 13216 then 13055 
+				when insee_com in ('04198', '04033') then 4033 -- Fusion 2017
+				else insee_com::integer end
 	) as d using (id_comm)
 	where 
 		nom_abrege_polluant in ('conso','so2','nox','pm10','pm2.5','covnm','nh3','co','co2','ch4.co2e','n2o.co2e','prg100.3ges')
