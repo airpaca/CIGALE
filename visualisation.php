@@ -2338,7 +2338,13 @@ function export_pdf(){
 
     // Titre principal
     doc.text(my_app.nom_epci, 10, 10);
-    
+
+    // Logo Air PACA    
+    var img = new Image();
+    img.src = "img/logo-Air-PACA.png"; 
+    var dataURI = getBase64Image(img);
+    doc.addImage(dataURI, 'PNG', 150, 3); 
+
     // Sous titre
     doc.setFontSize(10);
     if (polluant_actif == 'conso') {
