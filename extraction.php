@@ -612,16 +612,15 @@ function create_table(response, display){
                 title: 'Air PACA - Export CIGALE du ' + datehour(),
                 // charset: 'iso-8859-1', // 'ANSI', // 'utf-8', 
                 customize: function ( csv ) {
-                    
                     return "Air PACA\n\n" + cgu + "\n\n" + csv;
                 }                
             },  
             {
                 extend: 'csvHtml5',
                 title: 'Air PACA - Export CIGALE du ' + datehour(),
-                // charset: 'iso-8859-1', // 'ANSI', // 'utf-8', 
+                charset:  'utf-8', // 'windows-1252', // 'iso-8859-1', // 'ANSI', // 'utf-8', 
+                bom: true,
                 customize: function ( csv ) {
-                    
                     return "Air PACA\n\n" + cgu + "\n\n" + csv;
                 }                
             },        
