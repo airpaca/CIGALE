@@ -454,6 +454,51 @@ full join (
 order by an, id_polluant
 */
 
+
+
+
+
+
+/**
+Mise à jour tardive d'une fusion de commune 4198 -> 4033
+avant calcul SS
+*/
+drop table if exists public.tmp_fusion;
+create table public.tmp_fusion as 
+select 
+	id_polluant, an, 
+	4033::integer as id_comm, 
+	id_secten1, code_cat_energie, id_usage, id_branche, 
+	sum(val) as val,
+	id_unite, bdrep, code_etab, memo
+from total.bilan_comm_v4_secten1
+where id_comm in (4198, 4033)
+group by 
+	id_polluant, an, 
+	4033::integer, 
+	id_secten1, code_cat_energie, id_usage, id_branche, 
+	id_unite, bdrep, code_etab, memo
+order by 
+	id_polluant, an, 
+	4033::integer, 
+	id_secten1, code_cat_energie, id_usage, id_branche, 
+	id_unite, bdrep, code_etab, memo
+;
+
+delete from total.bilan_comm_v4_secten1 where id_comm in (4198, 4033);
+
+insert into total.bilan_comm_v4_secten1 
+select * from public.tmp_fusion;
+
+
+
+
+
+
+
+
+
+
 /**
 Calcul du pourcentage de la consommation.
 La consommation totale est stockée dans ss_85_conso_tot
@@ -1215,14 +1260,20 @@ from (
 	left join commun.tpk_commune_2015_2016 as c using (id_comm)
 	left join (
 		select 
-			case when insee_com::integer between 13201 and 13216 then 13055 else insee_com::integer end as id_comm,
+			case 
+				when insee_com::integer between 13201 and 13216 then 13055 
+				when insee_com in ('04198', '04033') then 4033 -- Fusion 2017
+				else insee_com::integer end as id_comm,
 			sum(superficie) as superficie,
 			st_union(geom) as geom
 		from sig.geofla2016_communes
 		where
 			code_reg = '93'
 		group by 
-			case when insee_com::integer between 13201 and 13216 then 13055 else insee_com::integer end
+			case 
+				when insee_com::integer between 13201 and 13216 then 13055 
+				when insee_com in ('04198', '04033') then 4033
+				else insee_com::integer end
 	) as d using (id_comm)
 ) as a;
 
