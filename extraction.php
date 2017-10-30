@@ -606,8 +606,25 @@ function create_table(response, display){
         responsive: true,
         dom: 'lftBr', // 'lpftiBr' = Avec nb lignes en plus
         buttons: [
-            'copy', 
-            'csv',         
+            // 'copy', 
+            {
+                extend: 'copyHtml5',
+                title: 'Air PACA - Export CIGALE du ' + datehour(),
+                // charset: 'iso-8859-1', // 'ANSI', // 'utf-8', 
+                customize: function ( csv ) {
+                    
+                    return "Air PACA\n\n" + cgu + "\n\n" + csv;
+                }                
+            },  
+            {
+                extend: 'csvHtml5',
+                title: 'Air PACA - Export CIGALE du ' + datehour(),
+                // charset: 'iso-8859-1', // 'ANSI', // 'utf-8', 
+                customize: function ( csv ) {
+                    
+                    return "Air PACA\n\n" + cgu + "\n\n" + csv;
+                }                
+            },        
             {
                 extend: 'pdfHtml5',
                 title: 'Air PACA - Export CIGALE du ' + datehour(),
