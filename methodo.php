@@ -69,15 +69,17 @@
                 </div>
                 <div class="col-xs-4">
                     <a href="extraction.php"><img class="img-menus" id="img-extract" src="img/csv-icon.png" border="0" width="80"></img></a>      
-                </div>			
+                </div>		 
             </div>
-        
-        
+            
         </div>
         
         <!-- Zone droite affichage des documents -->
         <div class="col-md-9" id="zone-display">
-                 
+            
+            <br/>
+            <img src="img/logo-Air-PACA_small.png">
+            
 			<h1>Définitions et équivalences énergétiques</h1>
                 <h2 data-toc-text="Consommation d'énergie finale/primaire">Consommation d'énergie finale/primaire</h2>
 					<p>
