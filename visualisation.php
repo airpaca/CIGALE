@@ -309,6 +309,15 @@ var my_app = {
     niveau: "epci",
 };
 
+var cgu = 'Conditions d\'utilisation: \n\n \
+Les données fournies dans le cadre de l\'application CIGALE peuvent librement être diffusées, publiées ou utilisées dans le cadre de travaux, d\'études ou d\'analyse avec les conditions suivantes: \n\n \
+- Toute utilisation des données brutes issues de la base de données Energ\'air devra faire référence à l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) et à Air PACA en ces termes : \'Source: Base de donnes CIGALE - Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte d\'Azur / inventaire Air PACA\' \n\n \
+- Toute utilisation de données retravaillées par l\'utilisateur final à partir de données brutes issues de l\'application CIGALE devra faire référence à l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) et à Air PACA en ces termes : \'Source: *Utilisateur final* d\'après la base de données CIGALE - Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte d\'Azur / inventaire Air PACA\' \n\n \
+- Sur demande, l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte d\'Azur et Air PACA mettent à disposition les méthodes d\'exploitation des données mises en œuvre. \n\n \
+- Les données contenues dans ce document restent la propriété de l\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte dAzur et d\'Air PACA. \n\n \
+- L\'Observatoire Régional de l\'Energie, du Climat et de l\'Air (ORECA) Provence-Alpes-Côte dAzur et Air PACA peuvent rediffuser ce document à d\'autres destinataires. \
+'; 
+
 /* Déclaration des Controles Leaflet */
 var legend = L.control({position: 'bottomleft'});
 var logo = L.control({position: 'topleft'});
@@ -2402,9 +2411,13 @@ function export_pdf(){
         };
     };
      
+    // Conditions d'utilisation à la fin du doc
+    doc.addPage();
+    var splitTitle = doc.splitTextToSize(cgu, 180);
+    doc.text(splitTitle, 10, 10);
+     
     // Export
     doc.save('bilan_emissions.pdf');
-   
 };
 
 function create_hover_info_bar(){
