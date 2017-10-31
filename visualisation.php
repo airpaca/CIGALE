@@ -330,6 +330,10 @@ Chart.defaults.global.defaultFontFamily = "'Lato', sans-serif";
 Chart.defaults.global.defaultFontStyle = "normal";
 Chart.defaults.global.legend.labels.boxWidth = 20;
 
+// Spinner
+var spinner_bilans = new Spinner({opacity: 0.25, width: 3, color: "#6E6E6E", speed: 1.5, scale: 3, }); // top:"50%", left:"60%",
+var spinner_bilans_element = document.getElementById('sidebar');
+
 // Permets de dessiner des lignes sur un linechart pour les nodata
 // Source: https://stackoverflow.com/questions/36329630/chart-js-2-0-vertical-lines
 var originalLineDraw = Chart.controllers.line.prototype.draw;
@@ -2087,10 +2091,10 @@ function create_graphiques(siren_epci, nom_epci){
     Création des graphiques 
     */
     
-    // Mise en forme des blocs de graphiques pour les émissions
-    $(".graph4").css({"height": "10%", "width": "70%"});    
-    $(".graph4").show();
-    $(".graph5").show();
+    // On cache les graphiques précédents si existants et on lance le sablier
+    $(".graph_container").hide();
+    sidebar.show(); 
+    spinner_bilans.spin(spinner_bilans_element);
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2110,10 +2114,19 @@ function create_graphiques(siren_epci, nom_epci){
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max;            
+            jqXHR.an = an_max; 
+            jqXHR.spinner_bilans = spinner_bilans;    
         },        
         success: function(response,textStatus,jqXHR){
             
+            jqXHR.spinner_bilans.stop();
+            
+            // Mise en forme des blocs de graphiques pour les émissions
+            $(".graph_container").show();
+            $(".graph4").css({"height": "10%", "width": "70%"});    
+            $(".graph4").show();
+            $(".graph5").show();             
+                    
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + an_max + ")"); 
             
@@ -2124,10 +2137,9 @@ function create_graphiques(siren_epci, nom_epci){
             
             create_graph_legend("graph5", 1);
             
-            sidebar.show();  
-            
         },
         error: function (request, error) {
+            jqXHR.spinner_bilans.stop();
             console.log("ERROR: create_graphiques()");
             console.log(arguments);
             console.log("Ajax error: " + error);
@@ -2142,10 +2154,10 @@ function create_graphiques_conso(siren_epci, nom_epci){
     Création des graphiques 
     */
     
-    // Mise en forme des blocs de graphiques pour les émissions
-    $(".graph4").css({"height": "10%", "width": "70%"});  
-    $(".graph4").show();
-    $(".graph5").show();
+    // On cache les graphiques précédents si existants et on lance le sablier
+    $(".graph_container").hide();
+    sidebar.show(); 
+    spinner_bilans.spin(spinner_bilans_element);    
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2165,9 +2177,18 @@ function create_graphiques_conso(siren_epci, nom_epci){
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max;            
+            jqXHR.an = an_max;   
+            jqXHR.spinner_bilans = spinner_bilans;                
         },        
         success: function(response,textStatus,jqXHR){
+             
+            jqXHR.spinner_bilans.stop(); 
+             
+            // Mise en forme des blocs de graphiques pour les émissions
+            $(".graph_container").show();
+            $(".graph4").css({"height": "10%", "width": "70%"});  
+            $(".graph4").show();
+            $(".graph5").show();             
              
             // titre
             change_graph_title(jqXHR.nom_epci + "</br> Consommation d’énergie finale non corrigée du climat </br>(" + response[4][0].val + " ktep en " + an_max + ")");
@@ -2178,10 +2199,10 @@ function create_graphiques_conso(siren_epci, nom_epci){
             create_barchart_part(response[3], "graph4");
             
             create_graph_legend("graph5", 2);
-            
-            sidebar.show();  
+             
         },
         error: function (request, error) {
+            jqXHR.spinner_bilans.stop(); 
             console.log("ERROR: create_graphiques_conso()");
             console.log(arguments);
             console.log("Ajax error: " + error);
@@ -2195,6 +2216,11 @@ function create_graphiques_prod(siren_epci, nom_epci){
     /*
     Création des graphiques de productions
     */
+
+    // On cache les graphiques précédents si existants et on lance le sablier
+    $(".graph_container").hide();
+    sidebar.show(); 
+    spinner_bilans.spin(spinner_bilans_element);
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2214,10 +2240,13 @@ function create_graphiques_prod(siren_epci, nom_epci){
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max;            
+            jqXHR.an = an_max;
+            jqXHR.spinner_bilans = spinner_bilans;             
         },        
         success: function(response,textStatus,jqXHR){
-                       
+              
+            jqXHR.spinner_bilans.stop();
+              
             // titre
             change_graph_title(jqXHR.nom_epci + "</br> Production d’énergie </br>(" + response[4][0].val + " GWh en " + an_max + ")");
             
@@ -2226,6 +2255,7 @@ function create_graphiques_prod(siren_epci, nom_epci){
             create_linechart_prod_primaire(response[2], "graph3", "Evolution des productions primaires (par filières en GWh)");
             
             // Pour les production, on utilise les légendes dynamiques
+            $(".graph_container").show();
             $(".graph5").hide();
             
             // Si pas de productions secondaires, alors on supprime le graphique
@@ -2240,10 +2270,9 @@ function create_graphiques_prod(siren_epci, nom_epci){
             };
                         
             // create_graph_legend("graph5", 1);
-            
-            sidebar.show();  
         },
         error: function (request, error) {
+            jqXHR.spinner_bilans.stop();
             console.log("ERROR: create_graphiques_prod()");
             console.log(arguments);
             console.log("Ajax error: " + error);
@@ -2257,11 +2286,11 @@ function create_graphiques_ges(siren_epci, nom_epci){
     /*
     Création des graphiques 
     */
-    
-    // Mise en forme des blocs de graphiques pour les émissions
-    $(".graph4").css({"height": "10%", "width": "70%"});  
-    $(".graph4").show();  
-    $(".graph5").show();    
+
+    // On cache les graphiques précédents si existants et on lance le sablier
+    $(".graph_container").hide();
+    sidebar.show(); 
+    spinner_bilans.spin(spinner_bilans_element);    
     
     // Enregistrement de l'EPCI pour recréation éventuelle des graphiques avec un autre polluant
     my_app.siren_epci = siren_epci;
@@ -2281,10 +2310,19 @@ function create_graphiques_ges(siren_epci, nom_epci){
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max;            
+            jqXHR.an = an_max;  
+            jqXHR.spinner_bilans = spinner_bilans;            
         },        
         success: function(response,textStatus,jqXHR){
-                
+             
+            jqXHR.spinner_bilans.stop(); 
+             
+            // Mise en forme des blocs de graphiques pour les émissions
+            $(".graph_container").show();
+            $(".graph4").css({"height": "10%", "width": "70%"});  
+            $(".graph4").show();  
+            $(".graph5").show(); 
+             
             // titre
             change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + an_max + ")");
             
@@ -2294,10 +2332,10 @@ function create_graphiques_ges(siren_epci, nom_epci){
             create_barchart_part(response[3], "graph4");
             
             create_graph_legend("graph5", 2);
-            
-            sidebar.show();  
+ 
         },
         error: function (request, error) {
+            jqXHR.spinner_bilans.stop();
             console.log("ERROR: create_graphiques_ges()");
             console.log(arguments);
             console.log("Ajax error: " + error);
