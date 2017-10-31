@@ -58,3 +58,4 @@ vacuum freeze cigale.comm_poll;
 ALTER TABLE cigale.epci_poll CLUSTER ON \"idx.cigale.epci_poll.id_polluant\";
 EOF
 " 
+

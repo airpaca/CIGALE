@@ -2168,7 +2168,7 @@ function create_graphiques_conso(siren_epci, nom_epci){
             jqXHR.an = an_max;            
         },        
         success: function(response,textStatus,jqXHR){
-                       
+             
             // titre
             change_graph_title(jqXHR.nom_epci + "</br> Consommation d’énergie finale non corrigée du climat </br>(" + response[4][0].val + " ktep en " + an_max + ")");
             

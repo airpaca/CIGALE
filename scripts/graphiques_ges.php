@@ -19,7 +19,7 @@ $sql = "
 select b.nom_court_secten1, b.secten1_color, sum(val) as val
 from (
 	select id_comm, id_secten1, (sum(val) / 1000.)::BIGINT as val 
-	from total.bilan_comm_v4_secten1
+	from total.bilan_comm_v4_secten1_" . str_replace(".", "", $polluant) . " 
 	where 
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
@@ -52,7 +52,7 @@ $sql = "
 select b.nom_court_cat_energie as nom_court_secten1, b.cat_energie_color as secten1_color, sum(val) as val
 from (
 	select id_comm, code_cat_energie, (sum(val) / 1000.)::BIGINT as val 
-	from total.bilan_comm_v4_secten1
+	from total.bilan_comm_v4_secten1_" . str_replace(".", "", $polluant) . "
 	where 
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
@@ -83,7 +83,7 @@ while ($row = pg_fetch_assoc( $res )) {
 /* Evo par secteur - émissions directes */
 $sql = "
 select an, id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
-from total.bilan_comm_v4_secten1 as a
+from total.bilan_comm_v4_secten1_" . str_replace(".", "", $polluant) . " as a
 left join total.tpk_secten1_color as b using (id_secten1)
 where 
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
@@ -116,7 +116,7 @@ from (
 	select 
 		-- Emissions de l'EPCI
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v4_secten1
+		from total.bilan_comm_v4_secten1_" . str_replace(".", "", $polluant) . "
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
 			and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
@@ -126,7 +126,7 @@ from (
 		) as epci,
 		-- Emissions de la région
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v4_secten1
+		from total.bilan_comm_v4_secten1_" . str_replace(".", "", $polluant) . "
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
             and code_cat_energie not in (6, 8) -- emissions directes hors chaleur et froid
@@ -151,7 +151,7 @@ while ($row = pg_fetch_assoc( $res )) {
 /* Emi totale an max */
 $sql = "
 select (sum(val) / 1000.)::BIGINT as val 
-from total.bilan_comm_v4_secten1 as a
+from total.bilan_comm_v4_secten1_" . str_replace(".", "", $polluant) . " as a
 left join commun.tpk_commune_2015_2016 as c using (id_comm)
 where 
     an = " . $an . " 
