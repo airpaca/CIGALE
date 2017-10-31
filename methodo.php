@@ -97,7 +97,11 @@
 					</p>
 			    <h2 data-toc-text="Production d'énergie primaire">Production d'énergie primaire</h2>
 					<p>
-                    <i>en cours...</i> 
+					L’énergie primaire est l’ensemble des produits énergétiques avant transformation. 
+					La production d’énergie primaire consiste en l’extraction de combustibles fossiles (pétrole brut, gaz naturel, 
+					combustibles minéraux solides, etc.), la production d’énergie nucléaire (chaleur générée par la fission des atomes) 
+					ainsi que la production d’énergie renouvelable (énergie solaire thermique, photovoltaïque, hydraulique, éolienne, 
+					géothermique, biomasse, etc.). 
 					</p>
 				<h2 data-toc-text="Emissions de gaz à effet de serre : PRG">Emissions de gaz à effet de serre : PRG</h2>
 					<p>
@@ -112,8 +116,8 @@
 					</p>
 				<h2 data-toc-text="Equivalences énergétiques">Tableau des équivalences énergétiques</h2>
 					<p>
-                    <i>en cours...</i> 
-					</p>
+                    <img src="img/Tableau_eq_energetique.JPG" border="0" width="97%">
+                    </p>
 			
             <h1>Nomenclatures d'activités</h1>
 			    <h2 data-toc-text="Nomenclature SNAP">Nomenclature SNAP</h2>
