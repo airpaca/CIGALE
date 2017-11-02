@@ -9,6 +9,7 @@ html, body, #container {
     color: #555;
     -webkit-font-smoothing: antialiased;
     -webkit-overflow-scrolling: touch;
+    overflow:auto;
 }
 
 .row{
@@ -312,6 +313,7 @@ LEAFLET SIDEBAR STYLE OVERRIDING
     padding: 10px;
     z-index: 2000; 
     width: 50%;
+    min-width: 50%;
 }
 .leaflet-sidebar.left {
     left: -500px;
@@ -345,6 +347,7 @@ LEAFLET SIDEBAR STYLE OVERRIDING
     border-radius: 4px; 
     background-color:white; /* RS - bgd color */
     opacity:0.9; /* RS - Add opacity */
+    
 }
 .leaflet-touch .leaflet-sidebar > .leaflet-control {
     box-shadow: none;
@@ -452,6 +455,7 @@ Graphiques dans LeafletSidebar
     color: black;
     background-color: white;
     width: 50%;
+    min-width: 50%;
     height: 25%;
     float: left;
 }
@@ -461,6 +465,7 @@ Graphiques dans LeafletSidebar
     background-color: white;
     height: 25%;
     width: 50%;
+    min-width: 50%;
     float: right;
 }
 .graph3{
@@ -468,6 +473,7 @@ Graphiques dans LeafletSidebar
     color: black;
     background-color: white;
     width: 100%;
+    min-width: 100%;
     height: 40%;
     float: left;
 }
@@ -476,6 +482,7 @@ Graphiques dans LeafletSidebar
     color: black;
     background-color: white;
     width: 70%;
+    min-width: 70%;
     height: 10%; /* 12% si navigateur trop petit */
     float: left;
 }
@@ -484,6 +491,7 @@ Graphiques dans LeafletSidebar
     color: black;
     background-color: white;
     width: 100%;
+    min-width: 100%;
     height: 15%;
     float: left;    
 }
@@ -554,8 +562,8 @@ Graphiques dans LeafletSidebar
     /* transform: translateY(-40%); using the CSS3 Transform technique */
     /* transform: translateX(-80%); /* using the CSS3 Transform technique */
     /* padding-top: 10px; */
-    /* margin-bottom: 10px; */
-}
+    /* margin-bottom: 10px;
+} */
 
 /* .leaflet-verticalcenter .leaflet-control {
     margin-bottom: 10px;
