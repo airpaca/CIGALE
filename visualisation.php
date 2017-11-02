@@ -1249,9 +1249,11 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
             
             // ... colorramp en fonction du polluant
             // the_jenks = calc_jenks(data_filtered, "val", 6, ['#f9ebea', '#cd6155', '#cb4335']);
-            if (['conso','prod'].includes(my_layers_object.polluant)  == true) {
+            // if (['conso','prod'].includes(my_layers_object.polluant)  == true) {
+            if (my_layers_object.polluant == "conso" || my_layers_object.polluant == "prod") {
                 the_jenks = calc_jenks(data_filtered, "val", 6, color_scales.energie);
-            } else if (['co2','ch4.co2e','n2o.co2e','prg100.3ges'].includes(my_layers_object.polluant)  == true) {
+            // } else if (['co2','ch4.co2e','n2o.co2e','prg100.3ges'].includes(my_layers_object.polluant)  == true) {
+            } else if (my_layers_object.polluant == "co2" || my_layers_object.polluant == "ch4.co2e" || my_layers_object.polluant == "n2o.co2e" || my_layers_object.polluant == "prg100.3ges") {
                 the_jenks = calc_jenks(data_filtered, "val", 6, color_scales.ges);
             } else {
                 the_jenks = calc_jenks(data_filtered, "val", 6, color_scales.polluants);
