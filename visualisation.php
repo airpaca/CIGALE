@@ -38,9 +38,10 @@
     <!-- proj4js -->
     <script src="libs/proj4/proj4.js"></script>  
         
-    <!-- Chart.js -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
-
+    <!-- Chart.js
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script> -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    
     <!-- Selectize.js (ATTENTION: Version standalone nécessaire!! js/standalone) -->
     <script src="libs/selectize.js/selectize.min.js" type="text/javascript"></script>
     <link href="libs/selectize.js/selectize.css" rel="stylesheet" type="text/css"/>
@@ -1486,7 +1487,7 @@ function create_piechart_prod(response, div, graph_title, tooltip_unit){
     @response - Réponse json de la requête ajax
     @div - Classe de l'élement auquel rattacher le graph 
     */           
-    $('.' + div).html('<canvas id="' + div + '_canvas"></canvas>');        
+    $('.' + div).html('<canvas id="' + div + '_canvas""></canvas>'); // style="background-color: red;  
 
     var graph_labels = [];
     for (var i in response) {
@@ -2270,42 +2271,7 @@ function create_graphiques_prod(siren_epci, nom_epci){
                 $(".graph4").css({"height": "35%", "width": "100%"});                
                 $(".graph4").show();
                 create_linechart_prod_secondaire(response[1], "graph4", "Evolution des productions secondaires (par filières en GWh)");
-            };
-               
-            // console.log("A");
-            // $(window).trigger('resize');
-            // $(".leaflet-sidebar").css({"height": "100%", "width": "51%"}); // Pourrait fonctioner faut un if pour changer 
-            // console.log("B");
-            // $(".leaflet-sidebar").trigger('resize');
-            // console.log($(".leaflet-sidebar").css("width"));
-            // console.log($(".leaflet-sidebar").css("height"));
-            // $(".leaflet-sidebar").css({"width": "51%"});
-            // $(".leaflet-sidebar").css({"height": "100%", "width": "51%"});
-            // 553.5px
-               
-            
-
-
-
-            if (chrome_prod_plot_debug == "50%") {
-                $(".leaflet-sidebar").css({"width": "51%"});
-                console.log("Passe à 51");
-                // console.log($(".leaflet-sidebar").css("width"));
-                chrome_prod_plot_debug = "51%";
-            } else {
-                $(".leaflet-sidebar").css({"width": "50%"});
-                console.log("Passe à 50");
-                // console.log($(".leaflet-sidebar").css("width"));
-                chrome_prod_plot_debug = "50%";
-            };
-
-
-
-
-
-
-            
-               
+            };     
                
             // create_graph_legend("graph5", 1);
         },
