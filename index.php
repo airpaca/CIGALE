@@ -1,5 +1,7 @@
+<!-- Doctype HTML5 -->
 <!DOCTYPE html>
 <html lang="en">
+<html dir="ltr">
     <head>
 
         <meta charset="utf-8">
@@ -8,8 +10,10 @@
         <meta name="description" content="Consultation d'Inventaires Géolocalisés Air CLimat Energie">
         <meta name="author" content="Air PACA">
 
-        <title>CIGALE - Consultation d'Inventaires Géolocalisés Air CLimat Energie</title>
+        <title>CIGALE - Accueil</title>
 
+        <link rel="icon" type="image/png" href="img/cicada.png">
+        
         <link rel="stylesheet" href="libs/bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css"> <!-- Bootstrap core CSS  -->
         <link href="index.css" rel="stylesheet"> <!-- Custom styles for this template -->
         <link href='http://fonts.googleapis.com/css?family=Lato:300,400,900' rel='stylesheet' type='text/css'> <!-- Fonts from Google Fonts -->

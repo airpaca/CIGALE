@@ -1,14 +1,18 @@
+<!-- Doctype HTML5 -->
 <!DOCTYPE html>
 <html lang="en">
+<html dir="ltr">
 <head>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Consultation d’Inventaires Géolocalisés de qualité de l’Air et de L’Energie - Extractions">
+    <meta name="description" content="Extraction Climat Air Enerie">
     <meta name="author" content="Air PACA">    
     
-    <title>Air PACA - Extraction CIGALE</title> <!-- <title>CIGALE - Extraction</title> -->
+    <title>CIGALE - Extraction</title> <!-- <title>CIGALE - Extraction</title> -->
+    
+    <link rel="icon" type="image/png" href="img/cicada.png">
     
     <!-- JQuery 3.2.1 -->
     <script src="libs/jquery/jquery-3.2.1.min.js"></script>    
