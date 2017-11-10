@@ -70,7 +70,7 @@ declare
 
 begin 
 
-	for _id_polluant in (SELECT DISTINCT id_polluant from total.bilan_comm_v4_secten1 limit 1) loop
+	for _id_polluant in (SELECT DISTINCT id_polluant from total.bilan_comm_v4_secten1) loop
 
 		select replace(nom_abrege_polluant, '.', '') into _nom_abrege_polluant from commun.tpk_polluants where id_polluant = _id_polluant;
 
