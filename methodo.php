@@ -283,6 +283,11 @@
 			<a href="https://www.citepa.org/fr/activites/inventaires-des-emissions/secten">CITEPA : inventaire SECTEN</a>
 			</p>
 
+            <h1>Licence</h1>
+            <p>
+            Les données présentées sont sous licence <a href="http://opendatacommons.org/licenses/odbl/1.0/">ODbL</a>.
+            </p>          
+            
             <h1>Contact</h1>
             <p>
             Pour nous faire remonter une erreur, incohérence ou pour plus d'information sur les données 
