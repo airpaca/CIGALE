@@ -239,8 +239,13 @@
             </p>                    
 
             <h1 data-toc-text="Conditions d'utilisation">Conditions d'utilisation des données</h1>
+                    
                     <p>
-                    Les données fournies dans le cadre de l'application CIGALE peuvent librement être diffusées, 
+                    Les données présentées dans le cadre de l'application CIGALE sont sous licence 
+                    <a href="http://opendatacommons.org/licenses/odbl/1.0/">ODbL</a>.
+                    </p>
+                    <p>
+                    Elles peuvent librement être diffusées, 
                     publiées ou utilisées dans le cadre de travaux, d'études ou d'analyse avec les conditions suivantes:
                     </p>
                     <p>
@@ -283,11 +288,6 @@
 			<a href="https://www.citepa.org/fr/activites/inventaires-des-emissions/secten">CITEPA : inventaire SECTEN</a>
 			</p>
 
-            <h1>Licence</h1>
-            <p>
-            Les données présentées sont sous licence <a href="http://opendatacommons.org/licenses/odbl/1.0/">ODbL</a>.
-            </p>          
-            
             <h1>Contact</h1>
             <p>
             Pour nous faire remonter une erreur, incohérence ou pour plus d'information sur les données 
