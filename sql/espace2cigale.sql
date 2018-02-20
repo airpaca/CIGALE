@@ -458,6 +458,78 @@ order by an, id_polluant
 
 
 
+/**
+Récupération tardive des consos elec routier dans CIGALE directement dans la table SECTEN1
+*/
+insert into total.bilan_comm_v4_secten1
+-- Passage en SECTEN1 et Code_cat_energie
+select
+	id_polluant, 
+	an, 
+	case when id_comm >= 13201 and id_comm <= 13216 then 13055 else id_comm end as id_comm,  -- regroupement des arrondissements de Marseille.
+	e.id_secten1,
+	case when a.id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie,
+	id_usage,
+	id_branche, 
+	SUM(val) as val, 
+	id_unite, 
+	bdrep,
+	code_etab,
+	memo
+from (
+	-- Récupération des données
+	select 
+		id_polluant, 
+		an, 
+		case when id_comm >= 13201 and id_comm <= 13216 then 13055 else id_comm end as id_comm,  -- regroupement des arrondissements de Marseille.
+		id_snap3, -- Passer au SECTEN 1
+		id_energie, -- Passer en Cat énergie
+		38::integer as id_usage,
+		0::integer as id_branche, 
+		SUM(__convertir(val, 1, 1)) as val, 
+		1::integer as id_unite, 
+		false as bdrep,
+		-999::integer as code_etab,
+		'Consos traf elec récupérées dans un second temps'::text as memo
+	from total_traf.bilan_comm_v37_2015
+	where 
+		id_polluant=71 -- Consos MOCAT
+		and id_energie = 401
+		and an in (2007, 2010, 2012, 2013, 2014, 2015)
+		and id_polluant not in (121, 122)  -- Dans traf, 15 = 121 + 122
+	group by 
+	id_polluant, 
+		an, 
+		case when id_comm >= 13201 and id_comm <= 13216 then 13055 else id_comm end,  -- regroupement des arrondissements de Marseille.
+		id_snap3, -- Passer au SECTEN 1
+		id_energie -- Passer en Cat énergie
+) as a
+left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
+left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
+left join total.corresp_snap_synapse as d on a.id_snap3 = d.espace_id_snap3
+left join transversal.tpk_snap3 as e on d.synapse_id_snap3 = e.id_snap3
+group by 
+	id_polluant, 
+	an, 
+	case when id_comm >= 13201 and id_comm <= 13216 then 13055 else id_comm end,  -- regroupement des arrondissements de Marseille.
+	e.id_secten1,
+	case when a.id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
+	id_usage,
+	id_branche, 
+	id_unite, 
+	bdrep,
+	code_etab,
+	memo
+;
+
+
+
+
+
+
+
+
+
 
 /**
 Mise à jour tardive d'une fusion de commune 4198 -> 4033
@@ -1383,3 +1455,6 @@ GRANT USAGE ON SCHEMA commun TO ***;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA commun TO ***;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA commun TO ***;
 */
+
+
+
