@@ -622,6 +622,7 @@ where
 	and a.bdrep is true -- Uniquement les consos bdrep
 ;
 
+
 /**
 Calcul final du secret stat à la commune
 */
