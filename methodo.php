@@ -154,6 +154,9 @@
                     <a href="https://www.citepa.org/images/III-1_Rapports_Inventaires/SECTEN/CITEPA-liste-sources-2017-d.pdf">
 					Correspondance SNAP / SECTEN</a>
                     </p>
+                    
+                    
+                    <!--
                     <p>
                     Ce format de rapportage SECTEN est adaptée à des inventaires orientés « sources », 
                     c’est-à-dire lorsque les émissions sont comptabilisées sur leur lieu de rejet. 
@@ -164,6 +167,18 @@
                     Son principe est synthétisé dans le schéma suivant :
                     <p>
                     <img src="img/170724_schema_primaire_finale.jpg" border="0" width="97%">
+                    -->
+
+                    <p>
+                    L’inventaire des polluants atmosphériques (hors GES) comptabilise les émissions 
+                    sur le lieu de rejet. L’inventaire des émissions de gaz à effet de serre comptabilise 
+                    les émissions directes liées à tous les secteurs d’activité hormis celui de la 
+                    production d’énergie (électricité, chaleur et froid), dont seule la part d’émissions 
+                    indirectes liée à la consommation à l’intérieur du territoire est comptabilisée. 
+                    <p>
+                    <img src="img/170724_schema_inventaire.jpg" border="0" width="80%">                    
+                    
+                    
                     </p>	
 				<h2 data-toc-text="Secteur UTCF">Secteur UTCF</h2>
 					<p> 
