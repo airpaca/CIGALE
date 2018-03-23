@@ -786,7 +786,6 @@ $('[data-toggle="tooltip"]').tooltip(); // Configuration des popups
 
 
 
-
 </script>
 
 </body>
