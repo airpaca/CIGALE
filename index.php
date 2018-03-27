@@ -36,7 +36,10 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#"><b>CIGALE</b></a>
+                    <!-- <a class="navbar-brand" href="#"><b>CIGALE</b></a> -->
+                    <a class="navbar-brand" href="#"><img src="img/logoCigale/logo-cigale-blanc.png" id="logo_cigale"></a>
+                    
+                    
                 </div>
                 <!-- 
                 <div class="navbar-collapse collapse">
@@ -101,7 +104,8 @@
         </div><!-- /container -->
 
         <div class="container">
-            <p class="centered">Air PACA © - Bootstrap theme FLATTY thanks to http://blacktie.co | <a href="methodo.php#contact">contact</a></p>
+            <!-- <p class="centered">Air PACA © - Bootstrap theme FLATTY http://blacktie.co | <a href="methodo.php#contact">contact</a></p> -->
+            <p class="centered"><a href="https://www.airpaca.org/">Air PACA</a> © <a href="methodo.php#contact">contact</a> | Logo <a href="http://www.mathildeleygnac.com/">m-Leygnac</a> | Bootstrap theme <a href="http://blacktie.co">FLATTY</a></p>
         </div><!-- /container -->
 
 
