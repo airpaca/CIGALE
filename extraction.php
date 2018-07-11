@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Extraction Climat Air Enerie">
-    <meta name="author" content="Air PACA">    
+    <meta name="author" content="AtmoSud">    
     
     <title>CIGALE - Extraction</title> <!-- <title>CIGALE - Extraction</title> -->
     
@@ -191,11 +191,11 @@ var listes = {
 
 var cgu = 'Conditions Générales d\'utilisation: \n\n \
 Diffusion libre pour une réutilisation ultérieure des données dans les conditions ci-dessous : \n \
-– Toute utilisation partielle ou totale de ces données doit faire référence à Air PACA en terme de "Air PACA - Inventaire énergétique et d\'émissions de polluants et gaz à effet de serre". \n \
+– Toute utilisation partielle ou totale de ces données doit faire référence à AtmoSud en terme de "AtmoSud - Inventaire énergétique et d\'émissions de polluants et gaz à effet de serre". \n \
 – Données non rediffusées en cas de modification ultérieure des données. \n \
 \n \
-Les données contenues dans ce document restent la propriété d\'Air PACA.\n \
-Air PACA peut rediffuser ce document à d\'autres destinataires. \
+Les données contenues dans ce document restent la propriété d\'AtmoSud.\n \
+AtmoSud peut rediffuser ce document à d\'autres destinataires. \
 '; 
 
 /* Navigation entre les menus */
@@ -584,7 +584,7 @@ function afficher_donnees(){
    
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
-    $(".header_extraction").html('<img src="img/logo-Air-PACA_small.png"><br/><br/>Air PACA - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
+    $(".header_extraction").html('<img src="img/logo-Air-PACA_small.png"><br/><br/>AtmoSud - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
 function create_table(response, display){
@@ -613,24 +613,24 @@ function create_table(response, display){
             // 'copy', 
             {
                 extend: 'copyHtml5',
-                title: 'Air PACA - Export CIGALE du ' + datehour(),
+                title: 'AtmoSud - Export CIGALE du ' + datehour(),
                 // charset: 'iso-8859-1', // 'ANSI', // 'utf-8', 
                 customize: function ( csv ) {
-                    return "Air PACA\n\n" + cgu + "\n\n" + csv;
+                    return "AtmoSud\n\n" + cgu + "\n\n" + csv;
                 }                
             },  
             {
                 extend: 'csvHtml5',
-                title: 'Air PACA - Export CIGALE du ' + datehour(),
+                title: 'AtmoSud - Export CIGALE du ' + datehour(),
                 charset:  'utf-8', // 'windows-1252', // 'iso-8859-1', // 'ANSI', // 'utf-8', 
                 bom: true,
                 customize: function ( csv ) {
-                    return "Air PACA\n\n" + cgu + "\n\n" + csv;
+                    return "AtmoSud\n\n" + cgu + "\n\n" + csv;
                 }                
             },        
             {
                 extend: 'pdfHtml5',
-                title: 'Air PACA - Export CIGALE du ' + datehour(),
+                title: 'AtmoSud - Export CIGALE du ' + datehour(),
                 message: cgu, 
                 customize: function ( doc ) {
                     

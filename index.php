@@ -8,7 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Consultation d'Inventaires Géolocalisés Air CLimat Energie">
-        <meta name="author" content="Air PACA">
+        <meta name="author" content="AtmoSud">
 
         <title>CIGALE - Accueil</title>
 
@@ -63,7 +63,7 @@
                         </form>	
 
                         <div id="preambule">
-                        L'application CIGALE est réalisée par <a href="http://www.airpaca.org/">Air PACA</a>, 
+                        L'application CIGALE est réalisée par <a href="http://www.airpaca.org/">AtmoSud</a>, 
                         dans le cadre de ses missions au sein de <a href="http://oreca.regionpaca.fr/">l’Observatoire Régional de l’Energie, du Climat et de l’Air</a>. 
                         Elle fournit, de la région à la commune, des données annuelles de consommations et de productions d’énergie, 
                         d’émissions de polluants atmosphériques et de gaz à effet de serre.                   
@@ -105,7 +105,7 @@
 
         <div class="container">
             <!-- <p class="centered">Air PACA © - Bootstrap theme FLATTY http://blacktie.co | <a href="methodo.php#contact">contact</a></p> -->
-            <p class="centered"><a href="https://www.airpaca.org/">Air PACA</a> © <a href="methodo.php#contact">contact</a> | Logo <a href="http://www.mathildeleygnac.com/">m-Leygnac</a> | Bootstrap theme <a href="http://blacktie.co">FLATTY</a></p>
+            <p class="centered"><a href="https://www.airpaca.org/">AtmoSud</a> © <a href="methodo.php#contact">contact</a> | Logo <a href="http://www.mathildeleygnac.com/">m-Leygnac</a> | Bootstrap theme <a href="http://blacktie.co">FLATTY</a></p>
         </div><!-- /container -->
 
 

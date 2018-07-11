@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Méthodologie et documents de référence">
-    <meta name="author" content="Air PACA">    
+    <meta name="author" content="AtmoSud">    
     
     <title>CIGALE - Méthodo</title>
     
@@ -186,7 +186,7 @@
 					CO<sub>2</sub>, CH<sub>4</sub> et N<sub>2</sub>O. L'UTCF couvre la récolte et l'accroissement forestier, la conversion des forêts (défrichement) 
 					et des prairies ainsi que les sols dont la composition en carbone est sensible à la nature des activités 
 					auxquelles ils sont dédiés (forêt, prairies, terres cultivées). Ce secteur n’est actuellement pas calculé 
-					dans l’inventaire Air PACA.                  
+					dans l’inventaire AtmoSud.                  
                     </p>	
 				<h2 data-toc-text="Emetteurs non inclus">Emetteurs non inclus</h2>
 					<p> 
@@ -265,28 +265,28 @@
                     </p>
                     <p>
                     - Toute utilisation des données brutes issues de la base de données CIGALE devra faire référence à 
-                    l'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) et à Air PACA en ces termes :
+                    l'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) et à AtmoSud en ces termes :
                     'Source: Base de donnes CIGALE - Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) 
-                    Provence-Alpes-Côte d'Azur / inventaire Air PACA'
+                    Provence-Alpes-Côte d'Azur / inventaire AtmoSud'
                     </p>
                     <p>
                     - Toute utilisation de données retravaillées par l'utilisateur final à partir de données 
                     brutes issues de l'application CIGALE devra faire référence à l'Observatoire Régional de l'Energie, 
-                    du Climat et de l'Air (ORECA) et à Air PACA en ces termes :
+                    du Climat et de l'Air (ORECA) et à AtmoSud en ces termes :
                     'Source: *Utilisateur final* d'après la base de données CIGALE - Observatoire Régional de l'Energie, 
-                    du Climat et de l'Air (ORECA) Provence-Alpes-Côte d'Azur / inventaire Air PACA'
+                    du Climat et de l'Air (ORECA) Provence-Alpes-Côte d'Azur / inventaire AtmoSud'
                     </p>
                     <p>
-                    - Sur demande, l'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) Provence-Alpes-Côte d'Azur et Air PACA 
+                    - Sur demande, l'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) Provence-Alpes-Côte d'Azur et AtmoSud 
                     mettent à disposition les méthodes d'exploitation des données mises en œuvre.
                     </p>
                     <p>
                     - Les données contenues dans ce document restent la propriété de l'Observatoire Régional de l'Energie, 
-                    du Climat et de l'Air (ORECA) Provence-Alpes-Côte dAzur et d'Air PACA.
+                    du Climat et de l'Air (ORECA) Provence-Alpes-Côte dAzur et d'AtmoSud.
                     </p>
                     <p>
                     - L'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) Provence-Alpes-Côte dAzur et 
-                    Air PACA peuvent rediffuser ce document à d'autres destinataires.        
+                    AtmoSud peuvent rediffuser ce document à d'autres destinataires.        
                     </p>    
             
 			<h1>Liens utiles</h1>
@@ -309,7 +309,7 @@
             présentées, vous pouvez envoyer un mail à <a href="mailto:romain.souweine@airpaca.org">romain.souweine@airpaca.org</a>
             </p>
             <p>
-            Responsables de la publication: Air PACA - Gaëlle Luneau, Matthieu Moynet, Romain Souweine
+            Responsables de la publication: AtmoSud - Gaëlle Luneau, Matthieu Moynet, Romain Souweine
             </p>            
         </div>
         
