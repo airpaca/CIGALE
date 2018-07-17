@@ -95,7 +95,7 @@ if ($query_var != "999") {
         select an, id_comm, id_secten1, code_cat_energie, id_polluant, 
         sum(case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then null else val end) as val, 
         case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end as id_unite
-        from total.bilan_comm_v4_secten1
+        from total.bilan_comm_v" . $v_inv . "_secten1
         " . $where . "     
         and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
         group by 
@@ -184,7 +184,7 @@ if ($query_var != "999") {
         " . $champ_filiere . " 
         round(sum(val)::numeric, 1) as \"Valeur\",
         'MWh PCI' as \"Unite\"
-    FROM total.bilan_comm_v4_prod as a
+    FROM total.bilan_comm_v" . $v_inv . "_prod as a
     LEFT JOIN commun.tpk_communes as b using (id_comm)
     WHERE  
         an in (" . $query_ans . ") 
