@@ -250,18 +250,18 @@ $("#img-home").hover(function(){
 /* Variables générales */
 
 // Le logo AtmoSud prend trop de temps à transformer en base 64, on stock directement le résultat dans une variable.
-var dataURI_logo_airpaca = "data:image/jpeg;base64,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";
+// ANCIEN LOGO AIRPACA: var dataURI_logo_airpaca = "data:image/jpeg;base64,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";
+var dataURI_logo_airpaca = "data:image/jpeg;base64,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";
 
-var wms_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map";
-var wms_format = 'image/png';
-var wms_tr = true;
-var wms_attrib = "AtmoSud";
+// var wms_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map";
+// var wms_format = 'image/png';
+// var wms_tr = true;
+// var wms_attrib = "AtmoSud";
 
-var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0";
-var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&VERSION=2.0.0";
+// var wfs_getcapabilities = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0";
+// var wfs_address = cfg_host + "cgi-bin/mapserv?map=" + cfg_root + "CIGALE/serv.map&SERVICE=WFS&VERSION=2.0.0";  
+var wfs_address = cfg_host + "/cigale/ows?service=wfs&version=2.0.0";
 
-var ans_film = [2007, 2010, 2012, 2013, 2014, 2015];
-var an_max = 2015;
 var polls = ['conso', 'prod', 'so2','nox','pm10','pm2.5','covnm','nh3','co','co2','ch4.co2e','n2o.co2e','prg100.3ges'];
 var polls_names = {
     "conso": "consommations",
@@ -975,7 +975,7 @@ function create_wfs_epci_layers(my_layers_object){
     */
     
     $.ajax({
-        url: wfs_address + my_layers_object.wfs_query + "&nom_abrege_polluant=" + my_layers_object.polluant,
+        url: wfs_address + my_layers_object.wfs_query + "&CQL_FILTER=nom_abrege_polluant='" + my_layers_object.polluant + "'",
         datatype: 'json',
         jsonCallback: 'getJson',
         success: function (data) {
@@ -1241,7 +1241,8 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
     remove_all_comm_layers();     
     
     $.ajax({
-        url: wfs_address + my_layers_object.wfs_query + "&nom_abrege_polluant=" + my_layers_object.polluant + "&siren_epci=" + siren_epci,
+        // url: wfs_address + my_layers_object.wfs_query + "&nom_abrege_polluant=" + my_layers_object.polluant + "&siren_epci=" + siren_epci,
+        url: wfs_address + my_layers_object.wfs_query + "&CQL_FILTER=nom_abrege_polluant='" + my_layers_object.polluant + "'+AND+siren_epci='" + siren_epci + "'",
         datatype: 'json',
         jsonCallback: 'getJson',
         success: function (data) {
@@ -1420,7 +1421,7 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
         graph_labels.push(response[i].nom_court_secten1);
     };              
 
-    // var graph_title = 'Répartition sectorielle ' + an_max;
+    // var graph_title = 'Répartition sectorielle ' + cfg_anmax;
 
     var graph_data = [];
     for (var i in response) {
@@ -1505,7 +1506,7 @@ function create_piechart_prod(response, div, graph_title, tooltip_unit){
         graph_labels.push(response[i].detail_filiere_cigale);
     };              
 
-    // var graph_title = 'Répartition sectorielle ' + an_max;
+    // var graph_title = 'Répartition sectorielle ' + cfg_anmax;
 
     var graph_data = [];
     for (var i in response) {
@@ -1680,11 +1681,11 @@ function create_linechart_emi(response, div, graph_title){
         
         data = [];
         
-        for (ian in ans_film) {
+        for (ian in cfg_ans_film) {
             
             secteur = liste_secteurs[isect];
             couleur = liste_couleurs[isect];
-            an = ans_film[ian];
+            an = cfg_ans_film[ian];
             
             found_val = 0;
             for (var i in response) {
@@ -1710,12 +1711,12 @@ function create_linechart_emi(response, div, graph_title){
         });        
         
     };   
-
+    
     var ctx = document.getElementById(div + "_canvas");
     var graph = new Chart(ctx, {
         type: 'line',     
         data: {
-            labels: ans_film,
+            labels: cfg_ans_film,
             datasets: datasets,
         },
         options: {
@@ -1776,11 +1777,11 @@ function create_linechart_prod_primaire(response, div, graph_title){
         
         data = [];
         
-        for (ian in ans_film) {
+        for (ian in cfg_ans_film) {
             
             secteur = liste_secteurs[isect];
             couleur = liste_couleurs[isect];
-            an = ans_film[ian];
+            an = cfg_ans_film[ian];
             
             found_val = 0;
             for (var i in response) {
@@ -1811,7 +1812,7 @@ function create_linechart_prod_primaire(response, div, graph_title){
     var graph = new Chart(ctx, {
         type: 'line',     
         data: {
-            labels: ans_film,
+            labels: cfg_ans_film,
             datasets: datasets,
         },
         options: {
@@ -1873,11 +1874,11 @@ function create_linechart_prod_secondaire(response, div, graph_title){
         
         data = [];
         
-        for (ian in ans_film) {
+        for (ian in cfg_ans_film) {
             
             secteur = liste_secteurs[isect];
             couleur = liste_couleurs[isect];
-            an = ans_film[ian];
+            an = cfg_ans_film[ian];
             
             found_val = 0;
             for (var i in response) {
@@ -1908,7 +1909,7 @@ function create_linechart_prod_secondaire(response, div, graph_title){
     var graph = new Chart(ctx, {
         type: 'line',     
         data: {
-            labels: ans_film,
+            labels: cfg_ans_film,
             datasets: datasets,
         },
         options: {
@@ -2047,7 +2048,7 @@ function create_barchart_part(response, div){
                 display: true,
                 // fontSize: 15,
                 fontStyle: "normal", 
-                text: "EPCI = " + response[0].pct_reg + "% de la région en " + an_max,
+                text: "EPCI = " + response[0].pct_reg + "% de la région en " + cfg_anmax,
             },
             legend: {
                 position: 'bottom',
@@ -2120,14 +2121,14 @@ function create_graphiques(siren_epci, nom_epci){
         data: {
             siren_epci: siren_epci,
             polluant: polluant_actif,
-            an: an_max,
+            an: cfg_anmax,
         },    
         beforeSend:function(jqXHR, settings){
             jqXHR.siren_epci = siren_epci;  
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max; 
+            jqXHR.an = cfg_anmax; 
             jqXHR.spinner_bilans = spinner_bilans;    
         },        
         success: function(response,textStatus,jqXHR){
@@ -2141,10 +2142,10 @@ function create_graphiques(siren_epci, nom_epci){
             $(".graph5").show();             
                     
             // titre
-            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + an_max + ")"); 
+            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + cfg_anmax + ")"); 
             
             create_barchart_emi(response[1], "graph2", jqXHR.polls_names[jqXHR.polluant]);
-            create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + an_max, "t");
+            create_piechart_emi(response[0], "graph1", 'Répartition sectorielle ' + cfg_anmax, "t");
             create_linechart_emi(response[2], "graph3", "Evolution sectorielle pluriannuelle (t)");
             create_barchart_part(response[3], "graph4");
             
@@ -2152,7 +2153,7 @@ function create_graphiques(siren_epci, nom_epci){
             
         },
         error: function (request, error) {
-            jqXHR.spinner_bilans.stop();
+            // jqXHR.spinner_bilans.stop();
             console.log("ERROR: create_graphiques()");
             console.log(arguments);
             console.log("Ajax error: " + error);
@@ -2183,14 +2184,14 @@ function create_graphiques_conso(siren_epci, nom_epci){
         data: { 
             siren_epci: siren_epci,
             polluant: polluant_actif,
-            an: an_max,
+            an: cfg_anmax,
         },    
         beforeSend:function(jqXHR, settings){
             jqXHR.siren_epci = siren_epci;  
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max;   
+            jqXHR.an = cfg_anmax;   
             jqXHR.spinner_bilans = spinner_bilans;                
         },        
         success: function(response,textStatus,jqXHR){
@@ -2204,10 +2205,10 @@ function create_graphiques_conso(siren_epci, nom_epci){
             $(".graph5").show();             
              
             // titre
-            change_graph_title(jqXHR.nom_epci + "</br> Consommation d’énergie finale non corrigée du climat </br>(" + response[4][0].val + " ktep en " + an_max + ")");
+            change_graph_title(jqXHR.nom_epci + "</br> Consommation d’énergie finale non corrigée du climat </br>(" + response[4][0].val + " ktep en " + cfg_anmax + ")");
             
-            create_piechart_emi(response[0], "graph1", "Consommations finales par secteur en " + an_max, "ktep");
-            create_piechart_emi(response[1], "graph2", "Consommations finales par énergie en " + an_max, "ktep");
+            create_piechart_emi(response[0], "graph1", "Consommations finales par secteur en " + cfg_anmax, "ktep");
+            create_piechart_emi(response[1], "graph2", "Consommations finales par énergie en " + cfg_anmax, "ktep");
             create_linechart_emi(response[2], "graph3", "Evolution sectorielle (énergie finale en ktep)");
             create_barchart_part(response[3], "graph4");
             
@@ -2246,14 +2247,14 @@ function create_graphiques_prod(siren_epci, nom_epci){
         data: { 
             siren_epci: siren_epci,
             polluant: polluant_actif,
-            an: an_max,
+            an: cfg_anmax_prod,
         },    
         beforeSend:function(jqXHR, settings){
             jqXHR.siren_epci = siren_epci;  
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max;
+            jqXHR.an = cfg_anmax_prod;
             jqXHR.spinner_bilans = spinner_bilans;             
         },        
         success: function(response,textStatus,jqXHR){
@@ -2261,9 +2262,9 @@ function create_graphiques_prod(siren_epci, nom_epci){
             jqXHR.spinner_bilans.stop();
               
             // titre
-            change_graph_title(jqXHR.nom_epci + "</br> Production d’énergie </br>(" + response[4][0].val + " GWh en " + an_max + ")");
+            change_graph_title(jqXHR.nom_epci + "</br> Production d’énergie </br>(" + response[4][0].val + " GWh en " + cfg_anmax_prod + ")");
             
-            create_piechart_prod(response[0], "graph1", "Primaires par filières " + an_max, "GWh");
+            create_piechart_prod(response[0], "graph1", "Primaires par filières " + cfg_anmax_prod, "GWh");
             create_stacked_barchart_prod(response[3], "graph2");
             create_linechart_prod_primaire(response[2], "graph3", "Evolution des productions primaires (par filières en GWh)");
             
@@ -2318,14 +2319,14 @@ function create_graphiques_ges(siren_epci, nom_epci){
         data: { 
             siren_epci: siren_epci,
             polluant: polluant_actif,
-            an: an_max,
+            an: cfg_anmax,
         },    
         beforeSend:function(jqXHR, settings){
             jqXHR.siren_epci = siren_epci;  
             jqXHR.nom_epci = nom_epci;
             jqXHR.polluant = polluant_actif; 
             jqXHR.polls_names = polls_names;
-            jqXHR.an = an_max;  
+            jqXHR.an = cfg_anmax;  
             jqXHR.spinner_bilans = spinner_bilans;            
         },        
         success: function(response,textStatus,jqXHR){
@@ -2339,10 +2340,10 @@ function create_graphiques_ges(siren_epci, nom_epci){
             $(".graph5").show(); 
              
             // titre
-            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + an_max + ")");
+            change_graph_title(jqXHR.nom_epci + '</br> Emissions annuelles de ' + jqXHR.polls_names[jqXHR.polluant] + "</br>(" + response[4][0].val + " t en " + cfg_anmax + ")");
             
-            create_piechart_emi(response[0], "graph1", "Emissions par secteur " + an_max, "t");
-            create_piechart_emi(response[1], "graph2", "Emissions par énergie " + an_max, "t");
+            create_piechart_emi(response[0], "graph1", "Emissions par secteur " + cfg_anmax, "t");
+            create_piechart_emi(response[1], "graph2", "Emissions par énergie " + cfg_anmax, "t");
             create_linechart_emi(response[2], "graph3", "Evolution sectorielle (émissions indirectes en t)");
             create_barchart_part(response[3], "graph4");
             
@@ -2507,15 +2508,15 @@ function creation_couches_epci_polluant(){
         
         // Texte de légende en fonction du polluant
         if (polls[i] == 'conso'){
-            legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
+            legend_text = "Consommations finales " + cfg_anmax + " tep/km&sup2;";
         } else if (polls[i] == 'prod'){
-            legend_text = "Productions d'énergie primaire " + an_max + " MWh/km&sup2;";
+            legend_text = "Productions d'énergie primaire " + cfg_anmax + " MWh/km&sup2;";
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
-            legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";
+            legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + cfg_anmax + " kg/km&sup2;";
         } else if (polls[i] == 'prg100.3ges'){
-            legend_text = polls_names[polls[i]] + " en " + an_max + "  en kg/km&sup2;";
+            legend_text = polls_names[polls[i]] + " en " + cfg_anmax + "  en kg/km&sup2;";
         } else {
-            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";  
+            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + cfg_anmax + " kg/km&sup2;";  
         };
         
         // Ajout de la couche dans la liste des couches avec les bons paramètres
@@ -2523,10 +2524,10 @@ function creation_couches_epci_polluant(){
             name: "epci_" + polls[i],
             polluant: polls[i], 
             type: "wfs",
-            wfs_query: "&REQUEST=GetFeature&TYPENAME=epci_wfs&outputformat=geojson",
+            wfs_query: "&REQUEST=GetFeature&TYPENAME=cigale:epci_poll&outputformat=application/json",
             layer: null,
             opacity: 0.5,
-            subtitle: "Emissions " + an_max + " de " + polls[i] + " à l'EPCI",
+            subtitle: "Emissions " + cfg_anmax + " de " + polls[i] + " à l'EPCI",
             onmap: onmap,
             style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
             legend: {},
@@ -2552,15 +2553,15 @@ function creation_couches_comm_polluant(){
         
         // Texte de légende en fonction du polluant
         if (polls[i] == 'conso'){
-            legend_text = "Consommations finales " + an_max + " tep/km&sup2;";
+            legend_text = "Consommations finales " + cfg_anmax + " tep/km&sup2;";
         } else if (polls[i] == 'prod'){
-            legend_text = "Productions d'énergie primaire " + an_max + " MWh/km&sup2;";            
+            legend_text = "Productions d'énergie primaire " + cfg_anmax + " MWh/km&sup2;";            
         } else if (polls[i] == 'co2' || polls[i] == 'ch4.co2e' || polls[i] == 'n2o.co2e'){
-            legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;"; 
+            legend_text = "Emissions indirectes de " + polls_names[polls[i]] + " en " + cfg_anmax + " kg/km&sup2;"; 
         } else if (polls[i] == 'prg100.3ges'){
-            legend_text = polls_names[polls[i]] + " en " + an_max + "  kg/km&sup2;";            
+            legend_text = polls_names[polls[i]] + " en " + cfg_anmax + "  kg/km&sup2;";            
         } else {
-            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + an_max + " kg/km&sup2;";  
+            legend_text = "Emissions de " + polls_names[polls[i]] + " en " + cfg_anmax + " kg/km&sup2;";  
         };        
         
         // Ajout de la couche dans la liste des couches avec les bons paramètres
@@ -2569,10 +2570,10 @@ function creation_couches_comm_polluant(){
             polluant: polls[i], 
             type: "wfs",
             // wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_wfs_" + polls[i] + "&outputformat=geojson",
-            wfs_query: "&REQUEST=GetFeature&TYPENAME=comm_wfs&outputformat=geojson",
+            wfs_query: "&REQUEST=GetFeature&TYPENAME=cigale:comm_poll&outputformat=application/json",
             layer: null,
             opacity: 0.5,
-            subtitle: "Emissions " + an_max + " de " + polls[i] + " à la commune",
+            subtitle: "Emissions " + cfg_anmax + " de " + polls[i] + " à la commune",
             onmap: onmap,
             style: {color: "#000000", fillColor: "#D8D8D8", fillOpacity:0.5, weight: 2},
             legend: {},
@@ -2607,17 +2608,6 @@ function tests(){
 
 
 
-
-
-
-
-
-
-
-
-
-
- 
 
 </script>
 

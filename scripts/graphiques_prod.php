@@ -25,7 +25,7 @@ select
 	a.detail_filiere_cigale, 
 	color_detail_filiere_cigale, 
 	round(sum(val / 1000.)::numeric, 1) as val
-from total.bilan_comm_v4_prod as a
+from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	an = " . $an . "
     and grande_filiere_cigale = 'ENR'
@@ -51,7 +51,7 @@ $sql = "
 select 
 	an, 
 	round(sum(val / 1000.)::numeric, 1) as val
-from total.bilan_comm_v4_prod as a
+from total.bilan_comm_v" . $v_inv . "_prod as a
 where siren_epci_2017 = '" . $siren_epci . "' 
 group by an
 
@@ -84,7 +84,7 @@ select
 	a.detail_filiere_cigale, 
 	color_detail_filiere_cigale, 
 	round(sum(val / 1000.)::numeric, 1) as val
-from total.bilan_comm_v4_prod as a
+from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	grande_filiere_cigale = 'ENR'
     and siren_epci_2017 = '" . $siren_epci . "' 
@@ -111,7 +111,7 @@ select
 	a.grande_filiere_cigale, 
 	color_grande_filiere_cigale, 
 	round(sum(val / 1000.)::numeric, 1) as val
-from total.bilan_comm_v4_prod as a
+from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	grande_filiere_cigale <> 'ENR'
     and siren_epci_2017 = '" . $siren_epci . "' 
@@ -138,7 +138,7 @@ select
 	case when grande_filiere_cigale = 'ENR' then 'Primaire' else 'Secondaire' end as prod, 
 	case when grande_filiere_cigale = 'ENR' then '#33ff9c' else '#ff3390' end as prod_color, 
 	round(sum(val / 1000.)::numeric, 1) as val
-from total.bilan_comm_v4_prod as a
+from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
     siren_epci_2017 = '" . $siren_epci . "' 
 group by 
@@ -176,7 +176,7 @@ while ($row = pg_fetch_assoc( $res )) {
 // Prod totale an max
 $sql = "
 select sum(val / 1000.)::BIGINT as val
-from total.bilan_comm_v4_prod as a
+from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	an = " . $an . "
     and siren_epci_2017 = '" . $siren_epci . "' 

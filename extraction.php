@@ -374,7 +374,7 @@ function fill_listes(){
             $("#select_variable").selectpicker();    // FIXME: Les labels ne s'affichent pas!
             
             // Sélection des valeurs par défaut
-            $('#select_ans').selectpicker('val', '2015');
+            $('#select_ans').selectpicker('val', cfg_anmax);
             $("#select_entites").selectpicker('val', '93');   
             $("#select_entites").selectpicker('val', '93'); 
             $("#select_detail_comm").selectpicker('val', 'false'); 
@@ -584,7 +584,7 @@ function afficher_donnees(){
    
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
-    $(".header_extraction").html('<img src="img/logo-Air-PACA_small.png"><br/><br/>AtmoSud - Inventaire v4 - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
+    $(".header_extraction").html('<img src="img/logo-Air-PACA_small.png"><br/><br/>AtmoSud - Inventaire v' + cfg_vinv + ' - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
 function create_table(response, display){

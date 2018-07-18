@@ -11,7 +11,7 @@ if (!$conn) {
 }
 
 /* Export des années disponibles */
-$sql = "select distinct an from total.bilan_comm_v" . $v_inv . "_secten1 order by an;";
+$sql = "select distinct an from total.bilan_comm_v" . $v_inv . "_secten1 where an not in (2008,2009,2011) order by an;";
 
 $res = pg_query($conn, $sql);
 if (!$res) {
