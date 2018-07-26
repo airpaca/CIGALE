@@ -55,6 +55,7 @@ where
 	and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $siren_epci . ")
     and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
     and ss is false -- Aucune donnée en Secret Stat 
+    and an not in (2008,2009,2011)
 group by an
 
 -- Ajout des années non disponibles
