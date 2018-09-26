@@ -121,7 +121,7 @@ create table total.bilan_comm_v5_pcaet (
 	id_polluant smallint NOT NULL,
 	an smallint NOT NULL,
 	id_comm integer NOT NULL,
-	id_secten1 text NOT NULL,
+	id_secteur_pcaet text NOT NULL,
 	code_cat_energie smallint NOT NULL,
 	id_usage smallint NOT NULL,
 	id_branche integer NOT NULL DEFAULT 0,	
