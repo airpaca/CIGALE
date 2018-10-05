@@ -24,6 +24,7 @@ if ($query_var != "999") {
         $nom_entite = " nom_comm";
     } else {
         $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
+        $query_entite_nom = str_replace("'", "''", $query_entite_nom);
         $nom_entite = " '" . $query_entite_nom . "'";
     };
     if ($query_sect != "") {
@@ -224,7 +225,8 @@ if (!$conn) {
 /* Execution de la requête */
 $rResult = pg_query($conn, $sql);
 if (!$rResult) {
-    echo "An SQL error occured.\n";
+    echo "An SQL error occured.\n</br></br></br>";
+    // echo $sql;
     exit;
 }
 
