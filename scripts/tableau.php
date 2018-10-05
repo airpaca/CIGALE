@@ -98,7 +98,8 @@ if ($query_var != "999") {
         case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end as id_unite
         from total.bilan_comm_v" . $v_inv . "_secten1
         " . $where . "     
-        and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
+        -- and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
+        and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))    
         group by 
             an, 
             case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end, 
