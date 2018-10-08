@@ -164,6 +164,7 @@ where
 	id_polluant in (131,38,65,108,16,48,36,11)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
 	and a.id_comm <> 99999 -- Sans les émissions associées à l'objet mer
+	and a.id_comm <> 99138 -- Sans les émissions de la commune de Monaco  
 group by
 	id_secteur,
 	id_polluant, an, a.id_comm, 
@@ -198,6 +199,7 @@ where
 	id_polluant in (15, 123, 124, 128)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
 	and a.id_comm <> 99999 -- Sans les émissions associées à l'objet mer
+	and a.id_comm <> 99138 -- Sans les émissions associées à MC
 group by 
 	id_secteur,
 	id_polluant,
@@ -493,6 +495,7 @@ from (
 	from total.bilan_comm_v5
 	where id_polluant in (38, 65, 108, 16, 48, 36, 11, 131)
 	and id_comm <> 99999
+	and id_comm <> 99138
 	group by an, id_polluant
 ) as a
 full join (
@@ -1093,6 +1096,7 @@ from (
 		where 
 			id_polluant in (38,65,108,16,48,36,11,15,123,124,128)
 			and id_comm <> 99999
+			and id_comm <> 99138
 		group by id_polluant, an 
 
 		union all
@@ -1102,6 +1106,7 @@ from (
 		where 
 			id_polluant in (38,65,108,16,48,36,11,123,124,128)
 			and id_comm <> 99999
+			and id_comm <> 99138
 		group by id_polluant, an 		
 	) as a
 	group by id_polluant, an
