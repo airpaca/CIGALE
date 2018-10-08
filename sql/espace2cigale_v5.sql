@@ -68,17 +68,17 @@ from (
 -- 	union all
 
 -- 	-- Sélection des établissements tertiaire dont on connait l'id (!= -999)
--- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2015 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2015 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
+-- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2015 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2015 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 6 or b.id_version_corresp is null)
 -- 	union all
--- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2014 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2014 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
+-- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2014 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2014 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 6 or b.id_version_corresp is null)
 -- 	union all
--- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2013 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2013 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
+-- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2013 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2013 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 6 or b.id_version_corresp is null)
 -- 	union all
--- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2012 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2012 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
+-- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2012 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2012 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 6 or b.id_version_corresp is null)
 -- 	union all
--- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2010 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2010 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
+-- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2010 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2010 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 6 or b.id_version_corresp is null)
 -- 	union all
--- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2007 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2007 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 5 or b.id_version_corresp is null)
+-- 	select distinct an, a.id_comm, b.code_gerep, id_snap3, id_energie from total_ter.bilan_comm_v5_2007 as a left join src_ind.def_corresp_sources as b using (id_corresp) where id_corresp <> -999 and an = 2007 and (b.actif is true or b.actif is null) and (b.id_version_corresp = 6 or b.id_version_corresp is null)
 
 ) as a
 -- Lien avec les catégories d'énergie
@@ -159,7 +159,7 @@ select
 from total.bilan_comm_v5 as a
 left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
-left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
+left join (select * from src_ind.def_corresp_sources where id_version_corresp = 6 and actif is true) as d using (id_corresp)
 where 
 	id_polluant in (131,38,65,108,16,48,36,11)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
@@ -193,7 +193,7 @@ select
 from total.bilan_comm_v5_ges as a
 left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
-left join (select * from src_ind.def_corresp_sources where id_version_corresp = 5 and actif is true) as d using (id_corresp)
+left join (select * from src_ind.def_corresp_sources where id_version_corresp = 6 and actif is true) as d using (id_corresp)
 where 
 	id_polluant in (15, 123, 124, 128)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
@@ -750,7 +750,7 @@ from (
 				from src_ind.src_conso_source as a
 				left join src_ind.def_corresp_sources as b using (id_version_corresp, id_corresp)
 				where 
-					id_version_corresp = 5
+					id_version_corresp = 6
 					and actif is true
 					and id_energie = 301 
 					and a.commentaire = 'GRT GAZ'							
