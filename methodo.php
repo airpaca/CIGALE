@@ -232,7 +232,21 @@
 					- Autre énergie non renouvelable : Ordures ménagères (non organiques), déchets industriels solides, pneumatiques, plastiques, 
 					solvants usagés, gaz de cokerie, gaz de haut fourneau, mélange de gaz sidérurgiques, gaz industriel, gaz d’usine à gaz, gaz d’aciérie, hydrogène.
 					</p>
-					
+
+            <h1>Mise à jour des données</h1>
+            <p>
+            AtmoSud met à jour les inventaires d'émissions, de consommations et productions énergétiques tous les ans. 
+            </p>
+            <p>
+            Lors de cette mise à jour, une année supplémentaire est calculé. Les années antérieures sont également toutes recalculées pour 
+            prendre en compte les éventuelles modifications méthodologiques. 
+            Les données de la dernière version annulent et remplacent donc les précédentes.
+            </p>
+            <p>
+            <b>Version actuelle:</b> Année 2016 version 2018 (dernière maj 08/09/2018)</br>
+            <b>Historique des versions:</b> Année 2015 version 2017
+			</p>
+            
             <h1>Secret statistique</h1>
             <p>
             Certaines données sont soumises au secret statistique et ne peuvent être publiées. Une donnée est considérée 
