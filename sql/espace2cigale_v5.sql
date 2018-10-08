@@ -1014,7 +1014,8 @@ select distinct an, id_secten1, code_cat_energie, b.siren_epci_2017, ss_epci
 from total.bilan_comm_v5_secten1 as a
 left join commun.tpk_commune_2015_2016 as b using (id_comm)
 where id_polluant = 131 and ss_epci is false
-order by an, id_secten1, code_cat_energie, b.siren_epci_2017, ss_epci
+-- order by an, id_secten1, code_cat_energie, b.siren_epci_2017, ss_epci
+order by ss_epci, an, id_secten1, code_cat_energie, b.siren_epci_2017
 */
 
 
@@ -1163,7 +1164,7 @@ select
 	a.id_comm / 1000 as dep,
 	e.siren_epci_2017,
 	e.nom_epci_2017
-from total_prod_energie.prod_comm_v1 as a
+from total_prod_energie.prod_comm_v2 as a
 left join src_prod_energie.tpk_type_prod as b using (id_type_prod)
 left join src_prod_energie.tpk_filiere as c using (id_filiere)
 left join src_prod_energie.tpk_grande_filiere_cigale as d using (id_grande_filiere_cigale)
