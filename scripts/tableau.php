@@ -21,7 +21,7 @@ if ($query_var != "999") {
     $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
     if ($query_detail_comm == "true") {
         $group_by =  $group_by . ", \"Entité administrative\"";
-        $nom_entite = " nom_comm";
+        $nom_entite = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
     } else {
         $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
         $query_entite_nom = str_replace("'", "''", $query_entite_nom);
