@@ -21,7 +21,7 @@ if ($query_var != "999") {
     $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
     if ($query_detail_comm == "true") {
         $group_by =  $group_by . ", \"Entité administrative\"";
-        $nom_entite = " nom_comm";
+        $nom_entite = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
     } else {
         $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
         $query_entite_nom = str_replace("'", "''", $query_entite_nom);
@@ -150,13 +150,15 @@ if ($query_var != "999") {
         $where_entite = " and siren_epci_2017 = " . $query_entite . " ";
     // Si on est à la commune
     } else {
-        $champ_geo = "nom_comm";
+        // $champ_geo = "nom_comm";
+        $champ_geo = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
         $where_entite = " and id_comm = " . $query_entite . " ";
     };        
    
     /* Si détail à la commune demandé alors on regroupera à la commune */
     if ($query_detail_comm == "true") {
-       $champ_geo = "nom_comm";
+       // $champ_geo = "nom_comm";
+       $champ_geo = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
     }; 
 
     /* Gestion du regroupement par filiere */ 
