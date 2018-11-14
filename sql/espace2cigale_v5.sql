@@ -1,7 +1,7 @@
 ﻿/**
 
 espace2cigale.sql
-Air PACA - 2017 - GL/RS
+Air PACA - 2018 - GL/RS
 
 Insertion des données de l'inventaire des émissions dans CIGALE
 et traitement du secret statistique.
@@ -28,6 +28,14 @@ Secret stat à la commune par SECTEN 1 et catégorie d'énergie mais pas sur usa
 Secret stat à l'EPCI par SECTEN 1 et catégorie d'énergie en secrétisant une commune si besoin. 
 
 -- FIXME: Il faut peut-être passer les emissions de GES du 805XX en secten 8?
+
+
+
+* Mise à jour des communes avec les dernières fusions en date
+- sig.admin_express_2018
+- commun.tpk_commune_2015_2016 -> id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018
+! Le faire pour la visualisation mais également pour l'extraction!
+
 */
 
 
@@ -117,7 +125,6 @@ Création de la table des émissions par secten 1 et catégorie d'énergie
 
 
 
-
 -- Création de la table finale vide
 drop table if exists total.bilan_comm_v5_secten1;
 create table total.bilan_comm_v5_secten1 (
@@ -144,9 +151,11 @@ create table public.emi as
 -- ATTENTION On update certains SNAP non énergétiques, qui ont quand même des id_energie dans la table totale
 -- Ajout v5 - Dans inv v5 on a différencié tout le 15 en 121 et 122. Etant donné que l'on a que du CO2 tot dans CIGALE on 
 -- 			  regroupe le tout en 15
+-- NOTE: On fusionne les données avec le dernier découpage communal disponible
 select 
 	id_secteur,
-	id_polluant, an, a.id_comm, 
+	id_polluant, an, 
+	e.id_comm_2018 as id_comm, -- a.id_comm, 
 	id_snap3,
 	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
 	id_usage, id_branche,
@@ -160,6 +169,7 @@ from total.bilan_comm_v5 as a
 left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
 left join (select * from src_ind.def_corresp_sources where id_version_corresp = 6 and actif is true) as d using (id_corresp)
+left join commun.tpk_commune_2015_2016 as e on a.id_comm = e.id_comm
 where 
 	id_polluant in (131,38,65,108,16,48,36,11)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
@@ -167,7 +177,8 @@ where
 	and a.id_comm <> 99138 -- Sans les émissions de la commune de Monaco  
 group by
 	id_secteur,
-	id_polluant, an, a.id_comm, 
+	id_polluant, an, 
+	e.id_comm_2018, -- a.id_comm, 
 	id_snap3,
 	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
 	id_usage, id_branche,
@@ -181,7 +192,8 @@ union all
 select 
 	id_secteur,
 	id_polluant, 
-	an, a.id_comm, 
+	an, 
+	e.id_comm_2018 as id_comm, -- a.id_comm, 
 	id_snap3,
 	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end as code_cat_energie, -- code_cat_energie,
 	id_usage, id_branche,
@@ -195,6 +207,7 @@ from total.bilan_comm_v5_ges as a
 left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
 left join (select * from src_ind.def_corresp_sources where id_version_corresp = 6 and actif is true) as d using (id_corresp)
+left join commun.tpk_commune_2015_2016 as e on a.id_comm = e.id_comm
 where 
 	id_polluant in (15, 123, 124, 128)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
@@ -203,7 +216,8 @@ where
 group by 
 	id_secteur,
 	id_polluant,
-	an, a.id_comm, 
+	an, 
+	e.id_comm_2018, -- a.id_comm, 
 	id_snap3,
 	case when id_snap3 in (70900,70900,70900,70900,110300) then 0 else code_cat_energie end,
 	id_usage, id_branche,
@@ -627,7 +641,9 @@ order by src, id_polluant, id_secten1, code_cat_energie, an
 /**
 Mise à jour tardive d'une fusion de commune 4198 -> 4033
 avant calcul SS
-*/
+
+NOTE: Plus nécessaire, on prend la dernière version des fusions de communes lors de la création de la table
+
 drop table if exists public.tmp_fusion;
 create table public.tmp_fusion as 
 select 
@@ -655,7 +671,7 @@ delete from total.bilan_comm_v5_secten1 where id_comm in (4198, 4033);
 insert into total.bilan_comm_v5_secten1 
 select * from public.tmp_fusion;
 
-
+*/
 
 
 
@@ -851,69 +867,69 @@ with ss_epci as (
 		end as ss_epci
 	from (
 		-- Somme des consos à l'établissement
-		select id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, code_etab, sum(val) as conso_etab
+		select id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie, code_etab, sum(val) as conso_etab
 		from total.bilan_comm_v5_secten1
 		left join commun.tpk_commune_2015_2016 as b using (id_comm)
 		where id_polluant = 131 -- and an = 2015
-		group by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, code_etab
+		group by id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie, code_etab
 	) as a
 	left join (
 		-- Calcul du nb etab à l'EPCI secten et énergie
-		select an, siren_epci_2017, id_secten1, code_cat_energie, sum(coalesce(nb_etab, 0)) as nb_etab
+		select an, siren_epci_2018, id_secten1, code_cat_energie, sum(coalesce(nb_etab, 0)) as nb_etab
 		from  public.cigale_nb_etab as a
 		left join commun.tpk_commune_2015_2016 as b using (id_comm)
-		group by an, siren_epci_2017, id_secten1, code_cat_energie 
-	) as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
+		group by an, siren_epci_2018, id_secten1, code_cat_energie 
+	) as b using (an, siren_epci_2018, id_secten1, code_cat_energie)
 	left join (
 		-- Calcul conso à l'EPCI secten et énergie
-		select an, siren_epci_2017, id_secten1, code_cat_energie, sum(val) as conso_epci
+		select an, siren_epci_2018, id_secten1, code_cat_energie, sum(val) as conso_epci
 		from total.bilan_comm_v5_secten1 as a
 		left join commun.tpk_commune_2015_2016 as b using (id_comm)
 		where a.id_polluant = 131
-		group by an, siren_epci_2017, id_secten1, code_cat_energie 
-	) as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
+		group by an, siren_epci_2018, id_secten1, code_cat_energie 
+	) as c using (an, siren_epci_2018, id_secten1, code_cat_energie)
 	where 
 		code_etab <> '-999'
 		and code_cat_energie <> 8
 		-- FIXME: Et les clients GRT GAZ open data?
-	order by a.id_polluant, a.an, a.siren_epci_2017, a.id_secten1, a.code_cat_energie, a.code_etab
+	order by a.id_polluant, a.an, a.siren_epci_2018, a.id_secten1, a.code_cat_energie, a.code_etab
 ),
 nb_comm_ss as (
 	-- nb comm avec secret stat par epci
-	select id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, count(id_comm) as nb_comm_ss
+	select id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie, count(id_comm) as nb_comm_ss
 	from (
 		select id_polluant, an, id_comm, id_secten1, code_cat_energie
 		from total.bilan_comm_v5_secten1 
 		where ss is true and id_polluant = 131
 	) as a
 	left join commun.tpk_commune_2015_2016 as b using (id_comm)
-	group by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie
+	group by id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie
 ), 
 nb_comm_noss as (
 	-- nb comm sans secret stat par epci
-	select id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie, count(id_comm) as nb_comm_noss
+	select id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie, count(id_comm) as nb_comm_noss
 	from (
 		select id_polluant, an, id_comm, id_secten1, code_cat_energie
 		from total.bilan_comm_v5_secten1 
 		where ss is false and id_polluant  = 131
 	) as a
 	left join commun.tpk_commune_2015_2016 as b using (id_comm)
-	group by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie
+	group by id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie
 ),
 conso_min_comm_epci as (
 	-- Conso la plus faible des communes d'un EPCI par an, secten1, cat energie qui ne sont pas en SS comm
 	select *
 	from (
 		select 
-			an, siren_epci_2017, id_secten1, code_cat_energie, id_comm, val, rank()
-			OVER (PARTITION BY an, siren_epci_2017, id_secten1, code_cat_energie ORDER BY val DESC) as tri
+			an, siren_epci_2018, id_secten1, code_cat_energie, id_comm, val, rank()
+			OVER (PARTITION BY an, siren_epci_2018, id_secten1, code_cat_energie ORDER BY val DESC) as tri
 		from (
 			select 
-				an, siren_epci_2017, id_secten1, code_cat_energie, id_comm, sum(val) as val	
+				an, siren_epci_2018, id_secten1, code_cat_energie, id_comm, sum(val) as val	
 			from total.bilan_comm_v5_secten1 as a
 			left join commun.tpk_commune_2015_2016 as b using (id_comm)
 			where a.id_polluant = 131 and ss is false
-			group by an, siren_epci_2017, id_secten1, code_cat_energie, id_comm
+			group by an, siren_epci_2018, id_secten1, code_cat_energie, id_comm
 		) as a
 	) as a
 	where tri = 1
@@ -921,29 +937,29 @@ conso_min_comm_epci as (
 stats_ss_epci as (
 select a.*, ss_epci_true, case when ss_epci_true is not null then true else false end as ss_epci
 from (		
-	select distinct a.id_polluant, a.an, a.siren_epci_2017, a.id_secten1, a.code_cat_energie, nb_comm_ss, nb_comm_noss 
+	select distinct a.id_polluant, a.an, a.siren_epci_2018, a.id_secten1, a.code_cat_energie, nb_comm_ss, nb_comm_noss 
 	from ss_epci as a
-	left join nb_comm_ss as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
-	left join nb_comm_noss as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
+	left join nb_comm_ss as b using (an, siren_epci_2018, id_secten1, code_cat_energie)
+	left join nb_comm_noss as c using (an, siren_epci_2018, id_secten1, code_cat_energie)
 -- 	where 
 -- 		ss_epci is true
-		-- and siren_epci_2017 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013	
+		-- and siren_epci_2018 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013	
 ) as a
 left join (
-	select a.id_polluant, a.an, a.siren_epci_2017, a.id_secten1, a.code_cat_energie, nb_comm_ss, nb_comm_noss, true as ss_epci_true
+	select a.id_polluant, a.an, a.siren_epci_2018, a.id_secten1, a.code_cat_energie, nb_comm_ss, nb_comm_noss, true as ss_epci_true
 	from ss_epci as a
-	left join nb_comm_ss as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
-	left join nb_comm_noss as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
+	left join nb_comm_ss as b using (an, siren_epci_2018, id_secten1, code_cat_energie)
+	left join nb_comm_noss as c using (an, siren_epci_2018, id_secten1, code_cat_energie)
 	where 
 		ss_epci is true
-		-- and siren_epci_2017 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013
-) as b using (id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie)
+		-- and siren_epci_2018 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013
+) as b using (id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie)
 -- On lie toutes les statistiques calculées
 -- 	select a.*, b.nb_comm_ss, c.nb_comm_noss
 -- 	from ss_epci as a
--- 	left join nb_comm_ss as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
--- 	left join nb_comm_noss as c using (an, siren_epci_2017, id_secten1, code_cat_energie)
--- 	where siren_epci_2017 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013
+-- 	left join nb_comm_ss as b using (an, siren_epci_2018, id_secten1, code_cat_energie)
+-- 	left join nb_comm_noss as c using (an, siren_epci_2018, id_secten1, code_cat_energie)
+-- 	where siren_epci_2018 = 200035319 and id_secten1 = '2' and code_cat_energie = 8 and an = 2013
 )
 -- On crée la table temporaire en calculant un champ SS_epci temporaire en fonction du cas de figure
 select 
@@ -955,14 +971,14 @@ select
 	end as ss_epci_tmp,
 	b.id_comm as id_comm_to_ss
 from stats_ss_epci as a
-left join conso_min_comm_epci as b using (an, siren_epci_2017, id_secten1, code_cat_energie)
-order by an, siren_epci_2017, id_secten1, code_cat_energie
+left join conso_min_comm_epci as b using (an, siren_epci_2018, id_secten1, code_cat_energie)
+order by an, siren_epci_2018, id_secten1, code_cat_energie
 ;
 
 /**
 select *
 from public.tmp_ss_epci
-order by id_polluant, an, siren_epci_2017, id_secten1, code_cat_energie
+order by id_polluant, an, siren_epci_2018, id_secten1, code_cat_energie
 limit 300
 */
 
@@ -979,7 +995,7 @@ where
 	(a.an, a.id_secten1, a.code_cat_energie) 
 	= (b.an, b.id_secten1, b.code_cat_energie)
 	and a.id_comm = c.id_comm
-	and c.siren_epci_2017 = b.siren_epci_2017
+	and c.siren_epci_2018 = b.siren_epci_2018
 ;
 
 -- Secrétisation d'une commune quand nécessaire
@@ -1000,22 +1016,22 @@ where ss_epci is null;
 /* 
 VALIDATIONS
 -- Vérifier qu'on ait une valeur SS_EPCI unique pour un EPCI, an, id_secten1, code_cat_energie
-select an, siren_epci_2017, id_secten1, code_cat_energie, count(ss_epci) as validation
+select an, siren_epci_2018, id_secten1, code_cat_energie, count(ss_epci) as validation
 from (
-	select distinct an, siren_epci_2017, id_secten1, code_cat_energie, ss_epci
+	select distinct an, siren_epci_2018, id_secten1, code_cat_energie, ss_epci
 	from total.bilan_comm_v5_secten1 as a
 	left join commun.tpk_commune_2015_2016 as b using (id_comm)
 ) as a
-group by an, siren_epci_2017, id_secten1, code_cat_energie
+group by an, siren_epci_2018, id_secten1, code_cat_energie
 order by validation desc
 
 -- On regarde quelles sont les données en SS EPCI ou non
-select distinct an, id_secten1, code_cat_energie, b.siren_epci_2017, ss_epci
+select distinct an, id_secten1, code_cat_energie, b.siren_epci_2018, ss_epci
 from total.bilan_comm_v5_secten1 as a
 left join commun.tpk_commune_2015_2016 as b using (id_comm)
 where id_polluant = 131 and ss_epci is false
--- order by an, id_secten1, code_cat_energie, b.siren_epci_2017, ss_epci
-order by ss_epci, an, id_secten1, code_cat_energie, b.siren_epci_2017
+-- order by an, id_secten1, code_cat_energie, b.siren_epci_2018, ss_epci
+order by ss_epci, an, id_secten1, code_cat_energie, b.siren_epci_2018
 */
 
 
@@ -1155,15 +1171,15 @@ drop table if exists total.bilan_comm_v5_prod;
 create table total.bilan_comm_v5_prod as
 select 
 	a.an, 
-	a.id_comm, 
+	e.id_comm_2018 as id_comm, -- a.id_comm, 
 	a.id_type_prod, b.lib_type_prod,
 	c.id_grande_filiere_cigale, d.grande_filiere_cigale, d.color_grande_filiere_cigale,
 	c.id_detail_filiere_cigale, dd.detail_filiere_cigale, dd.color_detail_filiere_cigale,
 	sum(a.production) as val, 
 	a.id_unite,
 	a.id_comm / 1000 as dep,
-	e.siren_epci_2017,
-	e.nom_epci_2017
+	e.siren_epci_2018,
+	e.nom_epci_2018
 from total_prod_energie.prod_comm_v2 as a
 left join src_prod_energie.tpk_type_prod as b using (id_type_prod)
 left join src_prod_energie.tpk_filiere as c using (id_filiere)
@@ -1172,14 +1188,14 @@ left join src_prod_energie.tpk_detail_filiere_cigale as dd using (id_detail_fili
 left join commun.tpk_commune_2015_2016 as e using (id_comm)
 group by
 	a.an, 
-	a.id_comm, 
+	e.id_comm_2018, -- a.id_comm, 
 	a.id_type_prod, b.lib_type_prod,
 	c.id_grande_filiere_cigale, d.grande_filiere_cigale, d.color_grande_filiere_cigale,
 	c.id_detail_filiere_cigale, dd.detail_filiere_cigale, dd.color_detail_filiere_cigale,
 	a.id_unite,
 	a.id_comm / 1000,
-	e.siren_epci_2017,
-	e.nom_epci_2017
+	e.siren_epci_2018,
+	e.nom_epci_2018
 order by
 	an, 
 	id_comm, 
@@ -1321,19 +1337,19 @@ from (
 	select  	
 		an,
 		nom_abrege_polluant, 
-		siren_epci_2017 as siren_epci,
-		nom_epci_2017 as nom_epci,
+		siren_epci_2018 as siren_epci,
+		nom_epci_2018 as nom_epci,
 		sum(val)::numeric / (superficie / 100.)::numeric as val -- Superficie hectares -> km2
 	from total.bilan_comm_v5_secten1 as a
 	left join commun.tpk_commune_2015_2016 as b using (id_comm)
 	left join commun.tpk_polluants as c using (id_polluant)
-	left join cigale.epci as d on b.siren_epci_2017 = d.siren_epci
+	left join cigale.epci as d on b.siren_epci_2018 = d.siren_epci
 	where 
-		an = 2015
+		an = 2016
 		and not (id_polluant in (38,65,108,16,48,36,11) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
 		and not (id_polluant not in (38,65,108,16,48,36,11) and id_secten1 = '1') -- GES et Ener = Finale
 		and ss_epci is false -- Sans aucune donnée soumise au SS à l'EPCI	
-	group by an, nom_abrege_polluant, siren_epci_2017, nom_epci_2017, superficie
+	group by an, nom_abrege_polluant, siren_epci_2018, nom_epci_2018, superficie
 
 	union all
 
@@ -1341,15 +1357,15 @@ from (
 	select  	
 		an,
 		'prod'::text as nom_abrege_polluant, 
-		a.siren_epci_2017 as siren_epci,
-		nom_epci_2017 as nom_epci,
+		a.siren_epci_2018 as siren_epci,
+		nom_epci_2018 as nom_epci,
 		sum(val)::numeric / (superficie / 100.)::numeric as val -- Superficie hectares -> km2
 	from total.bilan_comm_v5_prod as a
-	left join cigale.epci as d on a.siren_epci_2017 = d.siren_epci
+	left join cigale.epci as d on a.siren_epci_2018 = d.siren_epci
 	where 
-		an = 2015
+		an = 2016
 		and id_grande_filiere_cigale = 1 -- ENR
-	group by an, siren_epci_2017, nom_epci_2017, superficie
+	group by an, siren_epci_2018, nom_epci_2018, superficie
 ) as a
 order by an, nom_abrege_polluant, siren_epci, nom_epci;
 
@@ -1376,20 +1392,20 @@ vacuum analyze cigale.epci_poll;
 vacuum freeze cigale.epci_poll;
 
 
-
+/*
 drop table if exists cigale.comm_poll;
 create table cigale.comm_poll WITH OIDS as  
 select row_number() over () as gid, *
 from (
 	select  
-		nom_abrege_polluant, id_comm, nom_comm, siren_epci_2017 as siren_epci, 
+		nom_abrege_polluant, id_comm, nom_comm, siren_epci_2018 as siren_epci, 
 		val / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
 		st_transform(geom, 4326) as geomtmp
 	from (
 		select id_polluant, an, id_comm, sum(val) as val
 		from total.bilan_comm_v5_secten1
 		where 
-			an = 2015
+			an = 2016
 			and not (id_polluant in (38,65,108,16,48,36,11,16) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
 			and not (id_polluant not in (38,65,108,16,48,36,11,16) and id_secten1 = '1') -- GES et Ener = Finale
 			and ss is false -- Sans aucune donnée en SS
@@ -1421,7 +1437,7 @@ from (
 
 	-- Ajout des prod
 	select 
-		'prod'::text as nom_abrege_polluant, id_comm, nom_comm, siren_epci_2017 as siren_epci, 
+		'prod'::text as nom_abrege_polluant, id_comm, nom_comm, siren_epci_2018 as siren_epci, 
 		val / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
 		st_transform(geom, 4326) as geomtmp
 	from (
@@ -1450,6 +1466,76 @@ from (
 				when insee_com in ('04198', '04033') then 4033
 				else insee_com::integer end
 	) as d using (id_comm)
+) as a;
+
+*/
+
+drop table if exists cigale.comm_poll;
+create table cigale.comm_poll WITH OIDS as  
+select row_number() over () as gid, *
+from (
+	select  
+		nom_abrege_polluant, c.id_comm_2018 as id_comm, c.nom_comm_2018 as nom_comm, siren_epci_2018 as siren_epci, 
+		sum(val) / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
+		-- st_transform(geom, 4326) as geomtmp
+		st_transform(d.geom,4326) as geomtmp
+	from (
+		select id_polluant, an, id_comm, sum(val) as val
+		from total.bilan_comm_v5_secten1
+		where 
+			an = 2016
+			and not (id_polluant in (38,65,108,16,48,36,11,16) and code_cat_energie in ('8', '6')) -- Emissions: Approche cadastrée: Pord d'énergie mais pas d'élec ni chaleur
+			and not (id_polluant not in (38,65,108,16,48,36,11,16) and id_secten1 = '1') -- GES et Ener = Finale
+			and ss is false -- Sans aucune donnée en SS
+		group by id_polluant, an, id_comm
+	) as a
+	left join commun.tpk_polluants as b using (id_polluant)
+	left join commun.tpk_commune_2015_2016 as c using (id_comm)
+	left join (
+		-- On utilise maintenant admin express
+		select 
+			insee_com::integer as id_comm,
+			sum(st_area(geom)) as superficie,
+			st_union(geom) as geom
+		from sig.admin_express_2018
+		where 
+			(insee_com::integer not between 13201 and 13216)
+		group by insee_com::integer
+	) as d on c.id_comm_2018 = d.id_comm -- using (id_comm)
+	where 
+		nom_abrege_polluant in ('conso','so2','nox','pm10','pm2.5','covnm','nh3','co','co2','ch4.co2e','n2o.co2e','prg100.3ges')
+	group by nom_abrege_polluant, c.id_comm_2018, c.nom_comm_2018, siren_epci_2018, d.geom, d.superficie
+	
+
+	union all
+
+	-- Ajout des prod
+	select 
+		'prod'::text as nom_abrege_polluant, c.id_comm_2018 as id_comm, c.nom_comm_2018 as nom_comm, siren_epci_2018 as siren_epci, 
+		sum(val) / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
+		-- st_transform(geom, 4326) as geomtmp
+		st_transform(d.geom,4326) as geomtmp
+	from (
+		select 999::integer as id_polluant, an, id_comm, sum(val) as val
+		from total.bilan_comm_v5_prod
+		where 
+			an = 2016
+			and id_grande_filiere_cigale = 1
+		group by id_polluant, an, id_comm
+	) as a
+	left join commun.tpk_commune_2015_2016 as c using (id_comm)
+	left join (
+		-- On utilise maintenant admin express
+		select 
+			insee_com::integer as id_comm,
+			sum(st_area(geom)) as superficie,
+			st_union(geom) as geom
+		from sig.admin_express_2018
+		where 
+			(insee_com::integer not between 13201 and 13216)
+		group by insee_com::integer
+	) as d on c.id_comm_2018 = d.id_comm -- using (id_comm)
+	group by nom_abrege_polluant, c.id_comm_2018, c.nom_comm_2018, siren_epci_2018, d.geom, d.superficie
 ) as a;
 
 SELECT AddGeometryColumn ('cigale','comm_poll','geom',4326,'MULTIPOLYGON',2, false);
@@ -1492,19 +1578,19 @@ create table cigale.liste_entites_admin as
     where id_reg = 93
     union all
     -- EPCI
-    select distinct 3 as order_field, siren_epci_2017, nom_epci_2017
+    select distinct 3 as order_field, siren_epci_2018, nom_epci_2018
     from commun.tpk_commune_2015_2016
-    where siren_epci_2017 is not null
+    where siren_epci_2018 is not null
     union all
     -- Communes
-    select order_field, id_comm, b.nom_comm || ' (' || lpad((id_comm / 1000)::text, 2, '0') || ')' as nom_comm
+    select distinct order_field, a.id_comm, b.nom_comm_2018 || ' (' || lpad((a.id_comm / 1000)::text, 2, '0') || ')' as nom_comm
     from (
         select distinct 4 as order_field, a.id_comm
         from total.bilan_comm_v5_secten1 as a
     ) as a
-    left join commun.tpk_communes as b using (id_comm)
+    -- left join commun.tpk_communes as b using (id_comm)
+    left join commun.tpk_commune_2015_2016 as b on a.id_comm = b.id_comm_2018
 order by order_field, valeur;
-
 
 
 
