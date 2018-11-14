@@ -207,7 +207,7 @@ where
     and siren_epci_2017 = " . $siren_epci . " 
     and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
     and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
-    and ss is false -- Aucune donnée en Secret Stat 
+    and ss_epci is false -- Aucune donnée en Secret Stat 
 ;
 ";
 

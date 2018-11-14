@@ -12,7 +12,7 @@ $query_ener = $_GET['query_ener'];
 $query_var = $_GET['query_var'];
 $query_detail_comm = $_GET['query_detail_comm'];
 
-/*  Ecriture du code SQL de la requête */
+/* Ecriture du code SQL de la requête */
 
 // Si export des consommations ou émissions
 if ($query_var != "999") { 
@@ -214,8 +214,8 @@ if ($query_var != "999") {
 
 /* Execution de la requête SQL et retour du résultat */
    
-// echo $ss;
-// echo $ss_field;
+
+/* DEBUG */
 // echo $sql;
 
 /* Connexion à PostgreSQL */
