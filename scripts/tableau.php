@@ -21,7 +21,7 @@ if ($query_var != "999") {
     $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
     if ($query_detail_comm == "true") {
         $group_by =  $group_by . ", \"Entité administrative\"";
-        $nom_entite = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
+        $nom_entite = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
     } else {
         $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
         $query_entite_nom = str_replace("'", "''", $query_entite_nom);
@@ -105,7 +105,8 @@ if ($query_var != "999") {
             case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end, 
             id_polluant, id_comm, id_secten1, code_cat_energie
     )  as a
-    left join commun.tpk_communes as b using (id_comm)
+    -- left join commun.tpk_communes as b using (id_comm)
+    left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018
     left join transversal.tpk_secten1 as c using (id_secten1)
     left join (select distinct code_cat_energie, cat_energie from transversal.tpk_energie) as d using (code_cat_energie)
     left join commun.tpk_polluants as e using (id_polluant)
@@ -146,19 +147,19 @@ if ($query_var != "999") {
         $where_entite = " and id_comm / 1000 = " . $query_entite . " ";
     // Si EPCI
     } elseif (strlen ($query_entite) == 9) {
-        $champ_geo = "nom_epci_2017";
-        $where_entite = " and siren_epci_2017 = " . $query_entite . " ";
+        $champ_geo = "nom_epci_2018";
+        $where_entite = " and siren_epci_2018 = " . $query_entite . " ";
     // Si on est à la commune
     } else {
         // $champ_geo = "nom_comm";
-        $champ_geo = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
+        $champ_geo = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
         $where_entite = " and id_comm = " . $query_entite . " ";
     };        
    
     /* Si détail à la commune demandé alors on regroupera à la commune */
     if ($query_detail_comm == "true") {
        // $champ_geo = "nom_comm";
-       $champ_geo = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
+       $champ_geo = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
     }; 
 
     /* Gestion du regroupement par filiere */ 
@@ -189,7 +190,7 @@ if ($query_var != "999") {
         round(sum(val)::numeric, 1) as \"Valeur\",
         'MWh PCI' as \"Unite\"
     FROM total.bilan_comm_v" . $v_inv . "_prod as a
-    LEFT JOIN commun.tpk_communes as b using (id_comm)
+    left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018 -- LEFT JOIN commun.tpk_communes as b using (id_comm)
     WHERE  
         an in (" . $query_ans . ") 
         " . $where_entite . " 
