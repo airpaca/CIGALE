@@ -1839,6 +1839,154 @@ ALTER TABLE total.bilan_comm_v5_secteurs CLUSTER ON "pk.total.bilan_comm_v5_sect
 
 
 
+/******************************************************************************
+
+Extraction des émissions 
+par snap2 et catégorie d'énergie
+pour fichier excel référents
+
+Différenciation du secteur de la production 
+d'énergie avec prod_ener true ou false
+
+-- Sélection des consommations
+select count(*) from total.bilan_comm_v5_snap2_catener where id_polluant in (131)
+
+-- Sélection des GES
+select count(*) from total.bilan_comm_v5_snap2_catener where id_polluant in (15, 123, 124, 128)
+
+-- Sélection des métaux
+select count(*) from total.bilan_comm_v5_snap2_catener where id_polluant in (2,5,37,39)
+
+-- Sélection des Particules
+select count(*) from total.bilan_comm_v5_snap2_catener where id_polluant in (65,108)
+
+-- Sélection des Dioxines et furanes
+select count(*) from total.bilan_comm_v5_snap2_catener where id_polluant in (40)
+
+-- Sélection des autres polluants
+select count(*) from total.bilan_comm_v5_snap2_catener where id_polluant in (3,4,11,16,36,38,48)
+
+******************************************************************************/
+
+drop table if exists total.bilan_comm_v5_snap2_catener;
+create table total.bilan_comm_v5_snap2_catener as 
+
+with snap_prod_ener as (
+	-- Table des SNAP ESPACE qui doivent passer en prod énergie
+	select distinct b.espace_id_snap3 as id_snap3
+	from transversal.tpk_snap3 as a
+	left join total.corresp_snap_synapse as b on a.id_snap3 = b.synapse_id_snap3
+	where 
+		id_secten1 = '1'
+		and b.espace_id_snap3 is not null
+	order by id_snap3
+)
+
+select 
+	id_polluant, 
+	nom_polluant, nom_abrege_polluant,
+	id_comm_2018 as id_comm, nom_comm_2018 as nom_comm, 
+	an, 
+	id_snap2, lib_snap2, 
+	code_cat_energie, cat_energie, prod_ener,
+	sum(val) as val
+from (
+	-- Sélection et regroupement des données émissions 35,200 ms
+	select 
+		id_polluant, id_comm, an, id_snap3 / 100 as id_snap2, id_energie, 
+		case when b.id_snap3 is not null then true else false end as prod_ener,
+		sum(val) as val
+	from total.bilan_comm_v5 as a
+	left join snap_prod_ener as b using (id_snap3)
+	where 
+		id_comm not in (99999, 99138)
+		and an not in (2008,2009,2011)
+		and id_polluant in (
+			131,
+			38,65,108,16,48,36,11,2,3,4,5,37,39,
+			40,
+			54,20 -- Pas disponibles dans le bilan
+		)
+	group by 
+		id_polluant, id_comm, an, id_snap3 / 100, id_energie, 
+		case when b.id_snap3 is not null then true else false end
+
+	union all
+
+	select 
+		id_polluant, id_comm, an, id_snap3 / 100 as id_snap2, id_energie, 
+		case when b.id_snap3 is not null then true else false end as prod_ener,
+		sum(val) as val
+	from total.bilan_comm_v5_ges as a
+	left join snap_prod_ener as b using (id_snap3)
+	where 
+		id_comm not in (99999, 99138)
+		and an not in (2008,2009,2011)
+		and id_polluant in (
+			15, 123, 124, 128
+		)
+	group by 
+		id_polluant, id_comm, an, id_snap3 / 100, id_energie, 
+		case when b.id_snap3 is not null then true else false end		
+) as a
+left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
+left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
+-- left join commun.tpk_snap3 as d using (id_snap3)
+left join commun.tpk_snap2 as d using (id_snap2)
+left join commun.tpk_energie as e on a.id_energie = e.id_energie
+left join commun.tpk_polluants as f using (id_polluant)
+left join commun.tpk_commune_2015_2016 as g using (id_comm)
+group by
+	id_polluant, 
+	nom_polluant, nom_abrege_polluant,
+	id_comm_2018, nom_comm_2018, 
+	an, 
+	id_snap2, lib_snap2, 
+	code_cat_energie, cat_energie, prod_ener
+order by 
+	id_polluant, 
+	nom_polluant, nom_abrege_polluant,
+	id_comm, 
+	an, 
+	id_snap2, lib_snap2, 
+	code_cat_energie, cat_energie, prod_ener
+;
+
+-- Validation
+drop function if exists total.bilan_snap2_catener();
+create function total.bilan_snap2_catener() returns void as $$ BEGIN
+
+if (
+	select round((
+		(
+			select sum(val) as val
+			from total.bilan_comm_v5
+			where 
+				id_comm not in (99999, 99138)
+				and an in (2016)
+				and id_polluant in (131)
+		) - (
+			select sum(val) as val
+			from total.bilan_comm_v5_snap2_catener
+			where 
+				id_comm not in (99999, 99138)
+				and an in (2016)
+				and id_polluant in (131)
+		)
+	)::numeric, 2) as diff
+) <> 0.00 then
+		raise WARNING 'ERREUR LORS DE LA VALIDATION DES EMISSIONS SNAP2';
+end if;
+end $$ language plpgsql;
+select total.bilan_snap2_catener();
+
+
+
+
+
+
+
+
 
 
 
