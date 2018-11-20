@@ -3,6 +3,9 @@
 espace2cigale.sql
 Air PACA - 2018 - GL/RS
 
+FIXME: Faire des validations automatiques sur le même modèle que celle de la table des émissions par secteur.
+
+
 Insertion des données de l'inventaire des émissions dans CIGALE
 et traitement du secret statistique.
 
@@ -35,6 +38,13 @@ Secret stat à l'EPCI par SECTEN 1 et catégorie d'énergie en secrétisant une 
 - sig.admin_express_2018
 - commun.tpk_commune_2015_2016 -> id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018
 ! Le faire pour la visualisation mais également pour l'extraction!
+
+
+Table des émissions détaillées pour accès restreint
+_______________________________________________________
+
+En fin de script, création de la table des émissions détaillées par secteur
+total.bilan_comm_v5_secteurs
 
 */
 
@@ -1591,6 +1601,246 @@ create table cigale.liste_entites_admin as
     -- left join commun.tpk_communes as b using (id_comm)
     left join commun.tpk_commune_2015_2016 as b on a.id_comm = b.id_comm_2018
 order by order_field, valeur;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/******************************************************************************
+
+Création de la table des émissions détaillées par secteurs et grands secteurs d'activités
+Table utilisée en accès restreint car ne traite pas le secret statistique.
+
+NOTE: PlPgSQL
+NOTE: Temps d'éxéction ~ 2 min
+
+- Récupération du secteur de la production d'énergie
+	On a bien ce secteur dans tpk_secteur. 
+	Mais l'affectation lors de la création de la table bilan comm
+    ne le prend pas en compte!
+	On a en revanche toujours l'id_snap3 dans bilan_comm
+	On peut donc utiliser id_snap3 et la correspondance avec les SNAP du transversal
+	pour retrouver quels SNAP partent dans le SECTEN 1 prod ener 
+- On ajoute le nom secteur, grand secteur et leur couleurs respectives
+- On ajoute les codes EPCI.
+- Nécessité de distinguer élec (401) et chaleur (403) des autres énergies pour extractions 
+  des consommations
+- Polluants rajoutés non présentés dans CIGALE
+  PCDDF (40), [1,3 Butadiène (54), Dichloroéthane-1,2 DCE (20) ne sont pas dans l'inventaire]
+- Prise en compte des fusions de communes avec la table de correspondance
+- On récupère les champs permettant de faire un order sur les secteurs et grands secteurs
+- On ne prend pas la commune de Monaco 99138
+
+Validations de la table des émissions:
+-------------------------------------------------------------------------------
+- Validations automatique après la création de la table
+
+Validations des requêtes d'extraction:
+-------------------------------------------------------------------------------
+- Extraction des parts d'émissions par secteur ou grand secteur
+  Emissions de tous les secteurs, sans l'élec et la chaleur [x][]
+  Validation d'une somme d'émissions SQL vs Interface [x]
+- Extraction des parts de GES par secteur ou grand secteur
+  On ne prend pas en compte le secteur de la production d'énergie, mais elec et chaleur [x][]  
+  Validation d'une somme d'émissions SQL vs Interface [x]
+- Extraction de l'évolution des émissions de polluants
+  Emissions de tous les secteurs, sans l'élec et la chaleur [x][]
+  Validation d'une somme d'émissions SQL vs Interface [x]
+- Extraction de l'évolution des GES
+  On ne prend pas en compte le secteur de la production d'énergie, mais elec et chaleur [x][]  
+  Validation d'une somme d'émissions SQL vs Interface [x]
+- Extraction de l'évolution des consommations
+  On veut des consos finales donc sans secteur de la prod énergie mais avec elec et chaleur [x][]  
+  Validation d'une somme d'émissions SQL vs Interface [x]
+
+
+Validation des affichages
+-------------------------------------------------------------------------------
+- La part des émissions / reg ou EPCI fait bien 100%
+
+
+******************************************************************************/
+
+drop table if exists total.bilan_comm_v5_secteurs;
+create table total.bilan_comm_v5_secteurs as
+with snap_prod_ener as (
+	-- Table des SNAP ESPACE qui doivent passer en prod énergie
+	select distinct b.espace_id_snap3 as id_snap3
+	from transversal.tpk_snap3 as a
+	left join total.corresp_snap_synapse as b on a.id_snap3 = b.synapse_id_snap3
+	where 
+		id_secten1 = '1'
+		and b.espace_id_snap3 is not null
+	order by id_snap3
+), emi as (
+	select 
+		id_polluant, 
+		case when id_snap3 in (select distinct id_snap3 from snap_prod_ener) then 12 else id_secteur end as id_secteur, 
+		id_comm, an, 
+		case when id_energie in (401,403) then 2 else 1 end as scope,
+		sum(coalesce(val,0)) as val
+	from total.bilan_comm_v5 as a
+	where 
+		(
+			id_polluant in (131,38,65,108,16,48,36,11,2,3,4,5,37,39)
+			OR
+			id_polluant in (40,54,20)
+		)
+		and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
+		and id_comm <> 99999 -- Sans les émissions associées à l'objet mer
+		and id_comm <> 99138 -- Sans les émissions de la commune de Monaco	
+		and an not in (2008,2009,2011) -- Uniquement les années d'inventaire
+	group by 
+		id_polluant, 
+		case when id_snap3 in (select distinct id_snap3 from snap_prod_ener) then 12 else id_secteur end, 
+		id_comm, an, 
+		case when id_energie in (401,403) then 2 else 1 end
+
+	union all
+
+	select 
+		id_polluant, 
+		case when id_snap3 in (select distinct id_snap3 from snap_prod_ener) then 12 else id_secteur end as id_secteur,
+		id_comm, an, 
+		case when id_energie in (401,403) then 2 else 1 end as scope,
+		sum(coalesce(val,0)) as val
+	from total.bilan_comm_v5_ges as a
+	where 
+		(
+			id_polluant in (15, 123, 124, 128)
+		)
+		and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
+		and id_comm <> 99999 -- Sans les émissions associées à l'objet mer
+		and id_comm <> 99138 -- Sans les émissions de la commune de Monaco	
+		and an not in (2008,2009,2011) -- Uniquement les années d'inventaire
+	group by 
+		id_polluant, 
+		case when id_snap3 in (select distinct id_snap3 from snap_prod_ener) then 12 else id_secteur end, 
+		id_comm, an,
+		case when id_energie in (401,403) then 2 else 1 end
+) 
+
+select
+	case 
+		when id_polluant = 131 then 0
+		when id_polluant = 65 then 1
+		when id_polluant = 108 then 2
+		when id_polluant = 38 then 3
+		when id_polluant = 48 then 4
+		when id_polluant = 16 then 5
+		when id_polluant = 3 then 6
+		when id_polluant = 4 then 7
+		when id_polluant = 36 then 8
+		when id_polluant = 2 then 9
+		when id_polluant = 5 then 10
+		when id_polluant = 37 then 11
+		when id_polluant = 39 then 12
+		when id_polluant = 40 then 13
+		when id_polluant = 11 then 14
+		when id_polluant = 15 then 15
+		when id_polluant = 123 then 16
+		when id_polluant = 124 then 17   
+		when id_polluant = 128 then 18
+	end as poll_order,
+	id_polluant, nom_abrege_polluant,
+	id_secteur, nom_secteur, secteur_color, grand_secteur, grand_secteur_color,
+	secteur_order, grand_secteur_order,
+	id_comm_2018 as id_comm, nom_comm_2018 as nom_comm, siren_epci_2018, nom_epci_2018,
+	an, scope,
+	sum(val) as val
+from emi as a
+left join commun.tpk_commune_2015_2016 as b using (id_comm)
+left join total.tpk_secteur as c using (id_secteur)
+left join commun.tpk_polluants as d using (id_polluant)
+group by
+	id_polluant, nom_abrege_polluant,
+	id_secteur, nom_secteur, secteur_color, grand_secteur, grand_secteur_color,
+	secteur_order, grand_secteur_order,
+	id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018,
+	an, scope	
+order by 
+	poll_order,
+	-- id_polluant,
+	id_secteur, 
+	id_comm, siren_epci_2018, 
+	an, scope;
+
+
+-- Validation sur NOx et PM10
+drop function if exists total.validation_bilan_secteur();
+create function total.validation_bilan_secteur() returns void as $$ BEGIN
+
+	if (
+		select count(*)
+		from (
+			select (
+				select sum(val)::integer as val
+				from total.bilan_comm_v5
+				where 
+					an = 2016
+					and id_polluant = 38
+					and id_comm not in (99999,99138)
+			) - (
+				select sum(val)::integer as val
+				from total.bilan_comm_v5_secteurs
+				where 
+					an = 2016
+					and id_polluant = 38
+					and id_comm not in (99999,99138)
+			) as diff
+			union all
+			select (
+				select sum(val)::integer as val
+				from total.bilan_comm_v5
+				where 
+					an = 2016
+					and id_polluant = 38
+					and id_comm not in (99999,99138)
+			) - (
+				select sum(val)::integer as val
+				from total.bilan_comm_v5_secteurs
+				where 
+					an = 2016
+					and id_polluant = 38
+					and id_comm not in (99999,99138)
+			) as diff
+		) as a
+		where diff > 0
+	) > 0 then
+		raise WARNING 'ERREUR LORS DE LA VALIDATION DES EMISSIONS DETAILLEES';
+	end if;
+
+end $$ language plpgsql;
+select total.validation_bilan_secteur();
+
+-- Indexes et management
+alter table total.bilan_comm_v5_secteurs add constraint "pk.total.bilan_comm_v5_secteurs"
+	primary key (id_polluant, id_secteur, id_comm, an, scope);
+
+vacuum analyse total.bilan_comm_v5_secteurs;
+vacuum freeze total.bilan_comm_v5_secteurs;
+
+ALTER TABLE total.bilan_comm_v5_secteurs CLUSTER ON "pk.total.bilan_comm_v5_secteurs";
+
+
+
+
+
+
+
+
+
+
+
 
 
 

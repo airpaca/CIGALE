@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# CIGALE: Export de la bdd dev vers la bdd prod
-# Script à lancer sur le serveur de la bdd dev
-# Les passwords seront demandés lors des connexions au serveur prod
+# CIGALE: Export de la bdd locale vers la bdd dev
+# Script à lancer sur le serveur de la bdd locale
 # Les schémas doivent être crées et vides sur la base prod
+# La table des émissions détaillées par secteurs est également exportée
 # 
 # Pour ne pas avoir à répéter le password PostgreSQL à chaque connexion, 
 # faire un fichier .pgpass dans le home de l'utilisateur du serveur prod 
@@ -15,13 +15,13 @@
 # d'utiliser une clef RSA
 
 # Configuration
-dev_user="***"
-dev_db="***"
-prod_host="***"
-prod_user="***"
-prod_user_db="***"
-prod_db="***"
-version_inv="*"
+dev_user="emi"
+dev_db="inv2016"
+prod_host="78.153.226.3"
+prod_user="it-airpaca"
+prod_user_db="adpgatmosud"
+prod_db="cigale"
+version_inv="5"
 
 # Dump des tables nécessaires de la bdd dev
 echo "Dumping dev database into /tmp/cigale.dump"
@@ -45,18 +45,19 @@ pg_dump -U $dev_user \
 -t total.bilan_comm_v${version_inv}_prod \
 -t src_prod_energie.tpk_grande_filiere_cigale \
 -t src_prod_energie.tpk_detail_filiere_cigale \
+-t total.bilan_comm_v${version_inv}_secteurs \
 -Fc $dev_db > /tmp/cigale.dump
 
-# Export du dump sur le serveur prod
-echo "Exporting dump on prod server"
+# Export du dump sur le serveur dev
+echo "Exporting dump on dev server"
 scp /tmp/cigale.dump $prod_user@$prod_host:/tmp/
 
-# Restauration du dump sur le serveur prod
-echo "Updating database on prod server"
+# Restauration du dump sur le serveur dev
+echo "Updating database on dev server"
 ssh $prod_user@$prod_host "pg_restore --clean -U $prod_user_db -d $prod_db -h localhost /tmp/cigale.dump"
 
-# Maintenance des tables sur le serveur prod pour plus de rapidité
-echo "Maintaining database on prod server"
+# Maintenance des tables sur le serveur dev pour plus de rapidité
+echo "Maintaining database on dev server"
 ssh $prod_user@$prod_host "psql -U $prod_user_db -d $prod_db -h localhost << EOF
 vacuum ANALYZE total.bilan_comm_v${version_inv}_secten1;
 vacuum FREEZE total.bilan_comm_v${version_inv}_secten1;
@@ -156,5 +157,14 @@ ssh $prod_user@$prod_host "psql -U $prod_user_db -d $prod_db -h localhost << EOF
 
     vacuum ANALYZE total.bilan_comm_v${version_inv}_secten1_so2; 			
     vacuum FREEZE total.bilan_comm_v${version_inv}_secten1_so2; 
+EOF
+" 
+
+# Maintenance de la table des émissions détaillées
+ssh $prod_user@$prod_host "psql -U $prod_user_db -d $prod_db -h localhost << EOF
+    vacuum analyse total.bilan_comm_v5_secteurs;
+    vacuum freeze total.bilan_comm_v5_secteurs;
+
+    ALTER TABLE total.bilan_comm_v5_secteurs CLUSTER ON \"pk.total.bilan_comm_v5_secteurs\";
 EOF
 " 
