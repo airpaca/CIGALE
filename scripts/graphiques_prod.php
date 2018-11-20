@@ -29,7 +29,7 @@ from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	an = " . $an . "
     and grande_filiere_cigale = 'ENR'
-    and siren_epci_2017 = '" . $siren_epci . "' 
+    and siren_epci_2018 = '" . $siren_epci . "' 
 group by a.detail_filiere_cigale, color_detail_filiere_cigale
 order by detail_filiere_cigale  
 ;
@@ -52,7 +52,7 @@ select
 	an, 
 	round(sum(val / 1000.)::numeric, 1) as val
 from total.bilan_comm_v" . $v_inv . "_prod as a
-where siren_epci_2017 = '" . $siren_epci . "' 
+where siren_epci_2018 = '" . $siren_epci . "' 
 group by an
 
 union all 
@@ -87,7 +87,7 @@ select
 from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	grande_filiere_cigale = 'ENR'
-    and siren_epci_2017 = '" . $siren_epci . "' 
+    and siren_epci_2018 = '" . $siren_epci . "' 
 group by an, a.detail_filiere_cigale, color_detail_filiere_cigale
 order by an, detail_filiere_cigale  
 ;
@@ -114,7 +114,7 @@ select
 from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	grande_filiere_cigale <> 'ENR'
-    and siren_epci_2017 = '" . $siren_epci . "' 
+    and siren_epci_2018 = '" . $siren_epci . "' 
 group by an, a.grande_filiere_cigale, color_grande_filiere_cigale
 order by an, grande_filiere_cigale  
 ;
@@ -140,7 +140,7 @@ select
 	round(sum(val / 1000.)::numeric, 1) as val
 from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
-    siren_epci_2017 = '" . $siren_epci . "' 
+    siren_epci_2018 = '" . $siren_epci . "' 
 group by 
 	an, 
 	case when grande_filiere_cigale = 'ENR' then 'Primaire' else 'Secondaire' end, 
@@ -179,7 +179,7 @@ select sum(val / 1000.)::BIGINT as val
 from total.bilan_comm_v" . $v_inv . "_prod as a
 where 
 	an = " . $an . "
-    and siren_epci_2017 = '" . $siren_epci . "' 
+    and siren_epci_2018 = '" . $siren_epci . "' 
 ;
 ";
 
