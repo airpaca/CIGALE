@@ -15,13 +15,13 @@
 # d'utiliser une clef RSA
 
 # Configuration
-dev_user="emi"
-dev_db="inv2016"
-prod_host="78.153.226.3"
-prod_user="it-airpaca"
-prod_user_db="adpgatmosud"
-prod_db="cigale"
-version_inv="5"
+dev_user="***"
+dev_db="***"
+prod_host="***"
+prod_user="***"
+prod_user_db="***"
+prod_db="***"
+version_inv="***"
 
 # Dump des tables nécessaires de la bdd dev
 echo "Dumping dev database into /tmp/cigale.dump"
