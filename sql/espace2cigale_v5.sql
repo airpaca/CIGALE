@@ -1486,7 +1486,7 @@ select row_number() over () as gid, *
 from (
 	select  
 		nom_abrege_polluant, c.id_comm_2018 as id_comm, c.nom_comm_2018 as nom_comm, siren_epci_2018 as siren_epci, 
-		sum(val) / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
+		sum(val) / (d.superficie / 1000000.) as val, -- Superficie retournée en m2 par st_area sur du rgf93
 		-- st_transform(geom, 4326) as geomtmp
 		st_transform(d.geom,4326) as geomtmp
 	from (
@@ -1522,7 +1522,7 @@ from (
 	-- Ajout des prod
 	select 
 		'prod'::text as nom_abrege_polluant, c.id_comm_2018 as id_comm, c.nom_comm_2018 as nom_comm, siren_epci_2018 as siren_epci, 
-		sum(val) / (d.superficie / 100.) as val, -- Superficie en hectares dans les données geofla
+		sum(val) / (d.superficie / 1000000.) as val, -- Superficie retournée en m2 par st_area sur du rgf93
 		-- st_transform(geom, 4326) as geomtmp
 		st_transform(d.geom,4326) as geomtmp
 	from (
