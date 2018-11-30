@@ -72,6 +72,19 @@ if ($query_var != "999") {
     // SS
     if ($query_detail_comm == "false" and $query_entite == "93") { // --  and $query_sect == "") {
         $ss = "FALSE";
+    } elseif (
+        $query_detail_comm == "false" and 
+        (
+            $query_entite == "4" || 
+            $query_entite == "5" || 
+            $query_entite == "6" || 
+            $query_entite == "13" || 
+            $query_entite == "83" || 
+            $query_entite == "84" 
+        )    
+    
+    ) {
+        $ss = "FALSE";
     } else {
         $ss = "TRUE";
     };
@@ -217,7 +230,7 @@ if ($query_var != "999") {
    
 
 /* DEBUG */
-// echo $sql;
+//echo $sql;
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
