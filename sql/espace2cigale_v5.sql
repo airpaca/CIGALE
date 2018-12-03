@@ -2124,7 +2124,7 @@ from total.bilan_comm_v5 as a
 left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
 left join (select * from src_ind.def_corresp_sources where id_version_corresp = 6 and actif is true) as d using (id_corresp)
-left join commun.tpk_commune_2015_2016 as e using (id_comm)
+left join commun.tpk_commune_2015_2016 as e on a.id_comm = e.id_comm
 where 
 	id_polluant in (131,38,65,108,16,48,36,11)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
@@ -2162,7 +2162,7 @@ from total.bilan_comm_v5_ges as a
 left join total.corresp_energie_synapse as b on a.id_energie = b.espace_id_energie
 left join transversal.tpk_energie as c on b.synapse_id_energie = c.id_energie
 left join (select * from src_ind.def_corresp_sources where id_version_corresp = 6 and actif is true) as d using (id_corresp)
-left join commun.tpk_commune_2015_2016 as e using (id_comm)
+left join commun.tpk_commune_2015_2016 as e on a.id_comm = e.id_comm
 where 
 	id_polluant in (15, 123, 124, 128)
 	and val is not null -- NOTE: Certaines valeurs nulles dans les tables bilan de chaque secteur
@@ -2463,12 +2463,12 @@ vacuum FREEZE total.bilan_comm_v5_pcaet;
 /**
 Cluster de la table pour accélérer les requêtes
 */
-CREATE INDEX "idx.bilan_comm_v5_pcaet.id_polluant.an.ss.pcaet.code_cat_energie"
+CREATE INDEX "idx.bilan_comm_v5_pcaet.id_polluant.an.pcaet.code_cat_energie"
 ON total.bilan_comm_v5_pcaet
 USING btree
-(id_polluant, an, ss, id_secteur_pcaet, code_cat_energie);
+(id_polluant, an, id_secteur_pcaet, code_cat_energie);
 
-ALTER TABLE total.bilan_comm_v5_pcaet CLUSTER ON "idx.bilan_comm_v5_pcaet.id_polluant.an.ss.id_secteur_pcaet.code_cat_energie";
+ALTER TABLE total.bilan_comm_v5_pcaet CLUSTER ON "idx.bilan_comm_v5_pcaet.id_polluant.an.id_secteur_pcaet.code_cat_energie";
 
 /* 
 Validation finale des consommations et émissions
@@ -2509,7 +2509,6 @@ full join (
 order by id_polluant, an;
 
 */
-
 
 
 
