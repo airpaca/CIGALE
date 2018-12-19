@@ -160,8 +160,8 @@ if ($query_var != "999") {
         $where_entite = " and id_comm / 1000 = " . $query_entite . " ";
     // Si EPCI
     } elseif (strlen ($query_entite) == 9) {
-        $champ_geo = "nom_epci_2018";
-        $where_entite = " and siren_epci_2018 = " . $query_entite . " ";
+        $champ_geo = "a.nom_epci_2018";
+        $where_entite = " and a.siren_epci_2018 = " . $query_entite . " ";
     // Si on est à la commune
     } else {
         // $champ_geo = "nom_comm";
@@ -230,7 +230,7 @@ if ($query_var != "999") {
    
 
 /* DEBUG */
-//echo $sql;
+// echo $sql;
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
