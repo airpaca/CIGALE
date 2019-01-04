@@ -1240,6 +1240,8 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
     // Supprime tous les éventuels layers des communes 
     remove_all_comm_layers();     
     
+    console.log(wfs_address + my_layers_object.wfs_query + "&CQL_FILTER=nom_abrege_polluant='" + my_layers_object.polluant + "'+AND+siren_epci='" + siren_epci + "'");
+    
     $.ajax({
         // url: wfs_address + my_layers_object.wfs_query + "&nom_abrege_polluant=" + my_layers_object.polluant + "&siren_epci=" + siren_epci,
         url: wfs_address + my_layers_object.wfs_query + "&CQL_FILTER=nom_abrege_polluant='" + my_layers_object.polluant + "'+AND+siren_epci='" + siren_epci + "'",
