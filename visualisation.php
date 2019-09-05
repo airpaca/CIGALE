@@ -2290,11 +2290,10 @@ function create_graphiques_prod(siren_epci, nom_epci){
             // create_graph_legend("graph5", 1);
         },
         error: function (request, error) {
-            jqXHR.spinner_bilans.stop();
+            // jqXHR.spinner_bilans.stop();
             console.log("ERROR: create_graphiques_prod()");
             console.log(arguments);
             console.log("Ajax error: " + error);
-            $("#error_tube").show();
         },        
     });
 

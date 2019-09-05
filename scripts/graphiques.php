@@ -18,7 +18,8 @@ $sql = "
 select b.nom_court_secten1, b.secten1_color, sum(val) as val
 from (
 	select id_comm, id_secten1, (sum(val) / 1000.)::integer as val 
-	from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ." 
+	-- from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ." 
+	from total.bilan_comm_v" . $v_inv . "_diffusion --" . str_replace(".", "", $polluant) ." 
 	where 
         an = " . $an . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
@@ -26,7 +27,7 @@ from (
         and ss is false -- Aucune donnée en Secret Stat 
 	group by id_comm, id_secten1
 ) as a
-left join total.tpk_secten1_color as b using (id_secten1)
+left join total.tpk_secten1_color as b on a.id_secten1 = b.id_secten1::integer
 -- left join commun.tpk_commune_2015_2016 as c using (id_comm)
 left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
 left join cigale.epci as d on c.siren_epci_2018 = d.siren_epci
@@ -35,6 +36,7 @@ where
 group by b.nom_court_secten1, b.secten1_color    
 ;
 ";
+// echo nl2br($sql);
 
 $res = pg_query($conn, $sql);
 if (!$res) {
@@ -50,7 +52,8 @@ while ($row = pg_fetch_assoc( $res )) {
 /* Export des données pour barchart */
 $sql = "
 select an, (sum(val) / 1000.)::integer as val
-from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ." 
+-- from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ." 
+from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) ." 
 where 
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
 	and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
@@ -71,6 +74,8 @@ order by an
 ;
 ";
 
+// echo nl2br($sql);
+
 $res = pg_query($conn, $sql);
 if (!$res) {
     echo "An SQL error occured.\n";
@@ -85,18 +90,20 @@ while ($row = pg_fetch_assoc( $res )) {
 /* Lignes d'évolution des secteurs*/
 $sql = "
 -- SANS LES VALEURS POUR LES ANNEES MANQUANTES
-select an, id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
-from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ."  as a
-left join total.tpk_secten1_color as b using (id_secten1)
+select an, a.id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
+from total.bilan_comm_v" . $v_inv . "_diffusion as a -- " . str_replace(".", "", $polluant) ."  as a
+left join total.tpk_secten1_color as b on a.id_secten1 = b.id_secten1::integer
 where 
  	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
     and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
 	and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
     and ss is false -- Aucune donnée en Secret Stat
-group by an, id_secten1, nom_court_secten1, secten1_color
+group by an, a.id_secten1, nom_court_secten1, secten1_color
 order by id_secten1, an
 ;
 ";
+
+// echo nl2br($sql);
 
 // $sql = "
 // -- AVEC LES VALEURS POUR LES ANNEES MANQUANTES
@@ -149,7 +156,7 @@ from (
 	select 
 		-- Emissions de l'EPCI
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ." 
+		from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) ." 
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
             and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
@@ -159,7 +166,7 @@ from (
 		) as epci,
 		-- Emissions de la région
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ." 
+		from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) ." 
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
             and code_cat_energie not in ('8', '6') -- Approche cadasrale pas d'élec ni conso de chaleur
@@ -168,6 +175,8 @@ from (
 		) as reg
 ) as a
 ";
+
+// echo nl2br($sql);
 
 $res = pg_query($conn, $sql);
 if (!$res) {
@@ -201,7 +210,7 @@ while ($row = pg_fetch_assoc( $res )) {
 // Récupération des émissions totales pour an max 
 $sql = "
 select (sum(val) / 1000.)::integer as val 
-from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) ."  as a
+from total.bilan_comm_v" . $v_inv . "_diffusion as a -- " . str_replace(".", "", $polluant) ."  as a
 -- left join commun.tpk_commune_2015_2016 as c using (id_comm)
 left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
 where 

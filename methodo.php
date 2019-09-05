@@ -243,8 +243,11 @@
             Les données de la dernière version annulent et remplacent donc les précédentes.
             </p>
             <p>
-            <b>Version actuelle:</b> Année 2016 version 2018 (dernière maj 08/09/2018)</br>
-            <b>Historique des versions:</b> Année 2015 version 2017
+            <b>Version actuelle:</b> </br> Année 2017 version 2019 v6.1 (publié le 20190905) </br>
+            <b>Historique des versions:</b></br> 
+			- Année 2016 version 2018 - maj 08/09/2018</br> 
+			- Année 2016 version 2018</br> 
+			- Année 2015 version 2017</br> 
 			</p>
             
             <h1>Secret statistique</h1>
@@ -320,7 +323,7 @@
             <h1>Contact</h1>
             <p>
             Pour nous faire remonter une erreur, incohérence ou pour plus d'information sur les données 
-            présentées, vous pouvez envoyer un mail à <a href="mailto:romain.souweine@airpaca.org">romain.souweine@airpaca.org</a>
+            présentées, vous pouvez envoyer un mail à <a href="mailto:contact@atmosud.org">contact@atmosud.org</a>
             </p>
             <p>
             Responsables de la publication: AtmoSud - Gaëlle Luneau, Matthieu Moynet, Romain Souweine

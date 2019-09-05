@@ -35,6 +35,8 @@ order by detail_filiere_cigale
 ;
 ";
 
+// echo nl2br($sql);
+
 $res = pg_query($conn, $sql);
 if (!$res) {
     echo "An SQL error occured.\n";

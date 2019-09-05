@@ -286,6 +286,27 @@ function fill_listes(){
     // Déclanchement du sablier (spinner)
     spinner_left.spin(spinner_left_element);
     
+    
+    
+    $.ajax({
+        type: "GET",
+        url: "scripts/fill_listes.php",
+        dataType: 'json',   
+        beforeSend:function(jqXHR, settings){
+            jqXHR.spinner_left = spinner_left;
+        },          
+        // success: function(response,textStatus,jqXHR){
+            // console.log(api);
+        // },
+        error: function (request, error) {
+            console.log(arguments);
+            console.log("Ajax error: " + error);
+            jqXHR.spinner_left.stop();
+        },        
+    });            
+
+            
+    
     $.ajax({
         type: "GET",
         url: "scripts/fill_listes.php",

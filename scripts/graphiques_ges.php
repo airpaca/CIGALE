@@ -7,6 +7,10 @@ $siren_epci = $_GET['siren_epci'];
 $polluant = $_GET['polluant'];
 $an = $_GET['an'];
 
+if ($polluant == 'co2') {
+    $polluant = "co2.bio', 'co2.nbio";
+};
+
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
 if (!$conn) {
@@ -19,15 +23,15 @@ $sql = "
 select b.nom_court_secten1, b.secten1_color, sum(val) as val
 from (
 	select id_comm, id_secten1, (sum(val) / 1000.)::BIGINT as val 
-	from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) . " 
+	from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) . " 
 	where 
         an = " . $an . " 
-        and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+        and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
         and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
         and ss is false -- Aucune donnée en Secret Stat
 	group by id_comm, id_secten1
 ) as a
-left join total.tpk_secten1_color as b using (id_secten1)
+left join total.tpk_secten1_color as b on a.id_secten1 = b.id_secten1::integer
 -- left join commun.tpk_commune_2015_2016 as c using (id_comm)
 left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
 left join cigale.epci as d on c.siren_epci_2018 = d.siren_epci
@@ -36,6 +40,8 @@ where
 group by b.nom_court_secten1, b.secten1_color    
 ;
 ";
+
+// echo nl2br($sql);
 
 $res = pg_query($conn, $sql);
 if (!$res) {
@@ -53,10 +59,10 @@ $sql = "
 select b.nom_court_cat_energie as nom_court_secten1, b.cat_energie_color as secten1_color, sum(val) as val
 from (
 	select id_comm, code_cat_energie, (sum(val) / 1000.)::BIGINT as val 
-	from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) . "
+	from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) . "
 	where 
         an = " . $an . " 
-        and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+        and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
         and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
         and ss is false -- Aucune donnée en Secret Stat
 	group by id_comm, code_cat_energie
@@ -71,6 +77,8 @@ group by b.nom_court_cat_energie, b.cat_energie_color
 ;
 ";
 
+// echo nl2br($sql);
+
 $res = pg_query($conn, $sql);
 if (!$res) {
     echo "Erreur lors de l'export des émissions indirectes par catégories d'énergie";
@@ -84,18 +92,20 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Evo par secteur - émissions directes */
 $sql = "
-select an, id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
-from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) . " as a
-left join total.tpk_secten1_color as b using (id_secten1)
+select an, a.id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
+from total.bilan_comm_v" . $v_inv . "_diffusion as a -- " . str_replace(".", "", $polluant) . " as a
+left join total.tpk_secten1_color as b on a.id_secten1 = b.id_secten1::integer
 where 
-	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-    and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
+    and a.id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 	and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
     and ss is false -- Aucune donnée en Secret Stat
-group by an, id_secten1, nom_court_secten1, secten1_color
+group by an, a.id_secten1, nom_court_secten1, secten1_color
 order by id_secten1, an
 ;
 ";
+
+// echo nl2br($sql);
 
 $res = pg_query($conn, $sql);
 if (!$res) {
@@ -118,9 +128,9 @@ from (
 	select 
 		-- Emissions de l'EPCI
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) . "
+		from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) . "
 		where 
-			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
 			and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
             and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 			and an = " . $an . "
@@ -128,15 +138,17 @@ from (
 		) as epci,
 		-- Emissions de la région
 		(select (sum(val) / 1000.) as val
-		from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) . "
+		from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) . "
 		where 
-			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
             and code_cat_energie not in (6, 8) -- emissions directes hors chaleur et froid
 			and an = " . $an . "
             and ss is false -- Aucune donnée en Secret Stat
 		) as reg
 ) as a
 ";
+
+// echo nl2br($sql);
 
 $res = pg_query($conn, $sql);
 if (!$res) {
@@ -153,17 +165,19 @@ while ($row = pg_fetch_assoc( $res )) {
 /* Emi totale an max */
 $sql = "
 select (sum(val) / 1000.)::BIGINT as val 
-from total.bilan_comm_v" . $v_inv . "_secten1_" . str_replace(".", "", $polluant) . " as a
+from total.bilan_comm_v" . $v_inv . "_diffusion as a -- " . str_replace(".", "", $polluant) . " as a
 -- left join commun.tpk_commune_2015_2016 as c using (id_comm)
 left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
 where 
     an = " . $an . " 
     and siren_epci_2018 = " . $siren_epci . " 
-    and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
+    and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
     and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
     and ss_epci is false -- Aucune donnée en Secret Stat  
 ;
 ";
+
+// echo nl2br($sql);
 
 $res = pg_query($conn, $sql);
 if (!$res) {

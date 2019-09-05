@@ -12,13 +12,25 @@ $query_ener = $_GET['query_ener'];
 $query_var = $_GET['query_var'];
 $query_detail_comm = $_GET['query_detail_comm'];
 
+
 /* Ecriture du code SQL de la requête */
+
+// SI CO2 tot alors on recherche polluants 121 et 122
+$polls = explode(",", $query_var);
+$polls = array_replace($polls,
+    array_fill_keys(
+        array_keys($polls, "15"),
+        "121,122"
+    )
+);
+$query_var = implode(",", $polls);  
 
 // Si export des consommations ou émissions
 if ($query_var != "999") { 
 
     // Group by 
-    $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
+    // $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
+    $group_by = " GROUP BY an, lib_unite, case when nom_abrege_polluant in ('co2.bio', 'co2.nbio') then 'co2' else nom_abrege_polluant end";
     if ($query_detail_comm == "true") {
         $group_by =  $group_by . ", \"Entité administrative\"";
         $nom_entite = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
@@ -41,10 +53,11 @@ if ($query_var != "999") {
     };
     // echo $group_by;
 
-    // Where
+    // Where    
     $where = "WHERE ";
     $where =  $where . " an in (" . $query_ans . ")";
     $where =  $where . " and id_polluant in (" . $query_var . ")";
+    $where =  $where . " and id_snap3 not in (80408)"; // Sans croisière pour maritime
     if ($query_sect != "") {
         $where =  $where . " and id_secten1 in (" . str_replace("\\", "", $query_sect) . ")";
     };
@@ -64,7 +77,10 @@ if ($query_var != "999") {
         $where =  $where . " and id_comm / 1000 in (" . $query_entite . ")";
     } elseif (strlen ($query_entite) == 9) {
         $where =  $where . " and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $query_entite . ")";
-    } else {
+    // } elseif (startsWith($query_entite_nom, "Parc Naturel") == True) {
+    } elseif (strpos($query_entite_nom, "Parc Naturel ") !== false) {
+		$where =  $where . " and " . $query_entite . " = any(id_pnr)";		     
+	} else {
         $where =  $where . " and id_comm in (" . $query_entite . ")";
     };
     // echo $where;
@@ -102,17 +118,18 @@ if ($query_var != "999") {
         " . $nom_entite . "  as \"Entité administrative\",  
         " . $nom_secten1 . " as \"Activité\",  
         " . $cat_energie . " as \"Energie\", 
-        nom_abrege_polluant as \"Variable\", 
+        case when nom_abrege_polluant in ('co2.bio', 'co2.nbio') then 'co2' else nom_abrege_polluant end as \"Variable\", 
         round(sum(val)::numeric, 1) as \"Valeur\", 
         coalesce(lib_unite, 'Secret Stat') as \"Unite\"
     from (
         select an, id_comm, id_secten1, code_cat_energie, id_polluant, 
         sum(case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then null else val end) as val, 
         case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end as id_unite
-        from total.bilan_comm_v" . $v_inv . "_secten1
+        from total.bilan_comm_v" . $v_inv . "_diffusion 
         " . $where . "     
         -- and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
-        and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))    
+        -- and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))    
+		and (id_secten1, id_polluant) not in (('1', 131),('1', 121),('1', 122),('1', 128),('1', 123),('1', 124))    
         group by 
             an, 
             case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end, 
@@ -120,7 +137,7 @@ if ($query_var != "999") {
     )  as a
     -- left join commun.tpk_communes as b using (id_comm)
     left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018
-    left join transversal.tpk_secten1 as c using (id_secten1)
+    left join transversal.tpk_secten1 as c on a.id_secten1 = c.id_secten1::integer
     left join (select distinct code_cat_energie, cat_energie from transversal.tpk_energie) as d using (code_cat_energie)
     left join commun.tpk_polluants as e using (id_polluant)
     left join commun.tpk_unite as f using (id_unite)
@@ -162,7 +179,11 @@ if ($query_var != "999") {
     } elseif (strlen ($query_entite) == 9) {
         $champ_geo = "a.nom_epci_2018";
         $where_entite = " and a.siren_epci_2018 = " . $query_entite . " ";
-    // Si on est à la commune
+	// PNR
+    } elseif (strpos($query_entite_nom, "Parc Naturel ") !== false) {
+		$champ_geo = " (select nom from geres.alp_pnr where id = " . $query_entite . ") ";
+		$where_entite =  " and id_comm in (SELECT DISTINCT id_comm FROM total.bilan_comm_v6_diffusion WHERE " . $query_entite . " = any(id_pnr)) ";	
+	// Si on est à la commune
     } else {
         // $champ_geo = "nom_comm";
         $champ_geo = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
@@ -230,7 +251,7 @@ if ($query_var != "999") {
    
 
 /* DEBUG */
-// echo $sql;
+// echo nl2br($sql); $sql = $sql = "rgfgfg";
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
@@ -238,6 +259,9 @@ if (!$conn) {
     echo "Not connected";
     exit;
 }
+
+
+
 
 /* Execution de la requête */
 $rResult = pg_query($conn, $sql);
