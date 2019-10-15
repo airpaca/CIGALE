@@ -32,12 +32,14 @@ if ($query_var != "999") {
     // $group_by = " GROUP BY an, lib_unite, nom_abrege_polluant";
     $group_by = " GROUP BY an, lib_unite, case when nom_abrege_polluant in ('co2.bio', 'co2.nbio') then 'co2' else nom_abrege_polluant end";
     if ($query_detail_comm == "true") {
-        $group_by =  $group_by . ", \"Entité administrative\"";
-        $nom_entite = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
+        // $group_by =  $group_by . ", \"Entité administrative\"";
+        $group_by =  $group_by . ", \"Entité administrative\", \"Id Entité\"";
+        // $group_by =  $group_by . ", nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')', id_comm_2018";
+        $nom_entite = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' as \"Entité administrative\", id_comm_2018 as \"Id Entité\"";
     } else {
         $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
         $query_entite_nom = str_replace("'", "''", $query_entite_nom);
-        $nom_entite = " '" . $query_entite_nom . "'";
+        $nom_entite = " '" . $query_entite_nom . "' as \"Entité administrative\"";
     };
     if ($query_sect != "") {
         $group_by =  $group_by . ", nom_secten1";
@@ -64,27 +66,39 @@ if ($query_var != "999") {
     if ($query_ener != "") {
         $where =  $where . " and code_cat_energie in (" . $query_ener . ")";
     };
+    
     if ($query_entite == "93") {
         $where =  $where;
+    // } elseif (
+        // $query_entite == "4" || 
+        // $query_entite == "5" || 
+        // $query_entite == "6" || 
+        // $query_entite == "13" || 
+        // $query_entite == "83" || 
+        // $query_entite == "84" 
+    // ) {
     } elseif (
+        (
         $query_entite == "4" || 
         $query_entite == "5" || 
         $query_entite == "6" || 
         $query_entite == "13" || 
         $query_entite == "83" || 
         $query_entite == "84" 
-    ) {
+        )
+        && 
+        strpos($query_entite_nom, "Parc Naturel ") === false
+    ) {        
         $where =  $where . " and id_comm / 1000 in (" . $query_entite . ")";
     } elseif (strlen ($query_entite) == 9) {
         $where =  $where . " and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $query_entite . ")";
-    // } elseif (startsWith($query_entite_nom, "Parc Naturel") == True) {
     } elseif (strpos($query_entite_nom, "Parc Naturel ") !== false) {
 		$where =  $where . " and " . $query_entite . " = any(id_pnr)";		     
 	} else {
         $where =  $where . " and id_comm in (" . $query_entite . ")";
     };
     // echo $where;
-
+    
     // SS
     if ($query_detail_comm == "false" and $query_entite == "93") { // --  and $query_sect == "") {
         $ss = "FALSE";
@@ -115,7 +129,8 @@ if ($query_var != "999") {
     $sql = "
     select 
         an as \"Année\", 
-        " . $nom_entite . "  as \"Entité administrative\",  
+        -- " . $nom_entite . "  as \"Entité administrative\",  
+        " . $nom_entite . ",  
         " . $nom_secten1 . " as \"Activité\",  
         " . $cat_energie . " as \"Energie\", 
         case when nom_abrege_polluant in ('co2.bio', 'co2.nbio') then 'co2' else nom_abrege_polluant end as \"Variable\", 
@@ -165,12 +180,16 @@ if ($query_var != "999") {
         $where_entite = " ";
     // Si département
     } elseif (
+        (
         $query_entite == "4" || 
         $query_entite == "5" || 
         $query_entite == "6" || 
         $query_entite == "13" || 
         $query_entite == "83" || 
         $query_entite == "84" 
+        )
+        && 
+        strpos($query_entite_nom, "Parc Naturel ") === false
     ) {
         $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
         $champ_geo = " '" . $query_entite_nom . "'::text ";
@@ -193,7 +212,8 @@ if ($query_var != "999") {
     /* Si détail à la commune demandé alors on regroupera à la commune */
     if ($query_detail_comm == "true") {
        // $champ_geo = "nom_comm";
-       $champ_geo = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
+       $champ_geo = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' as \"Entité administrative\", id_comm_2018 as \"Id Entité\"";
+       $champ_geo_grpby = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')', id_comm_2018";
     }; 
 
     /* Gestion du regroupement par filiere */ 
@@ -217,7 +237,7 @@ if ($query_var != "999") {
     $sql = "
     SELECT 
         an as \"Année\",
-        " . $champ_geo . " as \"Entité administrative\",
+        " . $champ_geo . " ,
         lib_type_prod as \"Type de production\",
         " . $champ_grande_filiere . " 
         " . $champ_filiere . " 
@@ -232,13 +252,13 @@ if ($query_var != "999") {
         " . $where_filiere . " 
     GROUP BY
         an,
-        " . $champ_geo . " ,
+        " . $champ_geo_grpby . " ,
         lib_type_prod 
         " . $group_grande_filiere . " 
         " . $group_filiere . "
     ORDER BY    
         an, 
-        " . $champ_geo . " ,
+        " . $champ_geo_grpby . " ,
         lib_type_prod 
         " . $group_grande_filiere . " 
         " . $group_filiere . "        
@@ -251,7 +271,7 @@ if ($query_var != "999") {
    
 
 /* DEBUG */
-// echo nl2br($sql); $sql = $sql = "rgfgfg";
+// echo nl2br($sql); // $sql = $sql = "rgfgfg";
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");

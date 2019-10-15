@@ -323,10 +323,10 @@
             <h1>Contact</h1>
             <p>
             Pour nous faire remonter une erreur, incohérence ou pour plus d'information sur les données 
-            présentées, vous pouvez envoyer un mail à <a href="mailto:contact@atmosud.org">contact@atmosud.org</a>
+            présentées, vous pouvez envoyer un mail à <a href="mailto:contact.air@atmosud.org">contact.air@atmosud.org</a>
             </p>
             <p>
-            Responsables de la publication: AtmoSud - Gaëlle Luneau, Matthieu Moynet, Romain Souweine
+            Responsables de la publication: AtmoSud - Benjamin Rocher, Damien Bouchard, Romain Souweine
             </p>            
         </div>
         
