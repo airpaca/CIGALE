@@ -330,7 +330,7 @@ function fill_listes(){
 
             // Remplissage des secteurs d'activités
             for (isect in response[2]) {             
-                $("#select_secteurs").append($('<option>', {value: response[2][isect].id_secten1, text: response[2][isect].nom_secten1}, '</option>'));                               
+                $("#select_secteurs").append($('<option>', {value: response[2][isect].id_secteur_pcaet, text: response[2][isect].nom_secteur_pcaet}, '</option>'));                               
             };
             $("#select_secteurs").selectpicker('refresh');  
             
@@ -605,7 +605,7 @@ function afficher_donnees(){
    
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
-    $(".header_extraction").html('<img src="img/logo-Air-PACA_small.png"><br/><br/>AtmoSud - Inventaire v' + cfg_vinv + ' - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
+    $(".header_extraction").html('<img src="img/LogoAtmosud.small.png"><br/><br/>AtmoSud - Inventaire v' + cfg_vinv + ' - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
 function create_table(response, display){
@@ -637,7 +637,8 @@ function create_table(response, display){
                 title: 'AtmoSud - Export CIGALE du ' + datehour(),
                 // charset: 'iso-8859-1', // 'ANSI', // 'utf-8', 
                 customize: function ( csv ) {
-                    return "AtmoSud\n\n" + cgu + "\n\n" + csv;
+                    // return "AtmoSud\n\n" + cgu + "\n\n" + csv;
+                    return "AtmoSud inventaire v"+cfg_vinv+" - Export CIGALE du " + datehour() + "\n\n" + cgu + "\n\n" + csv;
                 }                
             },  
             {
@@ -646,17 +647,18 @@ function create_table(response, display){
                 charset:  'utf-8', // 'windows-1252', // 'iso-8859-1', // 'ANSI', // 'utf-8', 
                 bom: true,
                 customize: function ( csv ) {
-                    return "AtmoSud\n\n" + cgu + "\n\n" + csv;
+                    return "AtmoSud inventaire v"+cfg_vinv+" - Export CIGALE du " + datehour() + "\n\n" + cgu + "\n\n" + csv;
                 }                
             },        
             {
                 extend: 'pdfHtml5',
-                title: 'AtmoSud - Export CIGALE du ' + datehour(),
+                title: "AtmoSud inventaire v"+cfg_vinv+" - Export CIGALE du " + datehour(),
                 message: cgu, 
                 customize: function ( doc ) {
                     
                     var img = new Image();
-                    img.src = "img/logo-Air-PACA.png"; 
+                    // img.src = "img/logo-Air-PACA.png"; 
+                    img.src = "img/LogoAtmosud.small.png"; 
                     var dataURI = getBase64Image(img);
                     
                     doc.content.splice( 1, 0, {
@@ -738,7 +740,7 @@ function changer_listes_prod(is_prod){
         $("#select_secteurs option").remove();
     
         for (isect in listes["activites"]) {             
-            $("#select_secteurs").append($('<option>', {value: listes["activites"][isect].id_secten1, text: listes["activites"][isect].nom_secten1}, '</option>'));                               
+            $("#select_secteurs").append($('<option>', {value: listes["activites"][isect].id_secteur_pcaet, text: listes["activites"][isect].nom_secteur_pcaet}, '</option>'));                               
         };
         $("#select_secteurs").selectpicker('refresh');               
         

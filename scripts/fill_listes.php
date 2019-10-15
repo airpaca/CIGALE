@@ -49,7 +49,7 @@ while ($row = pg_fetch_assoc( $res )) {
 // order by order_field, valeur
 // ";
 $sql = "
-SELECT * FROM cigale.liste_entites_admin;
+SELECT order_field, valeur, texte FROM cigale.liste_entites_admin;
 ";
 
 $res = pg_query($conn, $sql);
@@ -64,10 +64,17 @@ while ($row = pg_fetch_assoc( $res )) {
 }
 
 /* Extraction des secteurs d'activités */
+// $sql = "
+// select '''' || id_secten1 || '''' as id_secten1, nom_secten1
+// from transversal.tpk_secten1 
+// order by id_secten1
+// "; 
+
+/* Extraction des secteurs d'activités PCAET */
 $sql = "
-select '''' || id_secten1 || '''' as id_secten1, nom_secten1
-from transversal.tpk_secten1 
-order by id_secten1
+select '''' || id_secteur_pcaet || '''' as id_secteur_pcaet, nom_secteur_pcaet
+from transversal.tpk_secteur_pcaet 
+order by id_secteur_pcaet
 ";
 
 $res = pg_query($conn, $sql);

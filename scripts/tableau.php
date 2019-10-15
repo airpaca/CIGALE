@@ -42,10 +42,10 @@ if ($query_var != "999") {
         $nom_entite = " '" . $query_entite_nom . "' as \"Entité administrative\"";
     };
     if ($query_sect != "") {
-        $group_by =  $group_by . ", nom_secten1";
-        $nom_secten1 = "nom_secten1";
+        $group_by =  $group_by . ", nom_secteur_pcaet";
+        $nom_secteur_pcaet = "nom_secteur_pcaet";
     } else {
-        $nom_secten1 = "'Tous secteurs'";
+        $nom_secteur_pcaet = "'Tous secteurs'";
     };
     if ($query_ener != "") {
         $group_by =  $group_by . ", cat_energie";
@@ -61,7 +61,7 @@ if ($query_var != "999") {
     $where =  $where . " and id_polluant in (" . $query_var . ")";
     $where =  $where . " and id_snap3 not in (80408)"; // Sans croisière pour maritime
     if ($query_sect != "") {
-        $where =  $where . " and id_secten1 in (" . str_replace("\\", "", $query_sect) . ")";
+        $where =  $where . " and id_secteur_pcaet in (" . str_replace("\\", "", $query_sect) . ")";
     };
     if ($query_ener != "") {
         $where =  $where . " and code_cat_energie in (" . $query_ener . ")";
@@ -93,6 +93,7 @@ if ($query_var != "999") {
     } elseif (strlen ($query_entite) == 9) {
         $where =  $where . " and id_comm in (select distinct id_comm from commun.tpk_commune_2015_2016 where siren_epci_2017 = " . $query_entite . ")";
     } elseif (strpos($query_entite_nom, "Parc Naturel ") !== false) {
+        // echo "PNR</br>";
 		$where =  $where . " and " . $query_entite . " = any(id_pnr)";		     
 	} else {
         $where =  $where . " and id_comm in (" . $query_entite . ")";
@@ -131,33 +132,33 @@ if ($query_var != "999") {
         an as \"Année\", 
         -- " . $nom_entite . "  as \"Entité administrative\",  
         " . $nom_entite . ",  
-        " . $nom_secten1 . " as \"Activité\",  
+        " . $nom_secteur_pcaet . " as \"Activité\",  
         " . $cat_energie . " as \"Energie\", 
         case when nom_abrege_polluant in ('co2.bio', 'co2.nbio') then 'co2' else nom_abrege_polluant end as \"Variable\", 
         round(sum(val)::numeric, 1) as \"Valeur\", 
         coalesce(lib_unite, 'Secret Stat') as \"Unite\"
     from (
-        select an, id_comm, id_secten1, code_cat_energie, id_polluant, 
+        select an, id_comm, id_secteur_pcaet, code_cat_energie, id_polluant, 
         sum(case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then null else val end) as val, 
         case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end as id_unite
         from total.bilan_comm_v" . $v_inv . "_diffusion 
         " . $where . "     
-        -- and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
-        -- and (id_secten1, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))    
-		and (id_secten1, id_polluant) not in (('1', 131),('1', 121),('1', 122),('1', 128),('1', 123),('1', 124))    
+        -- and (id_secteur_pcaet, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
+        -- and (id_secteur_pcaet, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))    
+		and (id_secteur_pcaet, id_polluant) not in (('1', 131),('1', 121),('1', 122),('1', 128),('1', 123),('1', 124))    
         group by 
             an, 
             case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end, 
-            id_polluant, id_comm, id_secten1, code_cat_energie
+            id_polluant, id_comm, id_secteur_pcaet, code_cat_energie
     )  as a
     -- left join commun.tpk_communes as b using (id_comm)
     left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018
-    left join transversal.tpk_secten1 as c on a.id_secten1 = c.id_secten1::integer
+    left join transversal.tpk_secteur_pcaet as c on a.id_secteur_pcaet = c.id_secteur_pcaet::integer
     left join (select distinct code_cat_energie, cat_energie from transversal.tpk_energie) as d using (code_cat_energie)
     left join commun.tpk_polluants as e using (id_polluant)
     left join commun.tpk_unite as f using (id_unite)
     " . $group_by . "
-    -- order by an, nom_entite, nom_secten1, cat_energie, nom_abrege_polluant, lib_unite
+    -- order by an, nom_entite, nom_secteur_pcaet, cat_energie, nom_abrege_polluant, lib_unite
     order by \"Année\", \"Entité administrative\", \"Activité\", \"Energie\", \"Variable\", \"Unite\"
     ;
     ";

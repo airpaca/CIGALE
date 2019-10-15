@@ -20,24 +20,24 @@ if (!$conn) {
 
 /* Export des emissions indirectes par secteur */
 $sql = "
-select b.nom_court_secten1, b.secten1_color, sum(val) as val
+select b.nom_secteur_pcaet, b.secteur_pcaet_color, sum(val) as val
 from (
-	select id_comm, id_secten1, (sum(val) / 1000.)::BIGINT as val 
+	select id_comm, id_secteur_pcaet, (sum(val) / 1000.)::BIGINT as val 
 	from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) . " 
 	where 
         an = " . $an . " 
+        and id_epci = " . $siren_epci . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
-        and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+        and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
         and ss is false -- Aucune donnée en Secret Stat
-	group by id_comm, id_secten1
+	group by id_comm, id_secteur_pcaet
 ) as a
-left join total.tpk_secten1_color as b on a.id_secten1 = b.id_secten1::integer
+left join total.tpk_secteur_pcaet_color as b on a.id_secteur_pcaet = b.id_secteur_pcaet::integer
 -- left join commun.tpk_commune_2015_2016 as c using (id_comm)
-left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
-left join cigale.epci as d on c.siren_epci_2018 = d.siren_epci
-where 
-	siren_epci = " . $siren_epci . " 
-group by b.nom_court_secten1, b.secten1_color    
+-- left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
+-- left join cigale.epci as d on c.siren_epci_2018 = d.siren_epci
+-- where siren_epci = " . $siren_epci . " 
+group by b.nom_secteur_pcaet, b.secteur_pcaet_color    
 ;
 ";
 
@@ -56,23 +56,23 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Export des emissions indirectes par cétégorie d'énergie */
 $sql = "
-select b.nom_court_cat_energie as nom_court_secten1, b.cat_energie_color as secten1_color, sum(val) as val
+select b.nom_court_cat_energie as nom_secteur_pcaet, b.cat_energie_color as secteur_pcaet_color, sum(val) as val
 from (
 	select id_comm, code_cat_energie, (sum(val) / 1000.)::BIGINT as val 
 	from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) . "
 	where 
         an = " . $an . " 
+        and id_epci = " . $siren_epci . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
-        and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+        and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
         and ss is false -- Aucune donnée en Secret Stat
 	group by id_comm, code_cat_energie
 ) as a
 left join total.tpk_cat_energie_color as b using (code_cat_energie)
 -- left join commun.tpk_commune_2015_2016 as c using (id_comm)
-left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
-left join cigale.epci as d on c.siren_epci_2018 = d.siren_epci
-where 
-	siren_epci = " . $siren_epci . " 
+-- left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
+-- left join cigale.epci as d on c.siren_epci_2018 = d.siren_epci
+-- where siren_epci = " . $siren_epci . " 
 group by b.nom_court_cat_energie, b.cat_energie_color
 ;
 ";
@@ -92,16 +92,17 @@ while ($row = pg_fetch_assoc( $res )) {
 
 /* Evo par secteur - émissions directes */
 $sql = "
-select an, a.id_secten1, nom_court_secten1, secten1_color, (sum(val) / 1000.)::integer as val
+select an, a.id_secteur_pcaet, nom_secteur_pcaet, secteur_pcaet_color, (sum(val) / 1000.)::integer as val
 from total.bilan_comm_v" . $v_inv . "_diffusion as a -- " . str_replace(".", "", $polluant) . " as a
-left join total.tpk_secten1_color as b on a.id_secten1 = b.id_secten1::integer
+left join total.tpk_secteur_pcaet_color as b on a.id_secteur_pcaet = b.id_secteur_pcaet::integer
 where 
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
-    and a.id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
-	and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
+    and a.id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+	-- and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
+    and id_epci = " . $siren_epci . " 
     and ss is false -- Aucune donnée en Secret Stat
-group by an, a.id_secten1, nom_court_secten1, secten1_color
-order by id_secten1, an
+group by an, a.id_secteur_pcaet, nom_secteur_pcaet, secteur_pcaet_color
+order by id_secteur_pcaet, an
 ;
 ";
 
@@ -131,8 +132,9 @@ from (
 		from total.bilan_comm_v" . $v_inv . "_diffusion -- " . str_replace(".", "", $polluant) . "
 		where 
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
-			and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
-            and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+			-- and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
+            and id_epci = " . $siren_epci . " 
+            and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
 			and an = " . $an . "
             and ss is false -- Aucune donnée en Secret Stat
 		) as epci,
@@ -167,12 +169,13 @@ $sql = "
 select (sum(val) / 1000.)::BIGINT as val 
 from total.bilan_comm_v" . $v_inv . "_diffusion as a -- " . str_replace(".", "", $polluant) . " as a
 -- left join commun.tpk_commune_2015_2016 as c using (id_comm)
-left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
+-- left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as c on a.id_comm = c.id_comm_2018
 where 
     an = " . $an . " 
-    and siren_epci_2018 = " . $siren_epci . " 
+    -- and siren_epci_2018 = " . $siren_epci . " 
+    and id_epci = " . $siren_epci . " 
     and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant in ('" . $polluant . "'))
-    and id_secten1 <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+    and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
     and ss_epci is false -- Aucune donnée en Secret Stat  
 ;
 ";

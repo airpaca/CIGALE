@@ -82,7 +82,7 @@
         <div class="col-md-9" id="zone-display">
             
             <br/>
-            <img src="img/logo-Air-PACA_small.png">
+            <img src="img/LogoAtmosud.small.png">
             
 			<h1>Définitions et équivalences énergétiques</h1>
                 <h2 data-toc-text="Consommation d'énergie finale/primaire">Consommation d'énergie finale/primaire</h2>
@@ -249,6 +249,12 @@
 			- Année 2016 version 2018</br> 
 			- Année 2015 version 2017</br> 
 			</p>
+            <b>Mises à jour de l'interface:</b></br> 
+            - 16/10/2019: Changement de la classification SECTEN1 en classification PCAET pour différencier le secteur déchets de celui de l'industrie.</br>
+            - 16/10/2019: Correction d'un bug lors de l'export des données sur les PNR.</br>
+            - 16/10/2019: Ajout du champ code insee des communes dans la partie export si détail communal activé.</br>
+            - 16/10/2019: Correction d'un bug d'affichage cartographique des communues de certains territoires.</br>
+            - 16/10/2019: Ajout de la version d'inventaire et de la date dans les extractions.</br>
             
             <h1>Secret statistique</h1>
             <p>

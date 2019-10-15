@@ -909,11 +909,19 @@ function calc_jenks(data, field, njenks, colorscale){
     the_jenks = calc_jenks(data, "superficie", 3, ['#f9ebea', '#cd6155', '#cb4335']);
     console.log(the_jenks);
     */
+
+    
     items = [];
     $.each(data.features, function (key, val) {
         $.each(val.properties, function(i,j){
             if (i == field) {
-                items.push(j);
+                if (!j){
+                    // Si une valeur est null alors on la met à 0, pas de NaN trouvé pour la librairie geostats
+                    items.push(0);
+                } else {
+                    items.push(j);                    
+                };
+
             };
         }); 
     });    
@@ -928,6 +936,8 @@ function calc_jenks(data, field, njenks, colorscale){
     // var color_x = chroma.scale(['#f9ebea', '#cd6155', '#cb4335']).colors(njenks);
     var color_x = chroma.scale(colorscale).colors(njenks);
     
+    
+    
     return {bornes: jenksResult, colors: color_x}; 
 };
 
@@ -939,6 +949,10 @@ function find_jenks_color(jenks_obj, the_val){
     the_val = value to test
     Returns html color
     */
+    
+    // console.log("FIND JENKS COLOR");
+    // console.log(jenks_obj);
+    // console.log(jenks_obj, the_val);
     
     // Si la valeur est dans une des bornes de classes <=
     for (ibornemin in jenks_obj.bornes.slice(0, -1)) {
@@ -962,7 +976,8 @@ function find_jenks_color(jenks_obj, the_val){
     } else {
         console.log("ERROR: Value " + the_val + " out of classes");
         return null;
-    };    
+    };
+    console.log("FIND JENKS COLOR END");
     
 };
 
@@ -1249,6 +1264,8 @@ function create_wfs_comm_layers(my_layers_object, siren_epci){
         jsonCallback: 'getJson',
         success: function (data) {
         
+            // console.log(data);
+        
             // Calcul des statistiques uniquement sur les valeurs répondant au filtre
             data_filtered = {features: []};
             for (ifeature in data.features) {
@@ -1420,7 +1437,7 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
 
     var graph_labels = [];
     for (var i in response) {
-        graph_labels.push(response[i].nom_court_secten1);
+        graph_labels.push(response[i].nom_secteur_pcaet);
     };              
 
     // var graph_title = 'Répartition sectorielle ' + cfg_anmax;
@@ -1433,7 +1450,7 @@ function create_piechart_emi(response, div, graph_title, tooltip_unit){
     var bg_colors = [];
     var bd_colors = [];
     for (var i in response) {
-        bg_colors.push(response[i].secten1_color);
+        bg_colors.push(response[i].secteur_pcaet_color);
         bd_colors.push('#ffffff');
     };  
     
@@ -1670,9 +1687,9 @@ function create_linechart_emi(response, div, graph_title){
     var liste_secteurs = [];
     var liste_couleurs = [];
     for (var i in response) {
-        if ($.inArray(response[i].nom_court_secten1, liste_secteurs) == -1){
-            liste_secteurs.push(response[i].nom_court_secten1);
-            liste_couleurs.push(response[i].secten1_color);
+        if ($.inArray(response[i].nom_secteur_pcaet, liste_secteurs) == -1){
+            liste_secteurs.push(response[i].nom_secteur_pcaet);
+            liste_couleurs.push(response[i].secteur_pcaet_color);
         };
     };    
 
@@ -1691,7 +1708,7 @@ function create_linechart_emi(response, div, graph_title){
             
             found_val = 0;
             for (var i in response) {
-                if (response[i].nom_court_secten1 == secteur && response[i].an == an){
+                if (response[i].nom_secteur_pcaet == secteur && response[i].an == an){
                     found_val = 1;
                     data.push(response[i].val);
                     break;
@@ -2586,7 +2603,7 @@ function creation_couches_comm_polluant(){
 function ajouter_logo(){
     logo.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info logo');  
-        div.innerHTML = '<img src="img/logo-Air-PACA_small.png">'; //  id="img_contributors"
+        div.innerHTML = '<img src="img/LogoAtmosud.small.png">'; //  id="img_contributors"
         return div;
     };
     logo.addTo(map);  
