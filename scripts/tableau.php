@@ -35,7 +35,8 @@ if ($query_var != "999") {
         // $group_by =  $group_by . ", \"Entité administrative\"";
         $group_by =  $group_by . ", \"Entité administrative\", \"Id Entité\"";
         // $group_by =  $group_by . ", nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')', id_comm_2018";
-        $nom_entite = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' as \"Entité administrative\", id_comm_2018 as \"Id Entité\"";
+        // $nom_entite = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' as \"Entité administrative\", id_comm_2018 as \"Id Entité\"";
+        $nom_entite = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' as \"Entité administrative\", id_comm as \"Id Entité\"";
     } else {
         $query_entite_nom = str_replace("\\'", "''", $query_entite_nom);
         $query_entite_nom = str_replace("'", "''", $query_entite_nom);
@@ -151,8 +152,8 @@ if ($query_var != "999") {
             case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end, 
             id_polluant, id_comm, id_secteur_pcaet, code_cat_energie
     )  as a
-    -- left join commun.tpk_communes as b using (id_comm)
-    left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018
+    left join commun.tpk_communes as b using (id_comm)
+    -- left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018
     left join transversal.tpk_secteur_pcaet as c on a.id_secteur_pcaet = c.id_secteur_pcaet::integer
     left join (select distinct code_cat_energie, cat_energie from transversal.tpk_energie) as d using (code_cat_energie)
     left join commun.tpk_polluants as e using (id_polluant)
@@ -272,7 +273,7 @@ if ($query_var != "999") {
    
 
 /* DEBUG */
-// echo nl2br($sql); // $sql = $sql = "rgfgfg";
+// echo nl2br($sql); exit();// $sql = $sql = "rgfgfg";
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
