@@ -198,8 +198,10 @@ if ($query_var != "999") {
         $where_entite = " and id_comm / 1000 = " . $query_entite . " ";
     // Si EPCI
     } elseif (strlen ($query_entite) == 9) {
-        $champ_geo = "a.nom_epci_2018";
+        // $champ_geo = "a.nom_epci";
+        $champ_geo = "a.nom_epci_2018 as nom_epci";
         $where_entite = " and a.siren_epci_2018 = " . $query_entite . " ";
+        $champ_geo_grpby = " , a.nom_epci_2018";
 	// PNR
     } elseif (strpos($query_entite_nom, "Parc Naturel ") !== false) {
 		$champ_geo = " (select nom from geres.alp_pnr where id = " . $query_entite . ") ";
@@ -207,16 +209,20 @@ if ($query_var != "999") {
 	// Si on est à la commune
     } else {
         // $champ_geo = "nom_comm";
-        $champ_geo = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
+        $champ_geo = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' ";
         $where_entite = " and id_comm = " . $query_entite . " ";
+        $champ_geo_grpby = ", nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')', id_comm";
     };        
    
     /* Si détail à la commune demandé alors on regroupera à la commune */
     if ($query_detail_comm == "true") {
        // $champ_geo = "nom_comm";
-       $champ_geo = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' as \"Entité administrative\", id_comm_2018 as \"Id Entité\"";
-       $champ_geo_grpby = " nom_comm_2018 || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')', id_comm_2018";
+       $champ_geo = " nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')' as \"Entité administrative\", id_comm as \"Id Entité\"";
+       $champ_geo_grpby = ", nom_comm || ' (' || lpad((id_comm / 1000)::text,2,'0') || ')', id_comm";
+    // } ELSE {
+       // $champ_geo_grpby = "";
     }; 
+
 
     /* Gestion du regroupement par filiere */ 
     if ($query_sect != "") {
@@ -246,20 +252,21 @@ if ($query_var != "999") {
         round(sum(val)::numeric, 1) as \"Valeur\",
         'MWh PCI' as \"Unite\"
     FROM total.bilan_comm_v" . $v_inv . "_prod as a
-    left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018 -- LEFT JOIN commun.tpk_communes as b using (id_comm)
+    -- left join (select distinct id_comm_2018, nom_comm_2018, siren_epci_2018, nom_epci_2018 FROM commun.tpk_commune_2015_2016) as b on  a.id_comm = b.id_comm_2018 -- LEFT JOIN commun.tpk_communes as b using (id_comm)
+    left join (select distinct id_comm_2018 as id_comm, nom_comm_2018 as nom_comm, siren_epci_2018 as siren_epci, nom_epci_2018 as nom_epci FROM commun.tpk_commune_2015_2016) as b using(id_comm)
     WHERE  
         an in (" . $query_ans . ") 
         " . $where_entite . " 
         " . $where_grande_filiere . " 
         " . $where_filiere . " 
     GROUP BY
-        an,
+        an -- ,
         " . $champ_geo_grpby . " ,
         lib_type_prod 
         " . $group_grande_filiere . " 
         " . $group_filiere . "
     ORDER BY    
-        an, 
+        an -- , 
         " . $champ_geo_grpby . " ,
         lib_type_prod 
         " . $group_grande_filiere . " 
@@ -277,7 +284,7 @@ if ($query_var != "999") {
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
-if (!$conn) {
+if (!$conn) { 
     echo "Not connected";
     exit;
 }
