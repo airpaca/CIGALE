@@ -243,7 +243,7 @@
             Les données de la dernière version annulent et remplacent donc les précédentes.
             </p>
             
-            <b>Versions d'inventaire</b>
+            <b>Versions d'inventaire:</b>
             <?php include 'scripts/versions_inventaire_html.php';   ?>
             
            
