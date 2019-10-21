@@ -242,13 +242,11 @@
             prendre en compte les éventuelles modifications méthodologiques. 
             Les données de la dernière version annulent et remplacent donc les précédentes.
             </p>
-            <p>
-            <b>Version actuelle:</b> </br> Année 2017 version 2019 v6.1 (publié le 20190905) </br>
-            <b>Historique des versions:</b></br> 
-			- Année 2016 version 2018 - maj 08/09/2018</br> 
-			- Année 2016 version 2018</br> 
-			- Année 2015 version 2017</br> 
-			</p>
+            
+            <b>Versions d'inventaire</b>
+            <?php include 'scripts/versions_inventaire_html.php';   ?>
+            
+           
             <b>Mises à jour de l'interface:</b></br> 
             - 16/10/2019: Changement de la classification SECTEN1 en classification PCAET pour différencier le secteur déchets de celui de l'industrie.</br>
             - 16/10/2019: Correction d'un bug lors de l'export des données sur les PNR.</br>
