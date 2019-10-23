@@ -1,0 +1,22 @@
+/*	Feuille de style Emiprox */
+
+* { font-size:12pt; font-family: Gudea, Ubuntu, Verdana, Arial; }
+html, body { text-align: center; }
+h1 { font-size: 1.75em; font-weight: bold; }
+a { font-weight:bolder; color:#0067A1; text-decoration:none; }
+a:hover { color:#A6C7DA; text-decoration:underline; }
+img {border:0 none;}
+input, select { font-size: 12px; border: 1px solid rgb(22, 123, 179); background-color: white; padding: 5px; }
+
+img#logo { margin: 10px; }
+
+.emi_quantite { font-weight:bolder; font-size: 2em; }
+.emi_title { font-size: 1.75em; }
+.emi_src { color: #aaa; font-size: 10pt; margin-bottom: 5px;  }
+.emi_credit { color: #bbb; font-size: 12px; }
+
+div .form_geonm { font-size: 1em; margin-right: 5px; }
+div .form_geotyp { font-size: 0.85em; opacity: 0.6; }
+
+p.introduction { margin-bottom: 30px; background-color: #f6f6f6; padding: 20px; text-align: justify; }
+p.conditions { font-size: 0.90em; color: #777; text-align: justify; margin-top: 30px; padding: 20px; }
