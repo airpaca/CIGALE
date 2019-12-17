@@ -167,10 +167,10 @@ if ($query_var != "999") {
 
     // Si extraction des consos d'énergie du secteur prod énergie résultat null ce qui est normal.
     // On renvoie un texte d'avertissement
-    if (str_replace("\\", "", $query_sect) == "'1'" and $query_var == "131") { 
+    //if (str_replace("\\", "", $query_sect) == "'1'" and $query_var == "131") { 
         // echo "Warning msg";
-        $sql = "SELECT '<font color=\"#ff6600\">Les consommations du secteur ''Extraction, transformation et distribution d''énergie'' sont considérées comme de l''énergie primaire et ne figurent pas dans le bilan des consommations finales. <a href=\"methodo.php\">[Plus d''informations]</a></font>' as Warning";
-    };
+       // $sql = "SELECT '<font color=\"#ff6600\">Les consommations du secteur ''Extraction, transformation et distribution d''énergie'' sont considérées comme de l''énergie primaire et ne figurent pas dans le bilan des consommations finales. <a href=\"methodo.php\">[Plus d''informations]</a></font>' as Warning";
+    //};
 
 // Si export des productions
 } else {
