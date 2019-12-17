@@ -12,7 +12,6 @@ $query_ener = $_GET['query_ener'];
 $query_var = $_GET['query_var'];
 $query_detail_comm = $_GET['query_detail_comm'];
 
-
 /* Ecriture du code SQL de la requête */
 
 // SI CO2 tot alors on recherche polluants 121 et 122
@@ -146,7 +145,9 @@ if ($query_var != "999") {
         " . $where . "     
         -- and (id_secteur_pcaet, id_polluant) not in (('1', 131),('1', 15),('1', 128))    
         -- and (id_secteur_pcaet, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))    
-		and (id_secteur_pcaet, id_polluant) not in (('1', 131),('1', 121),('1', 122),('1', 128),('1', 123),('1', 124))    
+		and ext_pcaet is true -- and (id_secteur_pcaet, id_polluant) not in (('1', 131),('1', 121),('1', 122),('1', 128),('1', 123),('1', 124))
+        and hors_bilan is false 
+        and id_comm not in (99138)
         group by 
             an, 
             case when " . $ss . " is TRUE and " . $ss_field . " is TRUE then NULL else id_unite end, 
@@ -279,8 +280,8 @@ if ($query_var != "999") {
 /* Execution de la requête SQL et retour du résultat */
    
 
-/* DEBUG */
-// echo nl2br($sql); exit();// $sql = $sql = "rgfgfg";
+/* DEBUG */ //
+ //echo nl2br($sql); exit();// $sql = $sql = "rgfgfg";//DECOCHER ICI POUR RECUPERER LA REQUETE DEPUIS CIGALE
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");
@@ -293,10 +294,11 @@ if (!$conn) {
 
 
 /* Execution de la requête */
+// echo(nl2br($sql));
 $rResult = pg_query($conn, $sql);
 if (!$rResult) {
     echo "An SQL error occured.\n</br></br></br>";
-    // echo $sql;
+    // echo(nl2br($sql));
     exit;
 }
 

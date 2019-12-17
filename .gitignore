@@ -12,5 +12,7 @@ config*
 # Swap files
 *.swp
 
+methanisation*
+
 
 

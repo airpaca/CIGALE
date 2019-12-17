@@ -152,20 +152,23 @@ SELECT
     case 
         when id_polluant in (15,128) then val / 1000000.
         else val / 1000.
-     end as val    
+     end as val     
 FROM (
     SELECT 
         case when id_polluant in (121,122) then 15 else id_polluant end as id_polluant, 
         id_secten1::text,
         id_unite,
         sum(val) as val
-    FROM total.bilan_comm_v6_diffusion
+    FROM total.bilan_comm_v7_diffusion
     WHERE 
         id_comm = " . $id_comm . "
         -- and id_polluant in (" . implode(",", $liste_polls) . ")
         and ( id_polluant in (" . implode(",", $liste_polls) . ") or id_polluant in (121,122) )
         and an = " . $IE["annee"] . " 
-        and (id_secten1::text, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))  
+        -- and (id_secten1::text, id_polluant) not in (('1', 131),('1', 15),('1', 128),('1', 123),('1', 124))  
+		and ext_pcaet is true
+        and hors_bilan is false 
+        and id_comm not in (99138)        
     group by 
         case when id_polluant in (121,122) then 15 else id_polluant end , 
         id_secten1, 
@@ -211,12 +214,15 @@ FROM (
         id_secten1::text,
         id_unite,
         sum(val) as val
-    FROM total.bilan_comm_v6_diffusion
+    FROM total.bilan_comm_v7_diffusion
     WHERE 
         id_comm / 1000 = " . $id_comm . " / 1000
         -- and id_polluant in (" . implode(",", $liste_polls) . ")
         and ( id_polluant in (" . implode(",", $liste_polls) . ") or id_polluant in (121,122) )
         and an = " . $IE["annee"] . " 
+		and ext_pcaet is true
+        and hors_bilan is false 
+        and id_comm not in (99138)            
     group by 
         case when id_polluant in (121,122) then 15 else id_polluant end,  
         id_secten1, 
@@ -262,11 +268,14 @@ FROM (
         id_secten1::text,
         id_unite,
         sum(val) as val
-    FROM total.bilan_comm_v6_diffusion
+    FROM total.bilan_comm_v7_diffusion
     WHERE 
         -- and id_polluant in (" . implode(",", $liste_polls) . ")
         ( id_polluant in (" . implode(",", $liste_polls) . ") or id_polluant in (121,122) )
-        and an = " . $IE["annee"] . " 
+        and an = " . $IE["annee"] . "
+		and ext_pcaet is true
+        and hors_bilan is false 
+        and id_comm not in (99138)            
     group by 
         case when id_polluant in (121,122) then 15 else id_polluant end, 
         id_secten1, 

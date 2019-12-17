@@ -85,38 +85,41 @@
             <img src="img/LogoAtmosud.small.png">
             
 			<h1>Définitions et équivalences énergétiques</h1>
-                <h2 data-toc-text="Consommation d'énergie finale/primaire">Consommation d'énergie finale/primaire</h2>
+                <h2 data-toc-text="Consommation énergétique finale">Consommation énergétique finale</h2>
 					<p>
-                    La <b>consommation d’énergie primaire</b> correspond à l’énergie non transformée consommée sur un territoire. 
-					Elle intègre les consommations du secteur de la Production/transformation d’énergie mais pas les consommations 
-					d’énergies secondaires telles que l’électricité ou la chaleur. 
-					Les émissions de polluants associées sont uniquement des émissions directes (SCOPE 1).
+                    Les données présentées dans Cigale correspondent à la <b>consommation énergétique finale</b>. 
+                    Il s’agit de l’énergie livrée à des fins énergétiques, donc hors utilisation en tant que matière première, pour toutes les branches économiques 
+                    à l’exception des producteurs d’électricité et de chaleur (pour éviter les double-comptes). 
+                    Elle représente toute l’énergie consommée par les utilisateurs finaux sur le territoire y compris les consommations d’électricité et de chaleur 
+                    (qui sont des énergies secondaires). Les émissions de gaz à effet de serre résultantes intègrent donc les émissions indirectes de CO<sub>2</sub> liées 
+                    à la consommation d’électricité (SCOPE 1 et 2). 
 					</p>	
 					<p>	
-					La <b>consommation d’énergie finale</b> représente toute l’énergie consommée par les utilisateurs finaux. 
-					Elle intègre les consommations d’électricité et de chaleur (qui sont des énergies secondaires) 
-					mais pas les consommations énergétiques du secteur de la Production/transformation d’énergie 
-					(considérées comme de l’énergie primaire). Les émissions de gaz à effet de serre résultantes 
-					intègrent donc les émissions indirectes de CO<sub>2</sub> liées à la consommation d’électricité (SCOPE 1 et 2).
+                    L’usage de matières premières correspond à la consommation non énergétique finale et n’est pas inclus dans les données de consommation dans Cigale, 
+                    bien que les émissions induites par les activités concernées soient prises en compte, sous la catégorie « aucune énergie ». 
 					</p>
-			    <h2 data-toc-text="Production d'énergie primaire">Production d'énergie primaire</h2>
+			    <h2 data-toc-text="Production d'énergie primaire">Production d'énergie</h2>
 					<p>
-					L’énergie primaire est l’ensemble des produits énergétiques avant transformation. 
-					La production d’énergie primaire consiste en l’extraction de combustibles fossiles (pétrole brut, gaz naturel, 
-					combustibles minéraux solides, etc.), la production d’énergie nucléaire (chaleur générée par la fission des atomes) 
-					ainsi que la production d’énergie renouvelable (énergie solaire thermique, photovoltaïque, hydraulique, éolienne, 
-					géothermique, biomasse, etc.). 
+					Dans CIGALE, les productions recensées sont les productions d’électricité et de chaleur en sortie de l’installation. </br>
+					Ces productions peuvent correspondre à des productions primaires (ex : éolien, solaire, hydraulique, etc.) ou a des productions secondaires ( ex : thermique fossile).					
+					</p>
+					<p>
+					Energie primaire: il s'agit des produits énergétiques « bruts » dans l’état dans lequel ils sont fournis par la nature, c’est-à-dire l’énergie potentielle contenue dans les produits après extraction mais
+					avant transformation (exemple : bois). </br>
+					Par convention, l’énergie électrique provenant des filières hydraulique, éolienne et photovoltaïque est considérée comme une production primaire.</br>
+					</br>
+					L’énergie secondaire (électricité ou chaleur) issue de la transformation des produits est généralement inférieure à la production primaire, en fonction des pertes et des rendements des unités de valorisation (UIOM, ISDND, centrale, etc.) 
 					</p>
 				<h2 data-toc-text="Emissions de gaz à effet de serre : PRG">Emissions de gaz à effet de serre : PRG</h2>
 					<p>
-                    Le <b>Pouvoir de Réchauffement Global (PRG)</b> est un indicateur défini pour comparer l’impact de chaque 
+                    Le <b>Potentiel de Réchauffement Global (PRG)</b> est un indicateur défini pour comparer l’impact de chaque 
 					gaz à effet de serre sur le réchauffement global, sur une période choisie (généralement 100 ans). 
 					Il est calculé à partir des PRG de chaque substance et est exprimé en équivalent CO<sub>2</sub> (CO<sub>2</sub>e). 
 					</p>	
 					<p>	
-					Par définition, le PRG du CO<sub>2</sub> est toujours égal à 1. Les coefficients utilisés dans l’inventaire 
-					sont ceux établis lors de la Conférence des Parties de 1995 et appliqués dans le cadre du protocole 
-					de Kyoto (CO<sub>2</sub>=1, CH<sub>4</sub>=21, N<sub>2</sub>O=310). Les gaz fluorés ne sont actuellement pas calculés dans l’inventaire.
+					Par définition, le PRG du CO<sub>2</sub> est toujours égal à 1. Les coefficients utilisés dans l’inventaire d'AtmoSud
+					sont ceux du 5<sup>e</sup> rapport du GIEC ( (CO2=<sub>2</sub>, CH<sub>4</sub>=28, N<sub>2</sub>O=265). 
+                    Les gaz fluorés ne sont actuellement pas calculés dans l’inventaire.
 					</p>
 				<h2 data-toc-text="Equivalences énergétiques">Tableau des équivalences énergétiques</h2>
 					<p>
@@ -127,83 +130,68 @@
 			    <h2 data-toc-text="Nomenclature SNAP">Nomenclature SNAP</h2>
                     <p>
                     Les inventaires d’émissions sont établis selon la nomenclature <b>SNAP</b> (Selected Nomenclature for Air Pollution, EMEP/CORINAIR 1997). 
-					Cette nomenclature a évolué depuis 1997, pour permettre la prise en compte de nouvelles activités. Elle est décrite dans l’
-					<a href="http://www.citepa.org/images/III-1_Rapports_Inventaires/OMINEA_2017.pdf">OMINEA 
-					(Organisation et méthodes des inventaires nationaux des émissions atmosphériques en France)</a>.
+					Cette nomenclature a évolué depuis 1997, pour permettre la prise en compte de nouvelles activités. Elle est décrite dans le rapport
+					OMINEA (Organisation et méthodes des inventaires nationaux des émissions atmosphériques en France). Cf. CITEPA.
                     </p>
-                <h2 data-toc-text="Nomenclature SECTEN">Nomenclature SECTEN</h2>
+                <h2 data-toc-text="Nomenclature PCAET">Nomenclature PCAET</h2>
                     <p>
-                    La restitution des inventaires de consommations d’énergie et d’émissions de polluants est 
-                    réalisée selon le premier niveau de la nomenclature <b>SECTEN</b> (SECTeurs économiques et ENergie), afin d’être en 
-                    cohérence avec l’inventaire national publié chaque année par le CITEPA.
+                    Dans l’outil CIGALE, les données d’émission et de consommation sont déclinées en huit secteurs conformément aux prescriptions de <a href="https://www.legifrance.gouv.fr/jo_pdf.do?id=JORFTEXT000032974938">l’arrêté PCAET</a> :
                     </p>
-                    <p>
-                    Le format SECTEN regroupe 7 secteurs principaux et 1 secteur intégrant les émetteurs non inclus:</br>
+                
                     <ul>
-                    <li>Extraction, transformation et distribution d’énergie</li>
-                    <li>Industrie manufacturière, traitement des déchets, construction</li>
-                    <li>Résidentiel, tertiaire, commercial, institutionnel</li>
-                    <li>Agriculture, sylviculture et aquaculture</li>
+                    <li>Résidentiel</li>
+                    <li>Tertiaire</li>
                     <li>Transport routier</li>
-                    <li>Modes de transports autres que routier</li>
-                    <li>UTCF (utilisation des terres, leurs changements et la forêt)</li>
-                    <li>Emetteurs non inclus dans le total France</li>
-                    </ul>
-                    </p>
-					<p>
-                    <a href="https://www.citepa.org/images/III-1_Rapports_Inventaires/SECTEN/CITEPA-liste-sources-2017-d.pdf">
-					Correspondance SNAP / SECTEN</a>
-                    </p>
-                    
-                    
-                    <!--
+                    <li>Autres transports</li>
+                    <li>Agriculture</li>
+                    <li>Déchets</li>
+                    <li>Industrie hors branche énergie</li>
+                    <li>Branche énergie</li>
+                    </ul>             
+                
                     <p>
-                    Ce format de rapportage SECTEN est adaptée à des inventaires orientés « sources », 
-                    c’est-à-dire lorsque les émissions sont comptabilisées sur leur lieu de rejet. 
-                    L’inventaire énergétique étant réalisé en même temps que l’inventaire des émissions, 
-                    le système de rapportage a dû être adapté, afin d’inclure les consommations d’énergie 
-                    secondaires (électricité et chaleur) pour lesquelles les émissions atmosphériques sont 
-                    rejetées sur le lieu de production et non sur leur lieu de consommation. 
-                    Son principe est synthétisé dans le schéma suivant :
-                    <p>
-                    <img src="img/170724_schema_primaire_finale.jpg" border="0" width="97%">
-                    -->
+                    Une neuvième catégorie <b>Emetteurs non inclus</b> regroupe les émissions non prises en compte dans les totaux sectoriels ainsi 
+                    que les sources non anthropiques, qui ne sont généralement pas rapportées dans les bilans d’émissions au format PCAET. 
+                    Il s’agit notamment de la remise en suspension des particules fines, des feux de forêt et des sources naturelles :
+                    (végétation, NOx et COVNM des champs et cultures, NOx des cheptels) :                    
+                    </p>
+                
+                    <img src="img/tableau_non_inclus.png" border="0" width="40%">
+                
+                    <p> 
+                    Les émissions de GES des cycles LTO internationaux sont également rapportées dans cette catégorie. 
+                    Pour information, les émissions et consommations des phases croisières de l’aviation et du maritime ne sont pas rapportées dans Cigale. 
+                    </p>
 
                     <p>
-                    L’inventaire des polluants atmosphériques (hors GES) comptabilise les émissions 
-                    sur le lieu de rejet. L’inventaire des émissions de gaz à effet de serre comptabilise 
-                    les émissions directes liées à tous les secteurs d’activité hormis celui de la 
-                    production d’énergie (électricité, chaleur et froid), dont seule la part d’émissions 
-                    indirectes liée à la consommation à l’intérieur du territoire est comptabilisée. 
-                    <p>
-                    <img src="img/170724_schema_inventaire.jpg" border="0" width="80%">                    
+                    Pour la <b>Branche énergie</b>, les données de consommation d’énergie et d’émissions de gaz à effet de serre liées à la production d’électricité, 
+                    de chaleur et de froid ne sont pas inclues dans ce secteur, mais elles sont comptabilisées au stade de la consommation finale par l’utilisateur. 
+                    Ainsi, l’inventaire des polluants atmosphériques (hors GES) comptabilise les émissions sur le lieu de rejet. L’inventaire des émissions de gaz à 
+                    effet de serre comptabilise les émissions directes liées à tous les secteurs d’activité hormis celui de la production d’électricité, de chaleur et 
+                    de froid, dont seule la part d’émissions indirectes liée à la consommation à l’intérieur du territoire est comptabilisée.
+                    </p>
+
+                    <img src="img/schema_scope.png" border="0" width="30%">
+
                     
                     
                     </p>	
-				<h2 data-toc-text="Secteur UTCF">Secteur UTCF</h2>
+				<h2 data-toc-text="Secteur UTCATF">Secteur UTCATF</h2>
 					<p> 
-                    L'<b>utilisation des terres, leur changement et la forêt</b> est à la fois un puits et une source d'émission de 
-					CO<sub>2</sub>, CH<sub>4</sub> et N<sub>2</sub>O. L'UTCF couvre la récolte et l'accroissement forestier, la conversion des forêts (défrichement) 
+                    L'<b>Utilisation des Terres, Changement d’Affectation des Terres et Foresterie</b> est à la fois un puits et une source d'émission de 
+					CO<sub>2</sub>, CH<sub>4</sub> et N<sub>2</sub>O. L'UTCATF couvre la récolte et l'accroissement forestier, la conversion des forêts (défrichement) 
 					et des prairies ainsi que les sols dont la composition en carbone est sensible à la nature des activités 
 					auxquelles ils sont dédiés (forêt, prairies, terres cultivées). Ce secteur n’est actuellement pas calculé 
 					dans l’inventaire AtmoSud.                  
                     </p>	
-				<h2 data-toc-text="Emetteurs non inclus">Emetteurs non inclus</h2>
-					<p> 
-                    La catégorie <b>Emetteurs non inclus</b> regroupe les émissions non prises en compte dans les totaux nationaux. 
-					Concernant les émissions de gaz à effet de serre direct, il s’agit des émissions du trafic maritime aérien 
-					et international ainsi que des sources non anthropiques. Pour les autres substances, il s’agit des mêmes 
-					émissions auxquelles sont ajoutées les émissions de la phase croisière du trafic aérien domestique, les 
-					émissions des sources biotiques agricoles et les émissions de particules issues de la remise en suspension 
-					(afin d’éviter les doubles comptes).                  
-                    </p>
+
 			
 			<h1>Nomenclatures de combustibles</h1>
 				<h2 data-toc-text="Nomenclature NAPFUE">Nomenclature NAPFUE</h2>
                     <p>
 					Les activités de combustion sont distinguées dans l’inventaire par un niveau supplémentaire en intégrant 
 					la nomenclature NAPFUE (Nomenclature for Air Pollution of FUEls). Cette nomenclature est décrite dans 
-					l'<a href="http://www.citepa.org/images/III-1_Rapports_Inventaires/OMINEA_2017.pdf">OMINEA</a>.
+					le rapport OMINEA (Cf. CITEPA).
 					</p>
 				<h2 data-toc-text="Format de restitution">Format de restitution</h2>
                     <p>
@@ -238,16 +226,19 @@
             AtmoSud met à jour les inventaires d'émissions, de consommations et productions énergétiques tous les ans. 
             </p>
             <p>
-            Lors de cette mise à jour, une année supplémentaire est calculé. Les années antérieures sont également toutes recalculées pour 
-            prendre en compte les éventuelles modifications méthodologiques. 
+            Lors de cette mise à jour, une année supplémentaire est calculée. Les années antérieures sont également toutes recalculées pour 
+            prendre en compte les éventuelles modifications méthodologiques et actualisation des données sources. 
             Les données de la dernière version annulent et remplacent donc les précédentes.
+            </p>
+            <p>
+            Des mises à jour pour une même version d’inventaire peuvent également être réalisées. Les listes des versions et détails des mises à jour sont consultables ci-dessous.            
             </p>
             
             <b>Versions d'inventaire:</b>
             <?php include 'scripts/versions_inventaire_html.php';   ?>
-            
            
             <b>Mises à jour de l'interface:</b></br> 
+			- 17/12/2019: Changement du format de restitution pour les consommations et émissions de GES de la branche production d'énergie, pour n'exclure que les installations de production d'électricité et de chaleur. Les autres activités, comme les raffineries par exemple, sont maintenant bien comptabilisées dans cette branche d'activités.</br>
             - 16/10/2019: Changement de la classification SECTEN1 en classification PCAET pour différencier le secteur déchets de celui de l'industrie.</br>
             - 16/10/2019: Correction d'un bug lors de l'export des données sur les PNR.</br>
             - 16/10/2019: Ajout du champ code insee des communes dans la partie export si détail communal activé.</br>
@@ -262,13 +253,12 @@
 			</p>
 			<p>
 			Le secret statistique est calculé par commune, par secteur d’activité et par catégorie d’énergie pour les consommations. 
-			Si une consommation est confidentielle, toutes les émissions concernées ne sont également pas publiées.
 			</p>
 			<p>
 			Dans le souci de publier un maximum de données, plusieurs traitements sont effectués :</br>
 			</p>
 			<p>
-			- Pas de donnée confidentielle à l’échelle de la région et des départements ;</br>
+			- Pas de donnée confidentielle pour les émissions (uniquement pour les consommations) </br>
 			- A l’échelle de l’EPCI, lorsque les critères du secret statistique sont respectés et 
 			que le secret statistique concerne plusieurs communes (pour un même secteur d’activité et 
 			une même catégorie d’énergie), les données globales de l’EPCI peuvent être diffusées (impossibilité de reconstitution des données communales).
@@ -288,7 +278,8 @@
                     - Toute utilisation des données brutes issues de la base de données CIGALE devra faire référence à 
                     l'Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) et à AtmoSud en ces termes :
                     'Source: Base de donnes CIGALE - Observatoire Régional de l'Energie, du Climat et de l'Air (ORECA) 
-                    Provence-Alpes-Côte d'Azur / inventaire AtmoSud'
+                    Provence-Alpes-Côte d'Azur / inventaire AtmoSud'. 
+                    Il est également important de préciser la version de l’inventaire et la date correspondant à l’extraction des données.
                     </p>
                     <p>
                     - Toute utilisation de données retravaillées par l'utilisateur final à partir de données 
@@ -317,8 +308,13 @@
 			<p>
 			<a href="img/171016_NoteMethodoInventaire.pdf">Note méthodologique d'élaboration de l'inventaire des émissions de polluants en Provence Alpes Côte d'Azur</a>
 			</p>
+            
+			<p>
+			<a href="https://www.atmosud.org/sites/paca/files/atoms/files/190724_plaquette_inventaires_territoriaux_0.pdf">En savoir plus sur les inventaires : la plaquette AtmoSud</a>
+			</p>            
+            
             <p>
-			<a href="http://www.lcsqa.org/system/files/ressources/medde-dgec-guide_methodo-elaboration_inventaires-pcit-2012_vf.pdf">Guide PCIT (Pôle de Coordination des Inventaires territoriaux)</a>
+			<a href="https://www.lcsqa.org/system/files/rapport/MTES_Guide_methodo_elaboration_inventaires_PCIT_mars2019.pdf">Guide PCIT (Pôle de Coordination des Inventaires territoriaux)</a>
 			</p>
 			<p>
 			<a href="https://www.citepa.org/fr/activites/inventaires-des-emissions/secten">CITEPA : inventaire SECTEN</a>
