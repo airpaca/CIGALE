@@ -11,8 +11,8 @@ if (!$conn) {
 }
 
 $sql = "
-select distinct siren_epci as geoid, nom_epci as geonm, 'EPCI' as geotyp
-from cigale.epci
+-- select distinct siren_epci as geoid, nom_epci as geonm, 'EPCI' as geotyp from cigale.epci
+select valeur as geoid, texte as geonm, 'EPCI' as geotyp from cigale.liste_entites_admin where order_field = 3 order by geonm;
 ";
 
 $res = pg_query($conn, $sql);
