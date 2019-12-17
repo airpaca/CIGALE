@@ -159,7 +159,7 @@ FROM (
         id_secten1::text,
         id_unite,
         sum(val) as val
-    FROM total.bilan_comm_v7_diffusion
+    FROM total.bilan_comm_v6_diffusion
     WHERE 
         id_comm = " . $id_comm . "
         -- and id_polluant in (" . implode(",", $liste_polls) . ")
@@ -214,7 +214,7 @@ FROM (
         id_secten1::text,
         id_unite,
         sum(val) as val
-    FROM total.bilan_comm_v7_diffusion
+    FROM total.bilan_comm_v6_diffusion
     WHERE 
         id_comm / 1000 = " . $id_comm . " / 1000
         -- and id_polluant in (" . implode(",", $liste_polls) . ")
@@ -268,7 +268,7 @@ FROM (
         id_secten1::text,
         id_unite,
         sum(val) as val
-    FROM total.bilan_comm_v7_diffusion
+    FROM total.bilan_comm_v6_diffusion
     WHERE 
         -- and id_polluant in (" . implode(",", $liste_polls) . ")
         ( id_polluant in (" . implode(",", $liste_polls) . ") or id_polluant in (121,122) )
