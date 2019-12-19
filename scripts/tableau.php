@@ -281,7 +281,7 @@ if ($query_var != "999") {
    
 
 /* DEBUG */ //
- //echo nl2br($sql); exit();// $sql = $sql = "rgfgfg";//DECOCHER ICI POUR RECUPERER LA REQUETE DEPUIS CIGALE
+//echo nl2br($sql); exit();// $sql = $sql = "rgfgfg";//DECOCHER ICI POUR RECUPERER LA REQUETE DEPUIS CIGALE
 
 /* Connexion à PostgreSQL */
 $conn = pg_connect("dbname='" . $pg_bdd . "' user='" . $pg_lgn . "' password='" . $pg_pwd . "' host='" . $pg_host . "'");

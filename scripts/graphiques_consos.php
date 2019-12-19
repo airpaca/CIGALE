@@ -24,8 +24,10 @@ from (
         an = " . $an . " 
         and id_epci = " . $siren_epci . " 
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-        and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
-        and ss is false -- Aucune donnée en Secret Stat
+        -- and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+        and ext_pcaet is true 
+        -- and ss is false -- Aucune donnée en Secret Stat
+        and ss_epci is false -- Aucune donnée en Secret Stat
 	group by id_comm, id_secteur_pcaet
 ) as a
 left join total.tpk_secteur_pcaet_color as b on a.id_secteur_pcaet = b.id_secteur_pcaet::integer
@@ -58,8 +60,10 @@ from (
         an = " . $an . "
         and id_epci = " . $siren_epci . "         
         and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-        and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
-        and ss is false -- Aucune donnée en Secret Stat
+        -- and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+        and ext_pcaet is true 
+        -- and ss is false -- Aucune donnée en Secret Stat
+        and ss_epci is false -- Aucune donnée en Secret Stat
 	group by id_comm, code_cat_energie
 ) as a
 left join total.tpk_cat_energie_color as b using (code_cat_energie)
@@ -73,7 +77,7 @@ group by b.nom_court_cat_energie, b.cat_energie_color
 
 $res = pg_query($conn, $sql);
 if (!$res) {
-    echo "B An SQL error occured.\n";
+    echo "An SQL error occured.\n";
     exit;
 }
 
@@ -89,10 +93,12 @@ from total.bilan_comm_v" . $v_inv . "_diffusion as a
 left join total.tpk_secteur_pcaet_color as b on a.id_secteur_pcaet = b.id_secteur_pcaet::integer
 where 
 	id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-    and a.id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
-	-- and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
+    -- and a.id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+	and ext_pcaet is true 
+    -- and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
     and id_epci = " . $siren_epci . " 
-    and ss is false -- Aucune donnée en Secret Stat
+    -- and ss is false -- Aucune donnée en Secret Stat
+    and ss_epci is false -- Aucune donnée en Secret Stat
 group by an, a.id_secteur_pcaet, nom_secteur_pcaet, secteur_pcaet_color
 order by id_secteur_pcaet, an
 ;
@@ -126,9 +132,11 @@ from (
 			id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
 			-- and id_comm in (select distinct id_comm_2018 from commun.tpk_commune_2015_2016 where siren_epci_2018 = " . $siren_epci . ")
             and id_epci = " . $siren_epci . " 
-            and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
-			and an = " . $an . "
-            and ss is false -- Aucune donnée en Secret Stat
+            -- and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+			and ext_pcaet is true 
+            and an = " . $an . "
+            -- and ss is false -- Aucune donnée en Secret Stat
+            and ss_epci is false -- Aucune donnée en Secret Stat
 		) as epci,
 		-- Emissions de la région
 		(select (sum(val) / 1000.) as val
@@ -164,7 +172,8 @@ where
     -- and siren_epci_2018 = " . $siren_epci . "  
     and id_epci = " . $siren_epci . " 
     and id_polluant in (select id_polluant from commun.tpk_polluants where nom_abrege_polluant = '" . $polluant . "')
-    and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+    -- and id_secteur_pcaet <> '1' -- Finale Pas de prod énergétique mais élec et chaleur
+    and ext_pcaet is true 
     and ss_epci is false -- Aucune donnée en Secret Stat	   
 ;
 ";
@@ -172,7 +181,7 @@ where
 
 $res = pg_query($conn, $sql);
 if (!$res) {
-    echo "E An SQL error occured.\n";
+    echo "An SQL error occured.\n";
     exit;
 }
 
