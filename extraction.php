@@ -605,7 +605,7 @@ function afficher_donnees(){
    
     // Mise à jour de la date et de l'heure de l'extraction
     var extraction_time = datehour();
-    $(".header_extraction").html('<img src="img/LogoAtmosud.small.png"><br/><br/>AtmoSud - Inventaire v' + cfg_vinv + ' - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
+    $(".header_extraction").html('<img src="img/LogoAtmosud.small.png"><br/><br/>AtmoSud - Inventaire v' + cfg_vinv + '.' + cfg_sous_vinv + ' - Extraction du ' + extraction_time + '</br><a target="_blank" href="methodo.php#conditions-d-utilisation-des-donn-es">Consulter les conditions d\'utilisation et de diffusion</a>');
 };
 
 function create_table(response, display){
@@ -638,7 +638,7 @@ function create_table(response, display){
                 // charset: 'iso-8859-1', // 'ANSI', // 'utf-8', 
                 customize: function ( csv ) {
                     // return "AtmoSud\n\n" + cgu + "\n\n" + csv;
-                    return "AtmoSud inventaire v"+cfg_vinv+" - Export CIGALE du " + datehour() + "\n\n" + cgu + "\n\n" + csv;
+                    return "AtmoSud inventaire v"+cfg_vinv+ '.' + cfg_sous_vinv +" - Export CIGALE du " + datehour() + "\n\n" + cgu + "\n\n" + csv;
                 }                
             },  
             {
@@ -647,12 +647,12 @@ function create_table(response, display){
                 charset:  'utf-8', // 'windows-1252', // 'iso-8859-1', // 'ANSI', // 'utf-8', 
                 bom: true,
                 customize: function ( csv ) {
-                    return "AtmoSud inventaire v"+cfg_vinv+" - Export CIGALE du " + datehour() + "\n\n" + cgu + "\n\n" + csv;
+                    return "AtmoSud inventaire v"+cfg_vinv+ '.' + cfg_sous_vinv +" - Export CIGALE du " + datehour() + "\n\n" + cgu + "\n\n" + csv;
                 }                
             },        
             {
                 extend: 'pdfHtml5',
-                title: "AtmoSud inventaire v"+cfg_vinv+" - Export CIGALE du " + datehour(),
+                title: "AtmoSud inventaire v"+cfg_vinv+ '.' + cfg_sous_vinv +" - Export CIGALE du " + datehour(),
                 message: cgu, 
                 customize: function ( doc ) {
                     
